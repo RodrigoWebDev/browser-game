@@ -2,9 +2,9 @@ interface ICARD {
   img: string;
   title: string;
   description: string;
-  footer: any;
-  imgHueRotation: number;
-  imgBrighter: boolean;
+  footer?: any;
+  imgHueRotation?: number;
+  imgBrighter?: boolean;
 }
 
 const Card = ({

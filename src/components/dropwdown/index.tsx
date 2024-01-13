@@ -31,10 +31,6 @@ const DropDown = ({ items, buttonChildren, index }: IDropDown) => {
             </li>
           );
         })}
-
-        <li>
-          <a>Jogar item</a>
-        </li>
       </ul>
     </details>
   );

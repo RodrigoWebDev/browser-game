@@ -6,6 +6,10 @@ import Card from "./components/card";
 import SwordsSvg from "./components/svgIcons/swords";
 import { randomFloatFromInterval } from "./helpers";
 import DropDown from "./components/dropwdown";
+import village from "./assets/backgrounds/village.webp";
+import Button from "./components/Button";
+import Modal from "./components/Modal";
+import npc from "./assets/npcs/0.webp";
 
 interface IPlayerActions {
   name: string;
@@ -25,11 +29,49 @@ interface IEnemy {
 
 function App() {
   const [showHit, setShowHit] = createSignal(false);
+  const [showModal, setShowModal] = createSignal(false);
   const [enemies, setEnemies] = createSignal<IEnemy[]>([]);
+  const [currentLocation, setCurrentLocation] = createSignal({
+    name: "Vila oculta da folha",
+    bg: village,
+    /* possibleThingsToFind: [
+      {
+        id: 0,
+        name: "Natielly",
+        type: "merchant",
+        img: npc,
+        takeDamage: false,
+      },
+    ], */
+    thingsFound: [
+      {
+        id: 0,
+        name: "Natielly",
+        type: "merchant",
+        friendly: true,
+        img: npc,
+        takeDamage: false,
+        playerActions: [
+          {
+            name: "Atacar",
+            click: () => {},
+          },
+          {
+            name: "Dar presente",
+            click: () => {},
+          },
+        ],
+      },
+    ],
+  });
   const [playerAttributes, setPlayerAttributes] = createSignal({
     hp: 100,
     maxHp: 100,
     attackDamage: 50,
+  });
+  const [modalContent, setModalContent] = createSignal({
+    title: "",
+    isOpen: false,
   });
 
   const enemyTemplate = {
@@ -83,6 +125,20 @@ function App() {
     }, 150);
   };
 
+  const explore = () => {
+    setModalContent((val) => ({
+      ...val,
+      title: `Explorando ${currentLocation().name}`,
+      isOpen: true,
+    }));
+
+    setShowModal(true);
+
+    setTimeout(() => {
+      setShowModal(false);
+    }, 1000);
+  };
+
   createEffect(() => {
     setEnemies([]);
     for (let i = 0; i < 4; i++) {
@@ -128,18 +184,18 @@ function App() {
         <h2>Inventário</h2>
 
         <div class="flex flex-wrap">
-          <button
-            class="btn w-[30px] h-[30px] p-[8px] flex items-center justify-center"
+          <Button
+            className="w-[30px] h-[30px] p-[8px] flex items-center justify-center"
             onClick={() => {
               playerTakeDamage(10);
             }}
           >
             <img src={potion} alt="Healing Potion" class="w-[30px] h-[30px]" />
-          </button>
+          </Button>
         </div>
       </aside>
       <main class="w-[70%] p-4">
-        <div id="combat">
+        <div style={{ display: "none" }} id="combat">
           <div id="enemies" class="flex mb-4">
             {enemies().map((enemy, index) => {
               const enemyIsDead = enemy.hp <= 0;
@@ -177,9 +233,9 @@ function App() {
                             index={index}
                           />
 
-                          <button class="btn btn-active btn-primary btn-sm">
+                          <Button className="btn-sm">
                             <SwordsSvg className="w-[16px] text-white" />
-                          </button>
+                          </Button>
                         </div>
                       </>
                     }
@@ -190,11 +246,67 @@ function App() {
           </div>
           <div id="player-actions" class="flex">
             <div>
-              <button class="btn btn-primary">Fugir do combate</button>
+              <Button>Fugir do combate</Button>
+            </div>
+          </div>
+        </div>
+
+        <div
+          id="exploration"
+          style={{
+            "background-image": `url(${currentLocation().bg})`,
+          }}
+          class="h-screen bg-contain"
+        >
+          <div class="h-full w-full bg-black/40 p-4">
+            <h2 class="text-[20px]">
+              Você esta em <strong>{currentLocation().name}</strong>
+            </h2>
+            <hr class="my-4" />
+            <div class="flex flex-wrap">
+              <Button
+                onClick={() => {
+                  explore();
+                }}
+              >
+                Explorar local
+              </Button>
+
+              <div id="things-found" class="mt-4">
+                {currentLocation().thingsFound.map((thing, index) => {
+                  return (
+                    <div class="w-[25%]">
+                      <Card
+                        title={thing.name}
+                        description=""
+                        img={thing.img}
+                        imgBrighter={thing.takeDamage}
+                        footer={
+                          <>
+                            <div data-id="actions" class="flex">
+                              <DropDown
+                                buttonChildren={
+                                  <SwordsSvg className="w-[16px] text-white" />
+                                }
+                                items={thing.playerActions}
+                                index={index}
+                              />
+                            </div>
+                          </>
+                        }
+                      />
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </div>
       </main>
+
+      <Modal title={modalContent().title} isOpen={showModal()}>
+        {}
+      </Modal>
     </div>
   );
 }
