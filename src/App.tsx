@@ -1,189 +1,37 @@
-import { createSignal, createEffect } from "solid-js";
 import Card from "./components/card";
 import SwordsSvg from "./components/svgIcons/swords";
-import { randomFloatFromInterval } from "./helpers";
 import DropDown from "./components/dropwdown";
 import Button from "./components/Button";
 import Modal from "./components/Modal";
-import Npc from "./classes/Npc";
 
 // Assets
 import knight from "./assets/player/classes/knight/0.webp";
 import potion from "./assets/consumables/potion0.webp";
-import enemy from "./assets/enemies/0.webp";
-import npc from "./assets/npcs/0.webp";
-import village from "./assets/backgrounds/village.webp";
-import exploration from "./assets/events/exploration.webp";
-import { IEnemy, ILocation } from "./interfaces";
+import useApp from "./useApp";
 
 function App() {
-  const [showHit, setShowHit] = createSignal(false);
-  const [enemies, setEnemies] = createSignal<IEnemy[]>([]);
-  const [playerAttributes, setPlayerAttributes] = createSignal({
-    hp: 100,
-    maxHp: 100,
-    attackDamage: 50,
-  });
-  const [modalContent, setModalContent] = createSignal({
-    title: "",
-    isOpen: false,
-    children: <></>,
-  });
+  const {
+    showHit,
+    player,
+    playerTakeDamage,
+    enemies,
+    //currentLocation,
+    modalContent,
+    explore,
+    world,
+  } = useApp();
 
-  /* const createNPC = () => {
-
-  } */
-
-  const [currentLocation, setCurrentLocation] = createSignal<ILocation>({
-    name: "Vila oculta da folha",
-    bg: village,
-    things: [
-      {
-        found: false,
-        thing: new Npc(
-          0,
-          "Natielly",
-          "merchant",
-          true,
-          npc,
-          false,
-          (npc: Npc) => {
-            setModalContent((value) => ({
-              ...value,
-              isOpen: true,
-              title: `Conversando com ${npc.name}`,
-              children: (
-                <div class="mt-4">
-                  <img class="max-w-[350px] mb-2" src={npc.img} />
-                  <p>{npc.message}</p>
-                </div>
-              ),
-            }));
-          }
-        ),
-      },
-    ],
-  });
-
-  const enemyTemplate = {
-    name: "Inimigo",
-    description: "Este inimigo quer te matar",
-    img: enemy,
-    takeDamage: false,
-    hp: 90,
-    maxHp: 100,
-    color: randomFloatFromInterval(0, 100),
-    playerActions: [
-      {
-        name: "Atacar",
-        click: (index: number) => {
-          enemyTakeDamage(index, playerAttributes().attackDamage);
-        },
-      },
-    ],
-  };
-
-  const playerTakeDamage = (damage: number) => {
-    setPlayerAttributes((val) => ({
-      ...val,
-      hp: val.hp - damage,
-    }));
-
-    setShowHit(true);
-    setTimeout(() => {
-      setShowHit(false);
-    }, 300);
-  };
-
-  const enemyTakeDamage = (index: number, damage: number) => {
-    const newEnemies = [...enemies()];
-    newEnemies[index] = {
-      ...newEnemies[index],
-      takeDamage: true,
-      hp: newEnemies[index].hp - damage,
-    };
-
-    setEnemies(newEnemies);
-
-    setTimeout(() => {
-      const newEnemies = [...enemies()];
-      newEnemies[index] = {
-        ...newEnemies[index],
-        takeDamage: false,
-      };
-
-      setEnemies(newEnemies);
-    }, 150);
-  };
-
-  const closeModal = () => {
-    setModalContent((val) => ({
-      ...val,
-      isOpen: false,
-    }));
-  };
-
-  const hasThingToFind = () => {
-    return currentLocation().things.some((item) => {
-      return item.found == false;
-    });
-  };
-
-  const findSomething = () => {
-    const _things = [...currentLocation().things];
-    const notFoundIndex = _things.findIndex((item) => !item.found);
-
-    if (notFoundIndex !== -1) {
-      _things[notFoundIndex].found = true;
-
-      setCurrentLocation((value) => ({
-        ...value,
-        things: _things,
-      }));
-    }
-  };
-
-  const explore = () => {
-    if (hasThingToFind()) {
-      setModalContent((val) => ({
-        ...val,
-        title: `Explorando ${currentLocation().name}`,
-        children: <img class="max-w-[350px] mt-2" src={exploration} />,
-        isOpen: true,
-      }));
-
-      setTimeout(() => {
-        closeModal();
-        findSomething();
-      }, 1000);
-    } else {
-      setModalContent((val) => ({
-        ...val,
-        title: "Você ja encontrou tudo",
-        children: <></>,
-        isOpen: true,
-      }));
-    }
-  };
-
-  createEffect(() => {
-    setEnemies([]);
-    for (let i = 0; i < 4; i++) {
-      setEnemies((val) => [...val, enemyTemplate]);
-    }
-  });
-
-  console.log(modalContent());
+  console.log(world());
 
   return (
     <div class="flex max-w-[1360px] mx-auto">
       <aside class="w-[30%] p-4 mr-4">
         <img src={knight} class={`${showHit() ? "brightness-[4]" : ""}`} />
         <div>
-          <strong>Nome</strong>: Tekomo Nakama
+          <strong>Nome</strong>: {player().name}
         </div>
         <div>
-          <strong>Classe</strong>: Guerreiro
+          <strong>Classe</strong>: {player().class}
         </div>
 
         <hr />
@@ -194,8 +42,8 @@ function App() {
           <div class="mr-2">HP:</div>
           <progress
             class="progress progress-error"
-            value={playerAttributes().hp}
-            max={playerAttributes().maxHp}
+            value={player().hp}
+            max={player().maxHp}
           ></progress>
         </div>
 
@@ -280,61 +128,63 @@ function App() {
           </div>
         </div>
 
-        <div
-          id="exploration"
-          style={{
-            "background-image": `url(${currentLocation().bg})`,
-          }}
-          class="h-screen bg-contain"
-        >
-          <div class="h-full w-full bg-black/40 p-4">
-            <h2 class="text-[20px]">
-              Você esta em <strong>{currentLocation().name}</strong>
-            </h2>
-            <hr class="my-4" />
-            <div class="flex flex-wrap">
-              <Button
-                onClick={() => {
-                  explore();
-                }}
-              >
-                Explorar local
-              </Button>
+        {world().locations.length && (
+          <div
+            id="exploration"
+            style={{
+              "background-image": `url(${world().locations[0].bg})`,
+            }}
+            class="h-screen bg-contain"
+          >
+            <div class="h-full w-full bg-black/40 p-4">
+              <h2 class="text-[20px]">
+                Você esta em <strong>{world().locations[0].name}</strong>
+              </h2>
+              <hr class="my-4" />
+              <div class="flex flex-wrap">
+                <Button
+                  onClick={() => {
+                    explore();
+                  }}
+                >
+                  Explorar local
+                </Button>
 
-              <div id="things-found" class="mt-4">
-                {currentLocation().things.map((item, index) => {
-                  const thing = item.thing;
+                <div id="things-found" class="mt-4">
+                  {world().locations[0].things.map((item, index) => {
+                    const thing = item.thing;
 
-                  if (item.found) {
-                    return (
-                      <div class="w-[25%]">
-                        <Card
-                          title={thing.name}
-                          description=""
-                          img={thing.img}
-                          imgBrighter={thing.takeDamage}
-                          footer={
-                            <>
-                              <div data-id="actions" class="flex">
-                                <DropDown
-                                  buttonChildren={
-                                    <SwordsSvg className="w-[16px] text-white" />
-                                  }
-                                  items={thing.playerActions}
-                                  index={index}
-                                />
-                              </div>
-                            </>
-                          }
-                        />
-                      </div>
-                    );
-                  }
-                })}
+                    if (item.found) {
+                      return (
+                        <div class="w-[25%]">
+                          <Card
+                            title={thing.name}
+                            description=""
+                            img={thing.img}
+                            imgBrighter={thing.takeDamage}
+                            footer={
+                              <>
+                                <div data-id="actions" class="flex">
+                                  <DropDown
+                                    buttonChildren={
+                                      <SwordsSvg className="w-[16px] text-white" />
+                                    }
+                                    items={thing.playerActions}
+                                    index={index}
+                                  />
+                                </div>
+                              </>
+                            }
+                          />
+                        </div>
+                      );
+                    }
+                  })}
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
       </main>
 
       <Modal title={modalContent().title} isOpen={modalContent().isOpen}>
