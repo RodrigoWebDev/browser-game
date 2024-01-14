@@ -10,6 +10,7 @@ import village from "./assets/backgrounds/village.webp";
 import Button from "./components/Button";
 import Modal from "./components/Modal";
 import npc from "./assets/npcs/0.webp";
+import Npc from "./classes/Npc";
 
 interface IPlayerActions {
   name: string;
@@ -31,6 +32,16 @@ function App() {
   const [showHit, setShowHit] = createSignal(false);
   const [showModal, setShowModal] = createSignal(false);
   const [enemies, setEnemies] = createSignal<IEnemy[]>([]);
+  const [playerAttributes, setPlayerAttributes] = createSignal({
+    hp: 100,
+    maxHp: 100,
+    attackDamage: 50,
+  });
+  const [modalContent, setModalContent] = createSignal({
+    title: "",
+    isOpen: false,
+    children: <></>,
+  });
   const [currentLocation, setCurrentLocation] = createSignal({
     name: "Vila oculta da folha",
     bg: village,
@@ -44,34 +55,20 @@ function App() {
       },
     ], */
     thingsFound: [
-      {
-        id: 0,
-        name: "Natielly",
-        type: "merchant",
-        friendly: true,
-        img: npc,
-        takeDamage: false,
-        playerActions: [
-          {
-            name: "Atacar",
-            click: () => {},
-          },
-          {
-            name: "Dar presente",
-            click: () => {},
-          },
-        ],
-      },
+      new Npc(0, "Natielly", "merchant", true, npc, false, (npc: Npc) => {
+        setModalContent((value) => ({
+          ...value,
+          isOpen: true,
+          title: `Conversando com ${npc.name}`,
+          children: (
+            <div class="mt-4">
+              <img class="max-w-[350px] mb-2" src={npc.img} />
+              <p>{npc.message}</p>
+            </div>
+          ),
+        }));
+      }),
     ],
-  });
-  const [playerAttributes, setPlayerAttributes] = createSignal({
-    hp: 100,
-    maxHp: 100,
-    attackDamage: 50,
-  });
-  const [modalContent, setModalContent] = createSignal({
-    title: "",
-    isOpen: false,
   });
 
   const enemyTemplate = {
@@ -145,6 +142,8 @@ function App() {
       setEnemies((val) => [...val, enemyTemplate]);
     }
   });
+
+  console.log(modalContent());
 
   return (
     <div class="flex max-w-[1360px] mx-auto">
@@ -304,8 +303,8 @@ function App() {
         </div>
       </main>
 
-      <Modal title={modalContent().title} isOpen={showModal()}>
-        {}
+      <Modal title={modalContent().title} isOpen={modalContent().isOpen}>
+        {modalContent().children}
       </Modal>
     </div>
   );
