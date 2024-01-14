@@ -1,36 +1,23 @@
 import { createSignal, createEffect } from "solid-js";
-import knight from "./assets/player/classes/knight/0.webp";
-import potion from "./assets/consumables/potion0.webp";
-import enemy from "./assets/enemies/0.webp";
 import Card from "./components/card";
 import SwordsSvg from "./components/svgIcons/swords";
 import { randomFloatFromInterval } from "./helpers";
 import DropDown from "./components/dropwdown";
-import village from "./assets/backgrounds/village.webp";
 import Button from "./components/Button";
 import Modal from "./components/Modal";
-import npc from "./assets/npcs/0.webp";
 import Npc from "./classes/Npc";
 
-interface IPlayerActions {
-  name: string;
-  click: (index: number) => void;
-}
-
-interface IEnemy {
-  name: string;
-  description: string;
-  img: string;
-  takeDamage: boolean;
-  hp: number;
-  maxHp: number;
-  color: number;
-  playerActions: IPlayerActions[];
-}
+// Assets
+import knight from "./assets/player/classes/knight/0.webp";
+import potion from "./assets/consumables/potion0.webp";
+import enemy from "./assets/enemies/0.webp";
+import npc from "./assets/npcs/0.webp";
+import village from "./assets/backgrounds/village.webp";
+import exploration from "./assets/events/exploration.webp";
+import { IEnemy, ILocation } from "./interfaces";
 
 function App() {
   const [showHit, setShowHit] = createSignal(false);
-  const [showModal, setShowModal] = createSignal(false);
   const [enemies, setEnemies] = createSignal<IEnemy[]>([]);
   const [playerAttributes, setPlayerAttributes] = createSignal({
     hp: 100,
@@ -42,32 +29,39 @@ function App() {
     isOpen: false,
     children: <></>,
   });
-  const [currentLocation, setCurrentLocation] = createSignal({
+
+  /* const createNPC = () => {
+
+  } */
+
+  const [currentLocation, setCurrentLocation] = createSignal<ILocation>({
     name: "Vila oculta da folha",
     bg: village,
-    /* possibleThingsToFind: [
+    things: [
       {
-        id: 0,
-        name: "Natielly",
-        type: "merchant",
-        img: npc,
-        takeDamage: false,
+        found: false,
+        thing: new Npc(
+          0,
+          "Natielly",
+          "merchant",
+          true,
+          npc,
+          false,
+          (npc: Npc) => {
+            setModalContent((value) => ({
+              ...value,
+              isOpen: true,
+              title: `Conversando com ${npc.name}`,
+              children: (
+                <div class="mt-4">
+                  <img class="max-w-[350px] mb-2" src={npc.img} />
+                  <p>{npc.message}</p>
+                </div>
+              ),
+            }));
+          }
+        ),
       },
-    ], */
-    thingsFound: [
-      new Npc(0, "Natielly", "merchant", true, npc, false, (npc: Npc) => {
-        setModalContent((value) => ({
-          ...value,
-          isOpen: true,
-          title: `Conversando com ${npc.name}`,
-          children: (
-            <div class="mt-4">
-              <img class="max-w-[350px] mb-2" src={npc.img} />
-              <p>{npc.message}</p>
-            </div>
-          ),
-        }));
-      }),
     ],
   });
 
@@ -122,18 +116,54 @@ function App() {
     }, 150);
   };
 
-  const explore = () => {
+  const closeModal = () => {
     setModalContent((val) => ({
       ...val,
-      title: `Explorando ${currentLocation().name}`,
-      isOpen: true,
+      isOpen: false,
     }));
+  };
 
-    setShowModal(true);
+  const hasThingToFind = () => {
+    return currentLocation().things.some((item) => {
+      return item.found == false;
+    });
+  };
 
-    setTimeout(() => {
-      setShowModal(false);
-    }, 1000);
+  const findSomething = () => {
+    const _things = [...currentLocation().things];
+    const notFoundIndex = _things.findIndex((item) => !item.found);
+
+    if (notFoundIndex !== -1) {
+      _things[notFoundIndex].found = true;
+
+      setCurrentLocation((value) => ({
+        ...value,
+        things: _things,
+      }));
+    }
+  };
+
+  const explore = () => {
+    if (hasThingToFind()) {
+      setModalContent((val) => ({
+        ...val,
+        title: `Explorando ${currentLocation().name}`,
+        children: <img class="max-w-[350px] mt-2" src={exploration} />,
+        isOpen: true,
+      }));
+
+      setTimeout(() => {
+        closeModal();
+        findSomething();
+      }, 1000);
+    } else {
+      setModalContent((val) => ({
+        ...val,
+        title: "Você ja encontrou tudo",
+        children: <></>,
+        isOpen: true,
+      }));
+    }
   };
 
   createEffect(() => {
@@ -272,30 +302,34 @@ function App() {
               </Button>
 
               <div id="things-found" class="mt-4">
-                {currentLocation().thingsFound.map((thing, index) => {
-                  return (
-                    <div class="w-[25%]">
-                      <Card
-                        title={thing.name}
-                        description=""
-                        img={thing.img}
-                        imgBrighter={thing.takeDamage}
-                        footer={
-                          <>
-                            <div data-id="actions" class="flex">
-                              <DropDown
-                                buttonChildren={
-                                  <SwordsSvg className="w-[16px] text-white" />
-                                }
-                                items={thing.playerActions}
-                                index={index}
-                              />
-                            </div>
-                          </>
-                        }
-                      />
-                    </div>
-                  );
+                {currentLocation().things.map((item, index) => {
+                  const thing = item.thing;
+
+                  if (item.found) {
+                    return (
+                      <div class="w-[25%]">
+                        <Card
+                          title={thing.name}
+                          description=""
+                          img={thing.img}
+                          imgBrighter={thing.takeDamage}
+                          footer={
+                            <>
+                              <div data-id="actions" class="flex">
+                                <DropDown
+                                  buttonChildren={
+                                    <SwordsSvg className="w-[16px] text-white" />
+                                  }
+                                  items={thing.playerActions}
+                                  index={index}
+                                />
+                              </div>
+                            </>
+                          }
+                        />
+                      </div>
+                    );
+                  }
                 })}
               </div>
             </div>

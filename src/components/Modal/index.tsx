@@ -31,7 +31,7 @@ const Modal = (props: IModal) => {
                   _setIsOpen(false);
                 }}
               >
-                Close
+                Fechar
               </button>
             </form>
           </div>
