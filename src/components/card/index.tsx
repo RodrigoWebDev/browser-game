@@ -1,26 +1,19 @@
+import { JSXElement } from "solid-js";
+
 interface ICARD {
   img: string;
   title: string;
-  description: string;
-  footer?: any;
+  footer?: JSXElement;
   imgHueRotation?: number;
   imgBrighter?: boolean;
 }
 
-const Card = ({
-  img,
-  title,
-  description,
-  footer,
-  imgHueRotation,
-  imgBrighter,
-}: ICARD) => {
+const Card = ({ img, title, footer, imgHueRotation, imgBrighter }: ICARD) => {
   return (
     <div class="card bg-base-100 shadow-xl">
       <figure>
         <img
           src={img}
-          alt="Shoes"
           style={{
             filter: imgBrighter
               ? "brightness(3)"
@@ -30,7 +23,6 @@ const Card = ({
       </figure>
       <div class="card-body">
         <h2 class="card-title text-[16px]">{title}</h2>
-        <p class="text-[14px]">{description}</p>
         {footer}
         {/* <div class="card-actions justify-end">
           <button class="btn btn-primary">Buy Now</button>

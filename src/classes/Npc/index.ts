@@ -1,9 +1,5 @@
 import { getRandomItemFromArray } from "../../helpers";
-
-interface IAction {
-  name: string;
-  click: () => void;
-}
+import { IAction } from "../interfaces";
 
 const npcMessages = [
   "O dia está lindo hoje!",
@@ -11,7 +7,7 @@ const npcMessages = [
   "O clima esta ótimo para dar um passeio.",
 ];
 
-class Npc {
+export class Npc {
   id;
   name;
   type = "NPC";
@@ -66,7 +62,6 @@ class Npc {
   }
 
   talk() {
-    console.log("talking...");
     const myMessage = getRandomItemFromArray(npcMessages);
     this.message = myMessage;
     this.talkCallBack(this);

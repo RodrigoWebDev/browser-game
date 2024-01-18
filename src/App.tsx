@@ -13,19 +13,22 @@ function App() {
   const {
     showHit,
     player,
+    escapeFromCombat,
     playerTakeDamage,
-    enemies,
+    combatScreen,
+    attackEnemy,
     //currentLocation,
     modalContent,
     explore,
     world,
+    getCurrentLocation,
+    goToNextArea,
+    goToPreviousArea,
   } = useApp();
 
-  console.log(world());
-
   return (
-    <div class="flex max-w-[1360px] mx-auto">
-      <aside class="w-[30%] p-4 mr-4">
+    <div class="flex justify-between h-screen items-center max-w-[1360px] mx-auto">
+      <aside class="w-[29%] p-4">
         <img src={knight} class={`${showHit() ? "brightness-[4]" : ""}`} />
         <div>
           <strong>Nome</strong>: {player().name}
@@ -71,121 +74,153 @@ function App() {
           </Button>
         </div>
       </aside>
-      <main class="w-[70%] p-4">
-        <div style={{ display: "none" }} id="combat">
-          <div id="enemies" class="flex mb-4">
-            {enemies().map((enemy, index) => {
-              const enemyIsDead = enemy.hp <= 0;
-              return (
-                <div
-                  class={`w-[25%] mr-2 ${
-                    enemyIsDead ? "pointer-events-none brightness-50" : ""
-                  }`}
-                >
-                  <Card
-                    img={enemy.img}
-                    imgHueRotation={enemy.color}
-                    imgBrighter={enemy.takeDamage}
-                    title={enemy.name}
-                    description={enemy.description}
-                    footer={
-                      <>
-                        <div
-                          class="flex items-center"
-                          title={`HP: ${enemy.hp}`}
-                        >
-                          <div class="mr-2">HP:</div>
-                          <progress
-                            class="progress progress-error"
-                            value={enemy.hp}
-                            max={enemy.maxHp}
-                          ></progress>
-                        </div>
-                        <div data-id="actions" class="flex">
-                          <DropDown
-                            buttonChildren={
-                              <SwordsSvg className="w-[16px] text-white" />
-                            }
-                            items={enemy.playerActions}
-                            index={index}
-                          />
-
-                          <Button className="btn-sm">
-                            <SwordsSvg className="w-[16px] text-white" />
-                          </Button>
-                        </div>
-                      </>
-                    }
-                  />
-                </div>
-              );
-            })}
-          </div>
-          <div id="player-actions" class="flex">
-            <div>
-              <Button>Fugir do combate</Button>
-            </div>
-          </div>
-        </div>
-
-        {world().locations.length && (
+      {world().locations.length && (
+        <main class="w-[69%]">
           <div
-            id="exploration"
             style={{
-              "background-image": `url(${world().locations[0].bg})`,
+              "background-image": `url(${getCurrentLocation().bg})`,
             }}
-            class="h-screen bg-contain"
+            class="h-full bg-contain"
           >
-            <div class="h-full w-full bg-black/40 p-4">
-              <h2 class="text-[20px]">
-                Você esta em <strong>{world().locations[0].name}</strong>
-              </h2>
-              <hr class="my-4" />
-              <div class="flex flex-wrap">
-                <Button
-                  onClick={() => {
-                    explore();
-                  }}
-                >
-                  Explorar local
-                </Button>
+            {player().isInCombat ? (
+              <div id="combat" class="p-4">
+                <div id="enemies" class="flex mb-4">
+                  {combatScreen().enemies.map((enemy) => {
+                    const enemyIsDead = enemy.hp <= 0;
+                    return (
+                      <div
+                        class={`w-[25%] mr-2 ${
+                          enemyIsDead ? "pointer-events-none brightness-50" : ""
+                        }`}
+                      >
+                        <Card
+                          img={enemy.img}
+                          imgHueRotation={enemy.hueRotation}
+                          imgBrighter={enemy.damageEffetct}
+                          title={enemy.name}
+                          footer={
+                            <>
+                              <div
+                                class="flex items-center"
+                                title={`HP: ${enemy.hp}`}
+                              >
+                                <div class="mr-2">HP:</div>
+                                <progress
+                                  class="progress progress-error"
+                                  value={enemy.hp}
+                                  max={enemy.maxHp}
+                                ></progress>
+                              </div>
+                              <div data-id="actions" class="flex">
+                                <DropDown
+                                  buttonChildren={
+                                    <SwordsSvg className="w-[16px] text-white" />
+                                  }
+                                  items={enemy.playerActions.map((item) => (
+                                    <li
+                                      onClick={() => {
+                                        attackEnemy(item, enemy);
+                                      }}
+                                    >
+                                      <a data-id="action">{item.name}</a>
+                                    </li>
+                                  ))}
+                                />
 
-                <div id="things-found" class="mt-4">
-                  {world().locations[0].things.map((item, index) => {
-                    const thing = item.thing;
-
-                    if (item.found) {
-                      return (
-                        <div class="w-[25%]">
-                          <Card
-                            title={thing.name}
-                            description=""
-                            img={thing.img}
-                            imgBrighter={thing.takeDamage}
-                            footer={
-                              <>
-                                <div data-id="actions" class="flex">
-                                  <DropDown
-                                    buttonChildren={
-                                      <SwordsSvg className="w-[16px] text-white" />
-                                    }
-                                    items={thing.playerActions}
-                                    index={index}
-                                  />
-                                </div>
-                              </>
-                            }
-                          />
-                        </div>
-                      );
-                    }
+                                <Button className="btn-sm">
+                                  <SwordsSvg className="w-[16px] text-white" />
+                                </Button>
+                              </div>
+                            </>
+                          }
+                        />
+                      </div>
+                    );
                   })}
                 </div>
+                <div id="player-actions" class="flex">
+                  <div>
+                    <Button
+                      onClick={() => {
+                        escapeFromCombat();
+                      }}
+                    >
+                      Fugir do combate
+                    </Button>
+                  </div>
+                </div>
               </div>
-            </div>
+            ) : (
+              <div id="exploration" class="h-full w-full bg-black/40 p-4">
+                <h2 class="text-[20px]">
+                  Você esta em <strong>{getCurrentLocation().name}</strong>
+                </h2>
+                <hr class="my-4" />
+                <div>
+                  <div class="flex flex-wrap">
+                    <Button
+                      onClick={() => {
+                        explore();
+                      }}
+                      className="mr-2"
+                    >
+                      Explorar área
+                    </Button>
+                    {player().currentLocationIndex > 0 && (
+                      <Button
+                        onClick={() => {
+                          goToPreviousArea();
+                        }}
+                        className="mr-2"
+                      >
+                        Voltar para área anterior
+                      </Button>
+                    )}
+                    <Button
+                      onClick={() => {
+                        goToNextArea();
+                      }}
+                    >
+                      Avançar para próxima área
+                    </Button>
+                  </div>
+
+                  <div id="things-found" class="mt-4 flex flex-wrap">
+                    {getCurrentLocation().things.map((item) => {
+                      const thing = item.thing;
+
+                      if (item.found) {
+                        return (
+                          <div class="w-[25%] mr-2">
+                            <Card
+                              title={thing.name}
+                              img={thing.img}
+                              imgBrighter={thing.takeDamage}
+                              footer={
+                                <>
+                                  <div data-id="actions" class="flex">
+                                    {/* <DropDown
+                                      buttonChildren={
+                                        <SwordsSvg className="w-[16px] text-white" />
+                                      }
+                                      items={}
+                                      index={index}
+                                    /> */}
+                                  </div>
+                                </>
+                              }
+                            />
+                          </div>
+                        );
+                      }
+                    })}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
-        )}
-      </main>
+        </main>
+      )}
 
       <Modal title={modalContent().title} isOpen={modalContent().isOpen}>
         {modalContent().children}

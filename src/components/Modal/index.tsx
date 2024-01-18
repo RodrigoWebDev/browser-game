@@ -1,10 +1,10 @@
-import { createEffect, createSignal } from "solid-js";
+import { createEffect, createSignal, JSXElement } from "solid-js";
 
 interface IModal {
   isOpen?: boolean;
   title: string;
   hideCloseButton?: boolean;
-  children?: any;
+  children?: JSXElement;
 }
 
 const Modal = (props: IModal) => {

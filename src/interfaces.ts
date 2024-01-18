@@ -5,17 +5,6 @@ export interface IPlayerActions {
   click: (index: number) => void;
 }
 
-export interface IEnemy {
-  name: string;
-  description: string;
-  img: string;
-  takeDamage: boolean;
-  hp: number;
-  maxHp: number;
-  color: number;
-  playerActions: IPlayerActions[];
-}
-
 export interface ILocation {
   name: string;
   type: string;

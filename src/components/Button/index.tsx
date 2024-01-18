@@ -1,5 +1,7 @@
+import { JSXElement } from "solid-js";
+
 interface IButton {
-  children?: any;
+  children?: JSXElement;
   className?: string;
   onClick?: () => void;
 }
