@@ -27,7 +27,7 @@ function App() {
   } = useApp();
 
   return (
-    <div class="flex justify-between h-screen items-center max-w-[1360px] mx-auto">
+    <div class="flex justify-between h-screen max-w-[1360px] mx-auto">
       <aside class="w-[29%] p-4">
         <img src={knight} class={`${showHit() ? "brightness-[4]" : ""}`} />
         <div>
@@ -199,13 +199,12 @@ function App() {
                               footer={
                                 <>
                                   <div data-id="actions" class="flex">
-                                    {/* <DropDown
+                                    <DropDown
                                       buttonChildren={
                                         <SwordsSvg className="w-[16px] text-white" />
                                       }
-                                      items={}
-                                      index={index}
-                                    /> */}
+                                      items={<></>}
+                                    />
                                   </div>
                                 </>
                               }

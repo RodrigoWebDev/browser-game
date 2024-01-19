@@ -8,17 +8,14 @@ import exploration from "./assets/events/exploration.webp";
 import { IWorld } from "./interfaces";
 import {
   GENDERS,
-  IPlace,
   MAX_THINGS_NUMBER,
   MIN_THINGS_NUMBER,
   NPC_NAMES,
-  PLACES,
-  PLACE_TYPES,
-  THINGS,
-  IThing,
-  ENEMIES,
 } from "./constants";
 import { IAction } from "./classes/interfaces";
+import { ENEMIES, TEnemyTypes } from "./constants/enemies";
+import { IThing, THINGS } from "./constants/things";
+import { IPlace, PLACES, PLACE_TYPES, TPLACE_TYPES } from "./constants/places";
 
 const useApp = () => {
   const [world, setWorld] = createSignal<IWorld>({
@@ -32,7 +29,7 @@ const useApp = () => {
     maxHp: 100,
     attackDamage: 50,
     currentLocationIndex: 0,
-    isInCombat: true,
+    isInCombat: false,
   });
   const [combatScreen, setCombatScreen] = createSignal({
     enemies: [new Enemy(0, ENEMIES["TROLL"]), new Enemy(1, ENEMIES["GOBLIN"])],
@@ -132,23 +129,36 @@ const useApp = () => {
 
     for (let i = 0; i < interval; i++) {
       const randomThing = getRandomItemFromArray(place.THINGS) as IThing;
-      const thingSubType = randomThing.SUBTYPE as "VILLAGER";
 
-      let randomName;
-      let randomImage;
+      let randomName = "";
+      let randomImage = "";
 
       if (randomThing.TYPE === "NPC") {
+        const thingSubType = randomThing.SUBTYPE as "VILLAGER";
         //Create NPC Info
-        /* const randomNPCName =  */
         const gender = getRandomItemFromArray(GENDERS) as "MALE" | "FEMALE";
         randomImage = getRandomItemFromArray(
           THINGS[thingSubType][gender].IMAGES
         );
         randomName = getRandomItemFromArray(NPC_NAMES[gender]);
+      }
 
-        console.log({ gender, randomName, randomImage });
-        /* const name = getRandomItemFromArray(NPC_NAMES[gender]);
-        const image = getRandomItemFromArray(THINGS[randomThingName].IMAGES); */
+      if (randomThing.TYPE === "STRUCTURE") {
+        const thingSubType = randomThing.SUBTYPE as "TAVERN";
+
+        randomImage = getRandomItemFromArray(THINGS[thingSubType].IMAGES);
+        randomName = `${getRandomItemFromArray(place.NAMES)} tavern`;
+      }
+
+      if (randomThing.TYPE === "ENEMY") {
+        const thingSubType = randomThing.SUBTYPE as "ENEMY";
+        const randomEmeny = getRandomItemFromArray(
+          THINGS[thingSubType].TYPES
+        ) as TEnemyTypes;
+        const enemyInformation = ENEMIES[randomEmeny];
+
+        randomImage = enemyInformation.image;
+        randomName = enemyInformation.name;
       }
 
       things.push({
@@ -186,14 +196,16 @@ const useApp = () => {
   };
 
   const getPlace = () => {
-    const randomPlaceType = getRandomItemFromArray(PLACE_TYPES);
+    const randomPlaceType = getRandomItemFromArray(PLACE_TYPES) as TPLACE_TYPES;
 
-    switch (randomPlaceType) {
+    return createPlaceInformation(PLACES[randomPlaceType]);
+
+    /* switch (randomPlaceType) {
       case "dungeon":
         return createPlaceInformation(PLACES.DUNGEON);
       default:
         return createPlaceInformation(PLACES.VILLAGE);
-    }
+    } */
   };
 
   const createPlaces = () => {
