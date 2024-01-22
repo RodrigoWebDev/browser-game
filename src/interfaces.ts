@@ -11,7 +11,12 @@ export interface ILocation {
   bg: string;
   things: {
     found: boolean;
-    thing: Npc;
+    thing: {
+      name: string;
+      type: string;
+      img: string;
+      playerActions: IPlayerActions[];
+    };
   }[];
 }
 

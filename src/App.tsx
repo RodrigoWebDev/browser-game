@@ -9,6 +9,8 @@ import knight from "./assets/player/classes/knight/0.webp";
 import potion from "./assets/consumables/potion0.webp";
 import useApp from "./useApp";
 
+const cardContainerStyle = "w-[25%] mr-2 mb-2";
+
 function App() {
   const {
     showHit,
@@ -89,7 +91,7 @@ function App() {
                     const enemyIsDead = enemy.hp <= 0;
                     return (
                       <div
-                        class={`w-[25%] mr-2 ${
+                        class={`${cardContainerStyle} ${
                           enemyIsDead ? "pointer-events-none brightness-50" : ""
                         }`}
                       >
@@ -98,6 +100,7 @@ function App() {
                           imgHueRotation={enemy.hueRotation}
                           imgBrighter={enemy.damageEffetct}
                           title={enemy.name}
+                          subTitle="ENEMY"
                           footer={
                             <>
                               <div
@@ -191,11 +194,12 @@ function App() {
 
                       if (item.found) {
                         return (
-                          <div class="w-[25%] mr-2">
+                          <div class={cardContainerStyle}>
                             <Card
                               title={thing.name}
+                              subTitle={thing.type}
                               img={thing.img}
-                              imgBrighter={thing.takeDamage}
+                              imgBrighter={false}
                               footer={
                                 <>
                                   <div data-id="actions" class="flex">

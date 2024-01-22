@@ -14,7 +14,7 @@ import maleVillager3 from "../assets/npcs/villagers/male/3.png";
 import maleVillager4 from "../assets/npcs/villagers/male/4.png";
 import maleVillager5 from "../assets/npcs/villagers/male/5.png";
 
-export const THINGS = {
+export const NPC = {
   VILLAGER: {
     MALE: {
       IMAGES: [
@@ -37,15 +37,29 @@ export const THINGS = {
       ],
     },
   },
-  TAVERN: {
-    IMAGES: [""],
-  },
-  ENEMY: {
-    TYPES: ["TROLL", "GOBLIN"],
+  TRAVELLER: {
+    MALE: {
+      IMAGES: [
+        maleVillager0,
+        maleVillager1,
+        maleVillager2,
+        maleVillager3,
+        maleVillager4,
+        maleVillager5,
+      ],
+    },
+    FEMALE: {
+      IMAGES: [
+        femaleVillager0,
+        femaleVillager1,
+        femaleVillager2,
+        femaleVillager3,
+        femaleVillager4,
+        femaleVillager5,
+      ],
+    },
   },
 };
 
-export interface IThing {
-  TYPE: string;
-  SUBTYPE: string;
-}
+export type TNPC_TYPES = keyof typeof NPC;
+export const NPC_TYPES = Object.keys(NPC) as TNPC_TYPES[];

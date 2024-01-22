@@ -1,6 +1,5 @@
 import { createSignal, onMount } from "solid-js";
 import { getRandomIntFromInterval, getRandomItemFromArray } from "./helpers";
-import Npc from "./classes/Npc";
 import Enemy from "./classes/Enemy";
 
 // Assets
@@ -13,9 +12,17 @@ import {
   NPC_NAMES,
 } from "./constants";
 import { IAction } from "./classes/interfaces";
-import { ENEMIES, TEnemyTypes } from "./constants/enemies";
+import { ENEMY, TENEMY_TYPES } from "./constants/enemies";
 import { IThing, THINGS } from "./constants/things";
-import { IPlace, PLACES, PLACE_TYPES, TPLACE_TYPES } from "./constants/places";
+import {
+  INNER_PLACE,
+  IPlace,
+  PLACES,
+  PLACE_TYPES,
+  TINNER_PLACE_TYPES,
+  TPLACE_TYPES,
+} from "./constants/places";
+import { NPC, TNPC_TYPES } from "./constants/npc";
 
 const useApp = () => {
   const [world, setWorld] = createSignal<IWorld>({
@@ -32,7 +39,7 @@ const useApp = () => {
     isInCombat: false,
   });
   const [combatScreen, setCombatScreen] = createSignal({
-    enemies: [new Enemy(0, ENEMIES["TROLL"]), new Enemy(1, ENEMIES["GOBLIN"])],
+    enemies: [new Enemy(0, ENEMY["TROLL"]), new Enemy(1, ENEMY["GOBLIN"])],
   });
   const [modalContent, setModalContent] = createSignal({
     title: "",
@@ -110,14 +117,14 @@ const useApp = () => {
     } else {
       setModalContent((val) => ({
         ...val,
-        title: "Você ja encontrou tudo",
+        title: "Você ja explorou tudo",
         children: <></>,
         isOpen: true,
       }));
     }
   };
 
-  const createPlaceInformation = (place: IPlace) => {
+  const getPlaceInformation = (place: IPlace) => {
     const name = `${getRandomItemFromArray(place.NAMES)} ${place.ID}`;
     const bg = getRandomItemFromArray(place.IMAGES);
     let things = [];
@@ -132,58 +139,72 @@ const useApp = () => {
 
       let randomName = "";
       let randomImage = "";
+      let actions = [];
+      const thingType = randomThing.TYPE;
 
-      if (randomThing.TYPE === "NPC") {
-        const thingSubType = randomThing.SUBTYPE as "VILLAGER";
+      if (thingType === "NPC") {
         //Create NPC Info
+        const subType = randomThing.SUBTYPE as TNPC_TYPES;
         const gender = getRandomItemFromArray(GENDERS) as "MALE" | "FEMALE";
-        randomImage = getRandomItemFromArray(
-          THINGS[thingSubType][gender].IMAGES
-        );
+        const images = NPC[subType][gender].IMAGES;
+        randomImage = getRandomItemFromArray(images);
         randomName = getRandomItemFromArray(NPC_NAMES[gender]);
+        actions = [
+          {
+            name: "Conversar",
+            click: () => {
+              //this.talk();
+            },
+          },
+        ];
       }
 
-      if (randomThing.TYPE === "STRUCTURE") {
-        const thingSubType = randomThing.SUBTYPE as "TAVERN";
-
-        randomImage = getRandomItemFromArray(THINGS[thingSubType].IMAGES);
-        randomName = `${getRandomItemFromArray(place.NAMES)} tavern`;
+      if (thingType === "INNER_PLACE") {
+        //Create INNER_PLACE Info
+        const subType = randomThing.SUBTYPE as TINNER_PLACE_TYPES;
+        const thing = INNER_PLACE[subType];
+        randomImage = getRandomItemFromArray(thing.IMAGES);
+        randomName = getRandomItemFromArray(thing.NAMES);
       }
 
-      if (randomThing.TYPE === "ENEMY") {
-        const thingSubType = randomThing.SUBTYPE as "ENEMY";
-        const randomEmeny = getRandomItemFromArray(
-          THINGS[thingSubType].TYPES
-        ) as TEnemyTypes;
-        const enemyInformation = ENEMIES[randomEmeny];
-
-        randomImage = enemyInformation.image;
-        randomName = enemyInformation.name;
+      if (thingType === "ENEMY") {
+        const thingSubType = randomThing.SUBTYPE as TENEMY_TYPES;
+        const thing = ENEMY[thingSubType];
+        randomImage = ENEMY[thingSubType].IMAGE;
+        randomName = thing.NAME;
       }
 
       things.push({
         found: false,
-        thing: new Npc(
-          0,
-          randomName,
-          "merchant",
-          true,
-          randomImage,
-          false,
-          (npc: Npc) => {
-            setModalContent((value) => ({
-              ...value,
-              isOpen: true,
-              title: `Conversando com ${npc.name}`,
-              children: (
-                <div class="mt-4">
-                  <img class="max-w-[350px] mb-2" src={npc.img} />
-                  <p>{npc.message}</p>
-                </div>
-              ),
-            }));
-          }
-        ),
+        thing: {
+          name: randomName,
+          type: thingType,
+          img: randomImage,
+          playerActions: [
+            {
+              name: "Conversar",
+              click: () => {
+                //this.talk();
+              },
+            },
+            {
+              name: "Atacar",
+              click: () => {},
+            },
+            {
+              name: "Dar presente",
+              click: () => {},
+            },
+            {
+              name: "Comprar",
+              click: () => {},
+            },
+            {
+              name: "Vender",
+              click: () => {},
+            },
+          ],
+        },
       });
     }
 
@@ -198,14 +219,7 @@ const useApp = () => {
   const getPlace = () => {
     const randomPlaceType = getRandomItemFromArray(PLACE_TYPES) as TPLACE_TYPES;
 
-    return createPlaceInformation(PLACES[randomPlaceType]);
-
-    /* switch (randomPlaceType) {
-      case "dungeon":
-        return createPlaceInformation(PLACES.DUNGEON);
-      default:
-        return createPlaceInformation(PLACES.VILLAGE);
-    } */
+    return getPlaceInformation(PLACES[randomPlaceType]);
   };
 
   const createPlaces = () => {
@@ -214,6 +228,8 @@ const useApp = () => {
     for (let i = 0; i < 5; i++) {
       _world.locations.push(getPlace());
     }
+
+    console.log({ _world });
 
     setWorld({ ..._world });
   };
