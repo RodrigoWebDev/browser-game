@@ -50,6 +50,33 @@ const useApp = () => {
     currentLocationIndex: 0,
     isInCombat: false,
     money: 250,
+    inventoryMaxCapacity: 4,
+    inventoryItems: [
+      {
+        name: "Healing potion",
+        img: potionImg,
+        playerActions: [
+          {
+            name: "Use",
+            click: () => {
+              //this.talk();
+            },
+          },
+          {
+            name: "Equip",
+            click: () => {
+              //this.talk();
+            },
+          },
+          {
+            name: "View item information",
+            click: () => {
+              //this.talk();
+            },
+          },
+        ],
+      },
+    ],
   });
   const [shop, setShop] = createSignal<IShop[]>([]);
   const [combatScreen, setCombatScreen] = createSignal({
@@ -212,12 +239,18 @@ const useApp = () => {
                     update={() => {
                       setShop([...shopItems]);
                     }}
-                    updatePlayerMoney={(newValue: number) => {
-                      console.log({ newValue });
-                      setPlayer((val) => ({
-                        ...val,
-                        money: newValue,
-                      }));
+                    updatePlayer={(newValues) => {
+                      setPlayer((val) => {
+                        console.log({ newValues });
+                        return {
+                          ...val,
+                          money: newValues.money,
+                          inventoryItems: [
+                            ...val.inventoryItems,
+                            ...newValues.inventoryItems,
+                          ],
+                        };
+                      });
                     }}
                   />
                 ),

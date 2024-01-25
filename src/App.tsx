@@ -6,8 +6,9 @@ import Modal from "./components/Modal";
 
 // Assets
 import knight from "./assets/player/classes/knight/0.webp";
-import potion from "./assets/consumables/potion0.webp";
 import useApp from "./useApp";
+import Inventory from "./components/Inventory";
+import ToolTip from "./components/Tooltip";
 
 const cardContainerStyle = "w-[25%] mr-2 mb-2";
 
@@ -43,40 +44,32 @@ function App() {
         <h2>
           <strong>Stats</strong>
         </h2>
-        <div class="flex items-center" title="HP: 100">
+        <ToolTip text={`HP: ${player().hp}`} className="flex items-center">
           <div class="mr-2">HP:</div>
           <progress
             class="progress progress-error"
             value={player().hp}
             max={player().maxHp}
           ></progress>
-        </div>
+        </ToolTip>
 
-        <div class="flex items-center" title="MP: 50">
+        <ToolTip text={`MP: 50`} className="flex items-center">
           <div class="mr-2">MP:</div>
           <progress
             class="progress progress-info"
             value="50"
             max="50"
           ></progress>
-        </div>
+        </ToolTip>
 
         <hr />
 
         <div>Money: {player().money}</div>
 
-        <h2>Inventory</h2>
-
-        <div class="flex flex-wrap">
-          <Button
-            className="w-[30px] h-[30px] p-[8px] flex items-center justify-center"
-            onClick={() => {
-              playerTakeDamage(10);
-            }}
-          >
-            <img src={potion} alt="Healing Potion" class="w-[30px] h-[30px]" />
-          </Button>
-        </div>
+        <Inventory
+          items={player().inventoryItems}
+          maxCapacity={player().inventoryMaxCapacity}
+        />
       </aside>
       {world().locations.length && (
         <main class="w-[69%]">
@@ -105,9 +98,9 @@ function App() {
                           subTitle="ENEMY"
                           footer={
                             <>
-                              <div
-                                class="flex items-center"
-                                title={`HP: ${enemy.hp}`}
+                              <ToolTip
+                                text={`HP: ${enemy.hp}`}
+                                className="flex items-center"
                               >
                                 <div class="mr-2">HP:</div>
                                 <progress
@@ -115,7 +108,7 @@ function App() {
                                   value={enemy.hp}
                                   max={enemy.maxHp}
                                 ></progress>
-                              </div>
+                              </ToolTip>
                               <div data-id="actions" class="flex">
                                 <DropDown
                                   buttonChildren={

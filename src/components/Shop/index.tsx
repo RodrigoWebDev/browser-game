@@ -1,3 +1,4 @@
+import { IAction } from "../../classes/interfaces";
 import Button from "../Button";
 import Card from "../card";
 
@@ -9,12 +10,21 @@ interface IItem {
   quantitySelected: number;
 }
 
+interface IUpdatePlayerArgs {
+  money: number;
+  inventoryItems: {
+    name: string;
+    img: string;
+    playerActions: IAction[];
+  }[];
+}
+
 interface IShop {
   items: IItem[];
   playerMoney: number;
   closeModal: () => void;
   update: () => void;
-  updatePlayerMoney: (newValue: number) => void;
+  updatePlayer: (args: IUpdatePlayerArgs) => void;
 }
 
 const getTotalPrice = (items: IItem[]) => {
@@ -43,9 +53,25 @@ const Shop = (props: IShop) => {
     });
   };
 
+  const getPurchasedItems = () => {
+    const filtered = props.items.filter((item) => {
+      return item.quantitySelected > 0;
+    });
+
+    return filtered.map((item) => {
+      return {
+        name: item.name,
+        img: item.img,
+        playerActions: [],
+      };
+    });
+  };
+
+  console.log("props.items");
+  console.log(props.items);
+
   return (
     <div class="flex flex-wrap justify-between mt-4">
-      {/* <div>{props.img && <img src={props.img} />}</div> */}
       {props.items.map((item) => {
         return (
           <div class="w-[49%] mb-2">
@@ -80,10 +106,6 @@ const Shop = (props: IShop) => {
                   </div>
                 </div>
               }
-              /* onClick={() => {
-                item.selected = !item.selected;
-                item.onClick(props.items);
-              }} */
             />
           </div>
         );
@@ -99,9 +121,10 @@ const Shop = (props: IShop) => {
                 console.log(props.playerMoney - getTotalPrice(props.items));
                 console.log(props.playerMoney);
                 console.log(getTotalPrice(props.items));
-                props.updatePlayerMoney(
-                  props.playerMoney - getTotalPrice(props.items)
-                );
+                props.updatePlayer({
+                  money: props.playerMoney - getTotalPrice(props.items),
+                  inventoryItems: getPurchasedItems(),
+                });
                 updateItemsQuantity();
                 props.closeModal();
               }
