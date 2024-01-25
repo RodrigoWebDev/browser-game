@@ -14,6 +14,15 @@ import maleVillager3 from "../assets/npcs/villagers/male/3.png";
 import maleVillager4 from "../assets/npcs/villagers/male/4.png";
 import maleVillager5 from "../assets/npcs/villagers/male/5.png";
 
+//Mecrhants
+import maleMerchant0 from "../assets/npcs/merchants/0.webp";
+
+export const NPC_GREETINGS = [
+  "O dia está lindo hoje!",
+  "Olá, posso ajuda-lo?",
+  "O clima esta ótimo para dar um passeio.",
+];
+
 export const NPC = {
   VILLAGER: {
     MALE: {
@@ -57,6 +66,14 @@ export const NPC = {
         femaleVillager4,
         femaleVillager5,
       ],
+    },
+  },
+  MERCHANT: {
+    MALE: {
+      IMAGES: [maleMerchant0],
+    },
+    FEMALE: {
+      IMAGES: [maleMerchant0],
     },
   },
 };

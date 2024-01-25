@@ -1,4 +1,4 @@
 export interface IAction {
   name: string;
-  click: (...args: any[]) => void;
+  click: (...args: any) => void;
 }

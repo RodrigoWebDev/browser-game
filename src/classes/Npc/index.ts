@@ -1,13 +1,7 @@
 import { getRandomItemFromArray } from "../../helpers";
 import { IAction } from "../interfaces";
 
-const npcMessages = [
-  "O dia está lindo hoje!",
-  "Olá, posso ajuda-lo?",
-  "O clima esta ótimo para dar um passeio.",
-];
-
-export class Npc {
+/* export class Npc {
   id;
   name;
   type = "NPC";
@@ -68,4 +62,4 @@ export class Npc {
   }
 }
 
-export default Npc;
+export default Npc; */

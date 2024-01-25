@@ -1,8 +1,6 @@
-import Npc from "./classes/Npc";
-
 export interface IPlayerActions {
   name: string;
-  click: (index: number) => void;
+  click: (...args: any) => void;
 }
 
 export interface ILocation {

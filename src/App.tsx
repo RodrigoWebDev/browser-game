@@ -33,15 +33,15 @@ function App() {
       <aside class="w-[29%] p-4">
         <img src={knight} class={`${showHit() ? "brightness-[4]" : ""}`} />
         <div>
-          <strong>Nome</strong>: {player().name}
+          <strong>Name</strong>: {player().name}
         </div>
         <div>
-          <strong>Classe</strong>: {player().class}
+          <strong>Class</strong>: {player().class}
         </div>
 
         <hr />
         <h2>
-          <strong>Status</strong>
+          <strong>Stats</strong>
         </h2>
         <div class="flex items-center" title="HP: 100">
           <div class="mr-2">HP:</div>
@@ -63,7 +63,9 @@ function App() {
 
         <hr />
 
-        <h2>Inventário</h2>
+        <div>Money: {player().money}</div>
+
+        <h2>Inventory</h2>
 
         <div class="flex flex-wrap">
           <Button
@@ -156,7 +158,7 @@ function App() {
             ) : (
               <div id="exploration" class="h-full w-full bg-black/40 p-4">
                 <h2 class="text-[20px]">
-                  Você esta em <strong>{getCurrentLocation().name}</strong>
+                  You are in <strong>{getCurrentLocation().name}</strong>
                 </h2>
                 <hr class="my-4" />
                 <div>
@@ -167,7 +169,7 @@ function App() {
                       }}
                       className="mr-2"
                     >
-                      Explorar área
+                      Explore
                     </Button>
                     {player().currentLocationIndex > 0 && (
                       <Button
@@ -176,15 +178,16 @@ function App() {
                         }}
                         className="mr-2"
                       >
-                        Voltar para área anterior
+                        Go back to previous area
                       </Button>
                     )}
+
                     <Button
                       onClick={() => {
                         goToNextArea();
                       }}
                     >
-                      Avançar para próxima área
+                      Go to next area
                     </Button>
                   </div>
 
@@ -207,7 +210,16 @@ function App() {
                                       buttonChildren={
                                         <SwordsSvg className="w-[16px] text-white" />
                                       }
-                                      items={<></>}
+                                      items={thing.playerActions.map((item) => (
+                                        <li
+                                          onClick={() => {
+                                            item.click();
+                                            console.log("Clique");
+                                          }}
+                                        >
+                                          <a data-id="action">{item.name}</a>
+                                        </li>
+                                      ))}
                                     />
                                   </div>
                                 </>
