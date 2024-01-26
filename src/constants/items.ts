@@ -10,6 +10,7 @@ export const ITEM = {
     consumableEffects: {
       heal: 50,
     },
+    weight: 100,
   },
   RING: {
     name: "Ring",
@@ -17,6 +18,7 @@ export const ITEM = {
     price: 58,
     canEquip: true,
     consumableEffects: null,
+    weight: 0.1,
   },
 };
 
@@ -28,6 +30,7 @@ export interface IITEM {
   consumableEffects?: {
     heal?: number | null;
   } | null;
+  weight: number;
 }
 
 export type TITEM_TYPES = keyof typeof ITEM;

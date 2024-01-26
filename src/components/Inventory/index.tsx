@@ -1,3 +1,4 @@
+import { getPlayerTotalWiehgt } from "../../helpers";
 import { IInventoryItems } from "../../interfaces";
 import ToolTip from "../Tooltip";
 
@@ -12,7 +13,8 @@ const Inventory = (props: IInventory) => {
       <div class="flex justify-between">
         <h2 class="mb-2">Inventory</h2>
         <div>
-          {props.items.length}/{props.maxCapacity}
+          {getPlayerTotalWiehgt(props.items).toFixed(1)}/
+          {props.maxCapacity.toFixed(1)} kg
         </div>
       </div>
 

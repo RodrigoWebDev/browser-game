@@ -5,6 +5,8 @@ import Card from "../card";
 interface IShop {
   items: IItemShop[];
   playerMoney: number;
+  playerCurrentWeight: number;
+  playerInventoryMaxCapacity: number;
   closeModal: () => void;
   update: () => void;
   updatePlayer: (args: IUpdatePlayerArgs) => void;
@@ -42,14 +44,42 @@ const Shop = (props: IShop) => {
     });
   };
 
-  const canShowError = () => {
-    return props.playerMoney < getTotalPrice(props.items);
+  const hasEnoughMoney = () => {
+    return props.playerMoney > getTotalPrice(props.items);
+  };
+
+  const getBuyedItemsTotalWeight = () => {
+    const weights = getPurchasedItems().map((item) => {
+      return item.weight * item.quantitySelected;
+    });
+
+    if (weights.length) {
+      return weights.reduce((prev: number, curr: number) => {
+        return prev + curr;
+      });
+    } else {
+      return 0;
+    }
+  };
+
+  const isPlayerInMaxWeightCapacity = () => {
+    return props.playerCurrentWeight >= props.playerInventoryMaxCapacity;
+  };
+
+  const willByPassMaxWeight = () => {
+    return getBuyedItemsTotalWeight() > props.playerInventoryMaxCapacity;
+  };
+
+  const totalWeightAfterBuy = () => {
+    return getBuyedItemsTotalWeight() + props.playerCurrentWeight;
   };
 
   const canShowBuyButton = () => {
     return (
       getTotalPrice(props.items) > 0 &&
-      props.playerMoney > getTotalPrice(props.items)
+      hasEnoughMoney() &&
+      !isPlayerInMaxWeightCapacity() &&
+      !willByPassMaxWeight()
     );
   };
 
@@ -93,25 +123,40 @@ const Shop = (props: IShop) => {
           </div>
         );
       })}
-      <div>
-        <div class="mb-2">Your money: {props.playerMoney}</div>
-        <div class="mb-4">Total price: {getTotalPrice(props.items)}</div>
 
-        {canShowError() && (
+      <div class="mt-4">
+        <div class="mb-2">
+          <strong>Your money</strong>: {props.playerMoney}
+        </div>
+        <div class="mb-2">
+          <strong>Total price</strong>: {getTotalPrice(props.items)}
+        </div>
+        <div class="mb-4">
+          <strong>Your weight after buy</strong>: {totalWeightAfterBuy()}/
+          {props.playerInventoryMaxCapacity.toFixed(1)} Kg
+        </div>
+
+        {!hasEnoughMoney() && (
           <div class="text-error">You don't have enough money</div>
+        )}
+
+        {isPlayerInMaxWeightCapacity() && (
+          <div class="text-error">You are carrying too much weight</div>
+        )}
+
+        {willByPassMaxWeight() && (
+          <div class="text-error">You can't carry any more weight</div>
         )}
 
         {canShowBuyButton() && (
           <Button
             onClick={() => {
-              if (props.playerMoney > getTotalPrice(props.items)) {
-                props.updatePlayer({
-                  money: props.playerMoney - getTotalPrice(props.items),
-                  inventoryItems: getPurchasedItems(),
-                });
-                updateItemsQuantity();
-                props.closeModal();
-              }
+              props.updatePlayer({
+                money: props.playerMoney - getTotalPrice(props.items),
+                inventoryItems: getPurchasedItems(),
+              });
+              updateItemsQuantity();
+              props.closeModal();
             }}
           >
             Buy

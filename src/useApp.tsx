@@ -1,5 +1,9 @@
 import { createSignal, onMount } from "solid-js";
-import { getRandomIntFromInterval, getRandomItemFromArray } from "./helpers";
+import {
+  getPlayerTotalWiehgt,
+  getRandomIntFromInterval,
+  getRandomItemFromArray,
+} from "./helpers";
 import Enemy from "./classes/Enemy";
 
 // Assets
@@ -67,7 +71,7 @@ const useApp = () => {
     attackDamage: 50,
     currentLocationIndex: 0,
     isInCombat: false,
-    money: 250,
+    money: 10000,
     inventoryMaxCapacity: 4,
     inventoryItems: [],
   });
@@ -205,6 +209,17 @@ const useApp = () => {
     });
   };
 
+  const isPlayerInMaxWeightCapacity = () => {
+    return (
+      getPlayerTotalWiehgt(player().inventoryItems) >=
+      player().inventoryMaxCapacity
+    );
+  };
+
+  const _getPlayerTotalWeight = () => {
+    return getPlayerTotalWiehgt(player().inventoryItems);
+  };
+
   const getPlaceInformation = (place: IPlace) => {
     const name = `${getRandomItemFromArray(place.NAMES)} (${place.ID}) `;
     const bg = getRandomItemFromArray(place.IMAGES);
@@ -276,6 +291,8 @@ const useApp = () => {
                     updatePlayer={(newValues) => {
                       updatePlayerInventory(newValues);
                     }}
+                    playerInventoryMaxCapacity={player().inventoryMaxCapacity}
+                    playerCurrentWeight={_getPlayerTotalWeight()}
                   />
                 ),
               });
