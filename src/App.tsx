@@ -5,10 +5,13 @@ import Button from "./components/Button";
 import Modal from "./components/Modal";
 
 // Assets
-import knight from "./assets/player/classes/knight/0.webp";
 import useApp from "./useApp";
 import Inventory from "./components/Inventory";
 import ToolTip from "./components/Tooltip";
+import Player from "./components/Player";
+import ExploreSvg from "./components/svgIcons/explore";
+import ArrowSvg from "./components/svgIcons/arrow";
+import Knight from "./components/svgIcons/knight";
 
 const cardContainerStyle = "w-[25%] mr-2 mb-2";
 
@@ -17,7 +20,6 @@ function App() {
     showHit,
     player,
     escapeFromCombat,
-    playerTakeDamage,
     combatScreen,
     attackEnemy,
     //currentLocation,
@@ -32,44 +34,47 @@ function App() {
   return (
     <div class="flex justify-between h-screen max-w-[1360px] mx-auto">
       <aside class="w-[29%] p-4">
-        <img src={knight} class={`${showHit() ? "brightness-[4]" : ""}`} />
-        <div>
-          <strong>Name</strong>: {player().name}
-        </div>
-        <div>
-          <strong>Class</strong>: {player().class}
-        </div>
+        <Player>
+          {/* <img src={knight} class={`${showHit() ? "brightness-[4]" : ""}`} /> */}
+          <Knight />
+          <div>
+            <strong>Name</strong>: {player().name}
+          </div>
+          <div>
+            <strong>Class</strong>: {player().class}
+          </div>
 
-        <hr />
-        <h2>
-          <strong>Stats</strong>
-        </h2>
-        <ToolTip text={`HP: ${player().hp}`} className="flex items-center">
-          <div class="mr-2">HP:</div>
-          <progress
-            class="progress progress-error"
-            value={player().hp}
-            max={player().maxHp}
-          ></progress>
-        </ToolTip>
+          <hr />
+          <h2>
+            <strong>Stats</strong>
+          </h2>
+          <ToolTip text={`HP: ${player().hp}`} className="flex items-center">
+            <div class="mr-2">HP:</div>
+            <progress
+              class="progress progress-error"
+              value={player().hp}
+              max={player().maxHp}
+            ></progress>
+          </ToolTip>
 
-        <ToolTip text={`MP: 50`} className="flex items-center">
-          <div class="mr-2">MP:</div>
-          <progress
-            class="progress progress-info"
-            value="50"
-            max="50"
-          ></progress>
-        </ToolTip>
+          <ToolTip text={`MP: 50`} className="flex items-center">
+            <div class="mr-2">MP:</div>
+            <progress
+              class="progress progress-info"
+              value="50"
+              max="50"
+            ></progress>
+          </ToolTip>
 
-        <hr />
+          <hr />
 
-        <div>Money: {player().money}</div>
+          <div>Money: {player().money}</div>
 
-        <Inventory
-          items={player().inventoryItems}
-          maxCapacity={player().inventoryMaxCapacity}
-        />
+          <Inventory
+            items={player().inventoryItems}
+            maxCapacity={player().inventoryMaxCapacity}
+          />
+        </Player>
       </aside>
       {world().locations.length && (
         <main class="w-[69%]">
@@ -156,32 +161,39 @@ function App() {
                 <hr class="my-4" />
                 <div>
                   <div class="flex flex-wrap">
-                    <Button
-                      onClick={() => {
-                        explore();
-                      }}
-                      className="mr-2"
-                    >
-                      Explore
-                    </Button>
                     {player().currentLocationIndex > 0 && (
+                      <ToolTip text="Go back to previous area">
+                        <Button
+                          className="mr-2"
+                          onClick={() => {
+                            goToPreviousArea();
+                          }}
+                        >
+                          <ArrowSvg className="flip-x" />
+                        </Button>
+                      </ToolTip>
+                    )}
+
+                    <ToolTip text="Explore the current location">
                       <Button
                         onClick={() => {
-                          goToPreviousArea();
+                          explore();
                         }}
                         className="mr-2"
                       >
-                        Go back to previous area
+                        <ExploreSvg />
                       </Button>
-                    )}
+                    </ToolTip>
 
-                    <Button
-                      onClick={() => {
-                        goToNextArea();
-                      }}
-                    >
-                      Go to next area
-                    </Button>
+                    <ToolTip text="Go to next area">
+                      <Button
+                        onClick={() => {
+                          goToNextArea();
+                        }}
+                      >
+                        <ArrowSvg />
+                      </Button>
+                    </ToolTip>
                   </div>
 
                   <div id="things-found" class="mt-4 flex flex-wrap">

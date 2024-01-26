@@ -1,11 +1,5 @@
 import village0 from "../assets/backgrounds/village/0.webp";
-import dungeon0 from "../assets/backgrounds/dungeon/0.webp";
-import dungeon1 from "../assets/backgrounds/dungeon/1.webp";
-import tavernOutside0 from "../assets/places/tavern/outside.png";
-import tavernInside1 from "../assets/places/tavern/inside.jpeg";
-import caveInside0 from "../assets/places/cave/inside0.jpeg";
-import forest from "../assets/backgrounds/forest/0.jpg";
-import { IThing } from "./things";
+import { IThing } from "../interfaces";
 
 export interface IPlace {
   ID: string;
@@ -134,7 +128,7 @@ export const PLACES = {
       "Lunarwood",
       "Briarheart Grove",
     ],
-    IMAGES: [forest],
+    IMAGES: [village0],
     THINGS: [
       {
         TYPE: "NPC",
@@ -164,7 +158,7 @@ export const INNER_PLACE = {
   DUNGEON: {
     ID: "DUNEGON",
     NAMES: ["Mistery", "Shadow", "Death", "Fear"],
-    IMAGES: [dungeon0, dungeon1],
+    IMAGES: [village0],
     THINGS: [
       {
         TYPE: "ENEMY",
@@ -191,7 +185,7 @@ export const INNER_PLACE = {
       "The Terrific Mice",
       "The Next Best Whisper",
     ],
-    IMAGES: [tavernOutside0],
+    IMAGES: [village0],
     THINGS: [
       {
         TYPE: "NPC",
@@ -202,7 +196,7 @@ export const INNER_PLACE = {
   CAVERN: {
     ID: "CAVERN",
     NAMES: ["Mistery", "Shadow", "Death", "Fear"],
-    IMAGES: [caveInside0],
+    IMAGES: [village0],
     THINGS: [
       {
         TYPE: "ENEMY",

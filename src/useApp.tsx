@@ -1,4 +1,5 @@
-import { createSignal, onMount } from "solid-js";
+import { createSignal, onMount, JSXElement } from "solid-js";
+import { Dynamic } from "solid-js/web";
 import {
   getPlayerTotalWiehgt,
   getRandomIntFromInterval,
@@ -6,10 +7,8 @@ import {
 } from "./helpers";
 import Enemy from "./classes/Enemy";
 
-// Assets
-import exploration from "./assets/events/exploration.webp";
-
 import {
+  IAction,
   IInventoryItems,
   IItemShop,
   IPlayerActions,
@@ -22,7 +21,6 @@ import {
   MIN_THINGS_NUMBER,
   NPC_NAMES,
 } from "./constants";
-import { IAction } from "./classes/interfaces";
 import { ENEMY, TENEMY_TYPES } from "./constants/enemies";
 import {
   INNER_PLACE,
@@ -36,14 +34,7 @@ import { NPC, NPC_GREETINGS, TNPC_TYPES } from "./constants/npc";
 import NpcTalk from "./components/NpcTalk";
 import Shop from "./components/Shop";
 import { IITEM, ITEM, ITEM_TYPES } from "./constants/items";
-
-/* interface IShop {
-  name: string;
-  img: string;
-  price: number;
-  maxQuantity: number;
-  quantitySelected: number;
-} */
+import PersonWalk from "./components/svgIcons/personWalk";
 
 interface IPlayer {
   name: string;
@@ -70,7 +61,7 @@ const useApp = () => {
     maxHp: 100,
     attackDamage: 50,
     currentLocationIndex: 0,
-    isInCombat: false,
+    isInCombat: true,
     money: 10000,
     inventoryMaxCapacity: 4,
     inventoryItems: [],
@@ -143,8 +134,8 @@ const useApp = () => {
     if (hasThingToFind()) {
       setModalContent((val) => ({
         ...val,
-        title: `Explorando ${getCurrentLocation().name}`,
-        children: <img class="max-w-[350px] mt-2" src={exploration} />,
+        title: `Exploring ${getCurrentLocation().name}`,
+        children: <PersonWalk />,
         isOpen: true,
       }));
 
@@ -209,13 +200,6 @@ const useApp = () => {
     });
   };
 
-  const isPlayerInMaxWeightCapacity = () => {
-    return (
-      getPlayerTotalWiehgt(player().inventoryItems) >=
-      player().inventoryMaxCapacity
-    );
-  };
-
   const _getPlayerTotalWeight = () => {
     return getPlayerTotalWiehgt(player().inventoryItems);
   };
@@ -238,7 +222,7 @@ const useApp = () => {
       };
 
       let randomName = "";
-      let randomImage = "";
+      let randomImage: JSXElement = <></>;
       let actions: IAction[] = [];
       let subType = randomThing.SUBTYPE.toLocaleLowerCase();
       const thingType = randomThing.TYPE;
@@ -305,7 +289,8 @@ const useApp = () => {
         //Create INNER_PLACE Info
         const _subType = randomThing.SUBTYPE as TINNER_PLACE_TYPES;
         const thing = INNER_PLACE[_subType];
-        randomImage = getRandomItemFromArray(thing.IMAGES);
+        const image = getRandomItemFromArray(thing.IMAGES);
+        randomImage = <Dynamic component={image} />;
         randomName = getRandomItemFromArray(thing.NAMES);
 
         actions = [
@@ -321,7 +306,8 @@ const useApp = () => {
       if (thingType === "ENEMY") {
         const thingSubType = randomThing.SUBTYPE as TENEMY_TYPES;
         const thing = ENEMY[thingSubType];
-        randomImage = ENEMY[thingSubType].IMAGE;
+        const image = ENEMY[thingSubType].IMAGE;
+        randomImage = <Dynamic component={image} />;
         randomName = thing.NAME;
 
         actions = [

@@ -1,3 +1,4 @@
+import { Dynamic } from "solid-js/web";
 import { IItemShop, IUpdatePlayerArgs } from "../../interfaces";
 import Button from "../Button";
 import Card from "../card";
@@ -90,7 +91,7 @@ const Shop = (props: IShop) => {
           <div class="w-[49%] mb-2">
             <Card
               title={`${item.name}(${item.maxQuantity})`}
-              img={item.img}
+              img={<Dynamic component={item.img} />}
               footer={
                 <div>
                   <div class="mb-2">Price: {item.price}</div>

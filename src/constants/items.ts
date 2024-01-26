@@ -1,5 +1,6 @@
-import potionImg from "../assets/consumables/potion0.webp";
-import ringImg from "../assets/items/ring.webp";
+import ringImg from "../components/svgIcons/ring";
+import potionImg from "../components/svgIcons/potion";
+import { JSXElement } from "solid-js";
 
 export const ITEM = {
   HEALING_POTION: {
@@ -24,7 +25,7 @@ export const ITEM = {
 
 export interface IITEM {
   name: string;
-  img: string;
+  img: (props: any) => JSXElement;
   price: number;
   canEquip: boolean;
   consumableEffects?: {

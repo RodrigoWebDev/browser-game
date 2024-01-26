@@ -1,7 +1,7 @@
 import { JSXElement } from "solid-js";
 
 interface ICARD {
-  img?: string;
+  img?: JSXElement;
   title?: string;
   subTitle?: string;
   footer?: JSXElement;
@@ -19,18 +19,7 @@ const Card = (props: ICARD) => {
         props.onClick && props.onClick();
       }}
     >
-      {props.img && (
-        <figure>
-          <img
-            src={props.img}
-            style={{
-              filter: props.imgBrighter
-                ? "brightness(3)"
-                : `hue-rotate(${props.imgHueRotation}deg)`,
-            }}
-          />
-        </figure>
-      )}
+      {props.img}
       <div class="card-body">
         {props.title && <h2 class="card-title text-[16px]">{props.title}</h2>}
         {props.subTitle && (

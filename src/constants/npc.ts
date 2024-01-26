@@ -1,21 +1,5 @@
-//Female villager
-import femaleVillager0 from "../assets/npcs/villagers/female/0.webp";
-import femaleVillager1 from "../assets/npcs/villagers/female/1.png";
-import femaleVillager2 from "../assets/npcs/villagers/female/2.png";
-import femaleVillager3 from "../assets/npcs/villagers/female/3.png";
-import femaleVillager4 from "../assets/npcs/villagers/female/4.png";
-import femaleVillager5 from "../assets/npcs/villagers/female/5.png";
-
-//Male villager
-import maleVillager0 from "../assets/npcs/villagers/male/0.webp";
-import maleVillager1 from "../assets/npcs/villagers/male/1.png";
-import maleVillager2 from "../assets/npcs/villagers/male/2.png";
-import maleVillager3 from "../assets/npcs/villagers/male/3.png";
-import maleVillager4 from "../assets/npcs/villagers/male/4.png";
-import maleVillager5 from "../assets/npcs/villagers/male/5.png";
-
-//Mecrhants
-import maleMerchant0 from "../assets/npcs/merchants/0.webp";
+//people
+import malePerson0 from "../components/svgIcons/malePerson0";
 
 export const NPC_GREETINGS = [
   "O dia está lindo hoje!",
@@ -27,53 +11,53 @@ export const NPC = {
   VILLAGER: {
     MALE: {
       IMAGES: [
-        maleVillager0,
-        maleVillager1,
+        malePerson0,
+        /* maleVillager1,
         maleVillager2,
         maleVillager3,
         maleVillager4,
-        maleVillager5,
+        maleVillager5, */
       ],
     },
     FEMALE: {
       IMAGES: [
-        femaleVillager0,
-        femaleVillager1,
+        malePerson0,
+        /*  femaleVillager1,
         femaleVillager2,
         femaleVillager3,
         femaleVillager4,
-        femaleVillager5,
+        femaleVillager5, */
       ],
     },
   },
   TRAVELLER: {
     MALE: {
       IMAGES: [
-        maleVillager0,
-        maleVillager1,
+        malePerson0,
+        /* maleVillager1,
         maleVillager2,
         maleVillager3,
         maleVillager4,
-        maleVillager5,
+        maleVillager5, */
       ],
     },
     FEMALE: {
       IMAGES: [
-        femaleVillager0,
-        femaleVillager1,
+        malePerson0,
+        /* femaleVillager1,
         femaleVillager2,
         femaleVillager3,
         femaleVillager4,
-        femaleVillager5,
+        femaleVillager5, */
       ],
     },
   },
   MERCHANT: {
     MALE: {
-      IMAGES: [maleMerchant0],
+      IMAGES: [malePerson0],
     },
     FEMALE: {
-      IMAGES: [maleMerchant0],
+      IMAGES: [malePerson0],
     },
   },
 };
