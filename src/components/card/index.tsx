@@ -16,7 +16,6 @@ const Card = (props: ICARD) => {
     <div
       class={`card bg-base-100 shadow-xl ${props.className}`}
       onClick={() => {
-        console.log("CLICOU");
         props.onClick && props.onClick();
       }}
     >

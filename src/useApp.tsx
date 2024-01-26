@@ -4,9 +4,14 @@ import Enemy from "./classes/Enemy";
 
 // Assets
 import exploration from "./assets/events/exploration.webp";
-import potionImg from "./assets/consumables/potion0.webp";
 
-import { IWorld } from "./interfaces";
+import {
+  IInventoryItems,
+  IItemShop,
+  IPlayerActions,
+  IUpdatePlayerArgs,
+  IWorld,
+} from "./interfaces";
 import {
   GENDERS,
   MAX_THINGS_NUMBER,
@@ -26,14 +31,27 @@ import {
 import { NPC, NPC_GREETINGS, TNPC_TYPES } from "./constants/npc";
 import NpcTalk from "./components/NpcTalk";
 import Shop from "./components/Shop";
-import { ITEM, ITEM_TYPES } from "./constants/items";
+import { IITEM, ITEM, ITEM_TYPES } from "./constants/items";
 
-interface IShop {
+/* interface IShop {
   name: string;
   img: string;
   price: number;
   maxQuantity: number;
   quantitySelected: number;
+} */
+
+interface IPlayer {
+  name: string;
+  class: string;
+  hp: number;
+  maxHp: number;
+  attackDamage: number;
+  currentLocationIndex: number;
+  isInCombat: boolean;
+  money: number;
+  inventoryMaxCapacity: number;
+  inventoryItems: IInventoryItems[];
 }
 
 const useApp = () => {
@@ -41,7 +59,7 @@ const useApp = () => {
     locations: [],
   });
   const [showHit, setShowHit] = createSignal(false);
-  const [player, setPlayer] = createSignal({
+  const [player, setPlayer] = createSignal<IPlayer>({
     name: "Tekomo Nakama",
     class: "Guerreiro",
     hp: 100,
@@ -51,34 +69,9 @@ const useApp = () => {
     isInCombat: false,
     money: 250,
     inventoryMaxCapacity: 4,
-    inventoryItems: [
-      {
-        name: "Healing potion",
-        img: potionImg,
-        playerActions: [
-          {
-            name: "Use",
-            click: () => {
-              //this.talk();
-            },
-          },
-          {
-            name: "Equip",
-            click: () => {
-              //this.talk();
-            },
-          },
-          {
-            name: "View item information",
-            click: () => {
-              //this.talk();
-            },
-          },
-        ],
-      },
-    ],
+    inventoryItems: [],
   });
-  const [shop, setShop] = createSignal<IShop[]>([]);
+  const [shop, setShop] = createSignal<IItemShop[]>([]);
   const [combatScreen, setCombatScreen] = createSignal({
     enemies: [new Enemy(0, ENEMY["TROLL"]), new Enemy(1, ENEMY["GOBLIN"])],
   });
@@ -169,6 +162,49 @@ const useApp = () => {
     return getRandomItemFromArray(NPC_GREETINGS);
   };
 
+  const updatePlayerInventory = (newValues: IUpdatePlayerArgs) => {
+    setPlayer((val) => {
+      const inventoryItemsWithActions = addActionsToInventoryItems(
+        newValues.inventoryItems
+      );
+      return {
+        ...val,
+        money: newValues.money,
+        inventoryItems: [...val.inventoryItems, ...inventoryItemsWithActions],
+      };
+    });
+  };
+
+  const addActionsToInventoryItems = (inventory: IITEM[]) => {
+    return inventory.map((inventoryItem) => {
+      let actions: IPlayerActions[] = [];
+
+      if (inventoryItem.canEquip) {
+        actions.push({
+          name: "Equip",
+          click: () => {},
+        });
+      }
+
+      if (inventoryItem.consumableEffects) {
+        actions.push({
+          name: "Consume",
+          click: () => {},
+        });
+      }
+
+      actions.push({
+        name: "Info",
+        click: () => {},
+      });
+
+      return {
+        ...inventoryItem,
+        playerActions: actions,
+      };
+    });
+  };
+
   const getPlaceInformation = (place: IPlace) => {
     const name = `${getRandomItemFromArray(place.NAMES)} (${place.ID}) `;
     const bg = getRandomItemFromArray(place.IMAGES);
@@ -211,15 +247,13 @@ const useApp = () => {
         });
 
         if (_subType == "MERCHANT") {
-          //const shopItems = ITEM_TYPES as TITEM_TYPES[];
-
           const shopItems = ITEM_TYPES.map((itemName) => ({
-            name: ITEM[itemName].NAME,
-            price: ITEM[itemName].PRICE,
-            img: ITEM[itemName].IMG,
+            ...ITEM[itemName],
             maxQuantity: 5,
             quantitySelected: 0,
           }));
+
+          console.log({ shopItems });
 
           setShop([...shopItems]);
 
@@ -240,17 +274,7 @@ const useApp = () => {
                       setShop([...shopItems]);
                     }}
                     updatePlayer={(newValues) => {
-                      setPlayer((val) => {
-                        console.log({ newValues });
-                        return {
-                          ...val,
-                          money: newValues.money,
-                          inventoryItems: [
-                            ...val.inventoryItems,
-                            ...newValues.inventoryItems,
-                          ],
-                        };
-                      });
+                      updatePlayerInventory(newValues);
                     }}
                   />
                 ),
@@ -324,8 +348,6 @@ const useApp = () => {
     for (let i = 0; i < 5; i++) {
       _world.locations.push(getPlace());
     }
-
-    console.log({ _world });
 
     setWorld({ ..._world });
   };

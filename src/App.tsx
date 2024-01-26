@@ -207,7 +207,6 @@ function App() {
                                         <li
                                           onClick={() => {
                                             item.click();
-                                            console.log("Clique");
                                           }}
                                         >
                                           <a data-id="action">{item.name}</a>

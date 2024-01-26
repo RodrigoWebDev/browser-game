@@ -3,16 +3,32 @@ import ringImg from "../assets/items/ring.webp";
 
 export const ITEM = {
   HEALING_POTION: {
-    NAME: "Healing potion",
-    IMG: potionImg,
-    PRICE: 12,
+    name: "Healing potion",
+    img: potionImg,
+    price: 12,
+    canEquip: false,
+    consumableEffects: {
+      heal: 50,
+    },
   },
   RING: {
-    NAME: "Ring",
-    IMG: ringImg,
-    PRICE: 58,
+    name: "Ring",
+    img: ringImg,
+    price: 58,
+    canEquip: true,
+    consumableEffects: null,
   },
 };
+
+export interface IITEM {
+  name: string;
+  img: string;
+  price: number;
+  canEquip: boolean;
+  consumableEffects?: {
+    heal?: number | null;
+  } | null;
+}
 
 export type TITEM_TYPES = keyof typeof ITEM;
 export const ITEM_TYPES = Object.keys(ITEM) as TITEM_TYPES[];

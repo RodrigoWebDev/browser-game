@@ -1,33 +1,16 @@
-import { IAction } from "../../classes/interfaces";
+import { IItemShop, IUpdatePlayerArgs } from "../../interfaces";
 import Button from "../Button";
 import Card from "../card";
 
-interface IItem {
-  name: string;
-  img: string;
-  price: number;
-  maxQuantity: number;
-  quantitySelected: number;
-}
-
-interface IUpdatePlayerArgs {
-  money: number;
-  inventoryItems: {
-    name: string;
-    img: string;
-    playerActions: IAction[];
-  }[];
-}
-
 interface IShop {
-  items: IItem[];
+  items: IItemShop[];
   playerMoney: number;
   closeModal: () => void;
   update: () => void;
   updatePlayer: (args: IUpdatePlayerArgs) => void;
 }
 
-const getTotalPrice = (items: IItem[]) => {
+const getTotalPrice = (items: IItemShop[]) => {
   const selectedItems = items.filter((item) => {
     return item.quantitySelected > 0;
   });
@@ -54,21 +37,21 @@ const Shop = (props: IShop) => {
   };
 
   const getPurchasedItems = () => {
-    const filtered = props.items.filter((item) => {
+    return props.items.filter((item) => {
       return item.quantitySelected > 0;
-    });
-
-    return filtered.map((item) => {
-      return {
-        name: item.name,
-        img: item.img,
-        playerActions: [],
-      };
     });
   };
 
-  console.log("props.items");
-  console.log(props.items);
+  const canShowError = () => {
+    return props.playerMoney < getTotalPrice(props.items);
+  };
+
+  const canShowBuyButton = () => {
+    return (
+      getTotalPrice(props.items) > 0 &&
+      props.playerMoney > getTotalPrice(props.items)
+    );
+  };
 
   return (
     <div class="flex flex-wrap justify-between mt-4">
@@ -114,13 +97,14 @@ const Shop = (props: IShop) => {
         <div class="mb-2">Your money: {props.playerMoney}</div>
         <div class="mb-4">Total price: {getTotalPrice(props.items)}</div>
 
-        {props.playerMoney > getTotalPrice(props.items) ? (
+        {canShowError() && (
+          <div class="text-error">You don't have enough money</div>
+        )}
+
+        {canShowBuyButton() && (
           <Button
             onClick={() => {
               if (props.playerMoney > getTotalPrice(props.items)) {
-                console.log(props.playerMoney - getTotalPrice(props.items));
-                console.log(props.playerMoney);
-                console.log(getTotalPrice(props.items));
                 props.updatePlayer({
                   money: props.playerMoney - getTotalPrice(props.items),
                   inventoryItems: getPurchasedItems(),
@@ -132,8 +116,6 @@ const Shop = (props: IShop) => {
           >
             Buy
           </Button>
-        ) : (
-          <div class="text-error">You don't have enough money</div>
         )}
       </div>
     </div>

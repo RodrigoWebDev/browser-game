@@ -1,11 +1,5 @@
-import { IPlayerActions } from "../../interfaces";
+import { IInventoryItems } from "../../interfaces";
 import ToolTip from "../Tooltip";
-
-interface IInventoryItems {
-  img: string;
-  name: string;
-  playerActions: IPlayerActions[];
-}
 
 interface IInventory {
   items: IInventoryItems[];
