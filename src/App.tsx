@@ -111,7 +111,7 @@ function App() {
                               </ToolTip>
                               <div data-id="actions" class="flex">
                                 <DropDown
-                                  buttonChildren={
+                                  trigger={
                                     <SwordsSvg className="w-[16px] text-white" />
                                   }
                                   items={enemy.playerActions.map((item) => (
@@ -200,8 +200,10 @@ function App() {
                                 <>
                                   <div data-id="actions" class="flex">
                                     <DropDown
-                                      buttonChildren={
-                                        <SwordsSvg className="w-[16px] text-white" />
+                                      trigger={
+                                        <Button>
+                                          <SwordsSvg className="w-[16px] text-white" />
+                                        </Button>
                                       }
                                       items={thing.playerActions.map((item) => (
                                         <li
