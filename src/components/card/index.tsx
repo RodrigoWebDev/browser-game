@@ -19,7 +19,7 @@ const Card = (props: ICARD) => {
         props.onClick && props.onClick();
       }}
     >
-      {props.img}
+      <div class="bg-[#15191e]">{props.img}</div>
       <div class="card-body">
         {props.title && <h2 class="card-title text-[16px]">{props.title}</h2>}
         {props.subTitle && (

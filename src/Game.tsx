@@ -15,14 +15,13 @@ import Knight from "./components/svgIcons/knight";
 
 const cardContainerStyle = "w-[25%] mr-2 mb-2";
 
-function App() {
+function Game() {
   const {
-    showHit,
+    openMenu,
     player,
     escapeFromCombat,
     combatScreen,
     attackEnemy,
-    //currentLocation,
     modalContent,
     explore,
     world,
@@ -36,7 +35,7 @@ function App() {
       <aside class="w-[29%] p-4">
         <Player>
           {/* <img src={knight} class={`${showHit() ? "brightness-[4]" : ""}`} /> */}
-          <Knight />
+          <Knight className="bg-[#15191e] rounded-box mb-4" />
           <div>
             <strong>Name</strong>: {player().name}
           </div>
@@ -44,10 +43,8 @@ function App() {
             <strong>Class</strong>: {player().class}
           </div>
 
-          <hr />
-          <h2>
-            <strong>Stats</strong>
-          </h2>
+          <div class="divider">Stats</div>
+
           <ToolTip text={`HP: ${player().hp}`} className="flex items-center">
             <div class="mr-2">HP:</div>
             <progress
@@ -66,7 +63,7 @@ function App() {
             ></progress>
           </ToolTip>
 
-          <hr />
+          <div class="divider">Inventory</div>
 
           <div>Money: {player().money}</div>
 
@@ -79,13 +76,13 @@ function App() {
       {world().locations.length && (
         <main class="w-[69%]">
           <div
-            style={{
+            /* style={{
               "background-image": `url(${getCurrentLocation().bg})`,
-            }}
+            }} */
             class="h-full bg-contain"
           >
             {player().isInCombat ? (
-              <div id="combat" class="p-4">
+              <div id="combat" class="p-4 bg-black/40">
                 <div id="enemies" class="flex mb-4">
                   {combatScreen().enemies.map((enemy) => {
                     const enemyIsDead = enemy.hp <= 0;
@@ -246,8 +243,17 @@ function App() {
       <Modal title={modalContent().title} isOpen={modalContent().isOpen}>
         {modalContent().children}
       </Modal>
+
+      <Button
+        className="fixed top-[1rem] right-[1rem] btn-sm"
+        onClick={() => {
+          openMenu();
+        }}
+      >
+        Menu
+      </Button>
     </div>
   );
 }
 
-export default App;
+export default Game;

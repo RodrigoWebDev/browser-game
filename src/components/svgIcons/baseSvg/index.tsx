@@ -12,7 +12,8 @@ const BaseSvg = (props: IBaseSvg) => {
       viewBox="0 0 512 512"
       width={props.size}
       height={props.size}
-      fill={props.fill || "#a6adbb"}
+      /* fill={props.fill || "#a6adbb"} */
+      class={`${props.className} fill-neutral-content`}
     >
       {props.children}
     </svg>

@@ -1,4 +1,4 @@
-import { createSignal, onMount, JSXElement } from "solid-js";
+import { createSignal, onMount, JSXElement, createEffect } from "solid-js";
 import { Dynamic } from "solid-js/web";
 import {
   getPlayerTotalWiehgt,
@@ -12,6 +12,7 @@ import {
   IInventoryItems,
   IItemShop,
   IPlayerActions,
+  ISettings,
   IUpdatePlayerArgs,
   IWorld,
 } from "./interfaces";
@@ -35,6 +36,7 @@ import NpcTalk from "./components/NpcTalk";
 import Shop from "./components/Shop";
 import { IITEM, ITEM, ITEM_TYPES } from "./constants/items";
 import PersonWalk from "./components/svgIcons/personWalk";
+import Menu from "./components/Menu";
 
 interface IPlayer {
   name: string;
@@ -50,6 +52,9 @@ interface IPlayer {
 }
 
 const useApp = () => {
+  const [settings, setSettings] = createSignal<ISettings>({
+    isNightMode: false,
+  });
   const [world, setWorld] = createSignal<IWorld>({
     locations: [],
   });
@@ -252,8 +257,6 @@ const useApp = () => {
             quantitySelected: 0,
           }));
 
-          console.log({ shopItems });
-
           setShop([...shopItems]);
 
           actions.push({
@@ -356,10 +359,19 @@ const useApp = () => {
   };
 
   const goToNextArea = () => {
-    setPlayer((val) => ({
-      ...val,
-      currentLocationIndex: val.currentLocationIndex + 1,
-    }));
+    setModalContent({
+      title: `Going to the next area`,
+      children: <PersonWalk />,
+      isOpen: true,
+    });
+
+    setTimeout(() => {
+      closeModal();
+      setPlayer((val) => ({
+        ...val,
+        currentLocationIndex: val.currentLocationIndex + 1,
+      }));
+    }, 1000);
   };
 
   const goToPreviousArea = () => {
@@ -382,15 +394,43 @@ const useApp = () => {
     }));
   };
 
+  const openMenu = () => {
+    setModalContent({
+      title: "Menu",
+      isOpen: true,
+      children: <Menu settings={settings()} setSettings={setSettings} />,
+    });
+  };
+
+  const loadSettings = () => {
+    const settingsFromLocalStorage = window.localStorage.getItem("settings");
+
+    if (settingsFromLocalStorage) {
+      const jsonSettings = JSON.parse(settingsFromLocalStorage) as ISettings;
+      setSettings(jsonSettings);
+    }
+  };
+
+  const updateSettings = () => {
+    window.localStorage.setItem("settings", JSON.stringify(settings()));
+    const theme = settings().isNightMode ? "dark" : "light";
+
+    document.querySelector("html")?.setAttribute("data-theme", theme);
+  };
+
   onMount(() => {
+    loadSettings();
     createPlaces();
   });
 
+  createEffect(() => {
+    updateSettings();
+  });
+
   return {
-    showHit,
+    openMenu,
     player,
     escapeFromCombat,
-    playerTakeDamage,
     combatScreen,
     attackEnemy,
     modalContent,

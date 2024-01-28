@@ -1,3 +1,4 @@
+import { Dynamic } from "solid-js/web";
 import { getPlayerTotalWiehgt } from "../../helpers";
 import { IInventoryItems } from "../../interfaces";
 import ToolTip from "../Tooltip";
@@ -27,7 +28,7 @@ const Inventory = (props: IInventory) => {
                   <div tabindex="0" role="button">
                     <div class="avatar">
                       <div class="rounded-xl">
-                        <img src={item.img} />
+                        <Dynamic component={item.img} />
                       </div>
                     </div>
                   </div>

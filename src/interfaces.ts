@@ -54,3 +54,7 @@ export interface IThing {
   TYPE: string;
   SUBTYPE: string;
 }
+
+export interface ISettings {
+  isNightMode: boolean;
+}
