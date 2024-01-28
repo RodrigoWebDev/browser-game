@@ -8,6 +8,7 @@ interface ICARD {
   imgHueRotation?: number;
   imgBrighter?: boolean;
   className?: string;
+  cardBodyClassName?: string;
   onClick?: () => void;
 }
 
@@ -19,8 +20,8 @@ const Card = (props: ICARD) => {
         props.onClick && props.onClick();
       }}
     >
-      <div class="bg-[#15191e]">{props.img}</div>
-      <div class="card-body">
+      <div class="bg-[#15191e] rounded-t-xl">{props.img}</div>
+      <div class={`card-body ${props.cardBodyClassName}`}>
         {props.title && <h2 class="card-title text-[16px]">{props.title}</h2>}
         {props.subTitle && (
           <div class="text-[14px]">

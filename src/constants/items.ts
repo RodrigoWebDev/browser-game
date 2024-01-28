@@ -11,7 +11,7 @@ export const ITEM = {
     consumableEffects: {
       heal: 50,
     },
-    weight: 100,
+    weight: 0.2,
   },
   RING: {
     name: "Ring",

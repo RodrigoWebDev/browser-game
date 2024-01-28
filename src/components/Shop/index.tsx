@@ -1,3 +1,4 @@
+import { onMount } from "solid-js";
 import { Dynamic } from "solid-js/web";
 import { IItemShop, IUpdatePlayerArgs } from "../../interfaces";
 import Button from "../Button";
@@ -32,10 +33,16 @@ const getTotalPrice = (items: IItemShop[]) => {
 };
 
 const Shop = (props: IShop) => {
+  onMount(() => {
+    props.items.forEach((item) => {
+      item.quantitySelected = 0;
+    });
+  });
+
   const updateItemsQuantity = () => {
     props.items.forEach((item) => {
       item.maxQuantity = item.maxQuantity - item.quantitySelected;
-      item.quantitySelected = 0;
+      //item.quantitySelected = 0;
     });
   };
 
@@ -152,9 +159,11 @@ const Shop = (props: IShop) => {
         {canShowBuyButton() && (
           <Button
             onClick={() => {
+              console.log("props.items");
+              console.log(props.items);
               props.updatePlayer({
                 money: props.playerMoney - getTotalPrice(props.items),
-                inventoryItems: getPurchasedItems(),
+                purchasedItems: getPurchasedItems(),
               });
               updateItemsQuantity();
               props.closeModal();

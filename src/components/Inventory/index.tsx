@@ -2,6 +2,8 @@ import { Dynamic } from "solid-js/web";
 import { getPlayerTotalWiehgt } from "../../helpers";
 import { IInventoryItems } from "../../interfaces";
 import ToolTip from "../Tooltip";
+import DropDown from "../dropwdown";
+import Card from "../card";
 
 interface IInventory {
   items: IInventoryItems[];
@@ -22,21 +24,31 @@ const Inventory = (props: IInventory) => {
       <div class="flex flex-wrap gap-[2%]">
         {props.items.map((item) => {
           return (
-            <div class="w-[23%]">
-              <ToolTip text={item.name}>
-                <div class="dropdown">
-                  <div tabindex="0" role="button">
-                    <div class="avatar">
-                      <div class="rounded-xl">
-                        <Dynamic component={item.img} />
-                      </div>
-                    </div>
+            <>
+              {/* <Card
+                title={`${item.name}`}
+                className="text-[12px]"
+                cardBodyClassName="p-2"
+                img={<Dynamic component={item.img} />}
+                footer={
+                  <div>
+                    <div class="mb-2">Price: {item.price}</div>
                   </div>
-                  <ul
-                    tabindex="0"
-                    class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
-                  >
-                    {item.playerActions.map((playerAction) => {
+                }
+              /> */}
+              <div class="w-[23%]">
+                <ToolTip
+                  text={`${item.name}(x${item.quantity})`}
+                  className="block"
+                >
+                  <DropDown
+                    trigger={
+                      <Dynamic
+                        component={item.img}
+                        className="bg-[#15191e] rounded-box"
+                      />
+                    }
+                    items={item.playerActions.map((playerAction) => {
                       return (
                         <li
                           onClick={() => {
@@ -47,10 +59,10 @@ const Inventory = (props: IInventory) => {
                         </li>
                       );
                     })}
-                  </ul>
-                </div>
-              </ToolTip>
-            </div>
+                  />
+                </ToolTip>
+              </div>
+            </>
           );
         })}
       </div>

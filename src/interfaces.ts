@@ -1,4 +1,4 @@
-import { IITEM } from "./constants/items";
+import { IITEM, TITEM_TYPES } from "./constants/items";
 import { JSXElement } from "solid-js";
 
 export interface IPlayerActions {
@@ -28,15 +28,18 @@ export interface IWorld {
 export interface IItemShop extends IITEM {
   maxQuantity: number;
   quantitySelected: number;
+  key: TITEM_TYPES;
 }
 
 export interface IInventoryItems extends IITEM {
   playerActions: IPlayerActions[];
+  quantity: number;
+  key: TITEM_TYPES;
 }
 
 export interface IUpdatePlayerArgs {
   money: number;
-  inventoryItems: IITEM[];
+  purchasedItems: IItemShop[];
 }
 
 export interface IAction {

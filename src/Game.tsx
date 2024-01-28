@@ -34,7 +34,6 @@ function Game() {
     <div class="flex justify-between h-screen max-w-[1360px] mx-auto">
       <aside class="w-[29%] p-4">
         <Player>
-          {/* <img src={knight} class={`${showHit() ? "brightness-[4]" : ""}`} /> */}
           <Knight className="bg-[#15191e] rounded-box mb-4" />
           <div>
             <strong>Name</strong>: {player().name}
@@ -75,12 +74,7 @@ function Game() {
       </aside>
       {world().locations.length && (
         <main class="w-[69%]">
-          <div
-            /* style={{
-              "background-image": `url(${getCurrentLocation().bg})`,
-            }} */
-            class="h-full bg-contain"
-          >
+          <div class="h-full bg-contain">
             {player().isInCombat ? (
               <div id="combat" class="p-4 bg-black/40">
                 <div id="enemies" class="flex mb-4">

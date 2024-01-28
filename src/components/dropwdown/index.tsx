@@ -8,7 +8,7 @@ interface IDropDown {
 const DropDown = (props: IDropDown) => {
   return (
     <>
-      <div class="dropdown">
+      <div class="dropdown block">
         <div tabindex="0" role="button">
           {props.trigger}
           {/* <div class="avatar">

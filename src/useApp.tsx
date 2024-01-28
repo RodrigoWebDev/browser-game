@@ -162,31 +162,50 @@ const useApp = () => {
     return getRandomItemFromArray(NPC_GREETINGS);
   };
 
-  const updatePlayerInventory = (newValues: IUpdatePlayerArgs) => {
-    setPlayer((val) => {
-      const inventoryItemsWithActions = addActionsToInventoryItems(
-        newValues.inventoryItems
-      );
-      return {
-        ...val,
-        money: newValues.money,
-        inventoryItems: [...val.inventoryItems, ...inventoryItemsWithActions],
-      };
-    });
-  };
+  const formatToInventoryItems = (shopItems: IItemShop[]) => {
+    const inventory = [...player().inventoryItems];
 
-  const addActionsToInventoryItems = (inventory: IITEM[]) => {
-    return inventory.map((inventoryItem) => {
-      let actions: IPlayerActions[] = [];
+    shopItems.forEach((shopItem) => {
+      const index = inventory.findIndex((item) => {
+        return item.key === shopItem.key;
+      });
 
-      if (inventoryItem.canEquip) {
+      if (index < 0) {
+        inventory.push({
+          ...shopItem,
+          quantity: shopItem.quantitySelected,
+          playerActions: [
+            {
+              name: "Equip",
+              click: () => {},
+            },
+            {
+              name: "Consume",
+              click: () => {},
+            },
+            {
+              name: "Info",
+              click: () => {},
+            },
+          ],
+        });
+      } else {
+        inventory[index] = {
+          ...inventory[index],
+          quantity: shopItem.quantitySelected + inventory[index].quantity,
+        };
+      }
+
+      /* let actions: IPlayerActions[] = [];
+
+      if (shopItem.canEquip) {
         actions.push({
           name: "Equip",
           click: () => {},
         });
       }
 
-      if (inventoryItem.consumableEffects) {
+      if (shopItem.consumableEffects) {
         actions.push({
           name: "Consume",
           click: () => {},
@@ -199,8 +218,25 @@ const useApp = () => {
       });
 
       return {
-        ...inventoryItem,
+        ...shopItem,
         playerActions: actions,
+        quantity: shopItem.quantitySelected,
+      }; */
+    });
+
+    setPlayer((val) => ({
+      ...val,
+      inventoryItems: inventory,
+    }));
+  };
+
+  const updatePlayerInventory = (newValues: IUpdatePlayerArgs) => {
+    formatToInventoryItems(newValues.purchasedItems);
+
+    setPlayer((val) => {
+      return {
+        ...val,
+        money: newValues.money,
       };
     });
   };
@@ -255,6 +291,7 @@ const useApp = () => {
             ...ITEM[itemName],
             maxQuantity: 5,
             quantitySelected: 0,
+            key: itemName,
           }));
 
           setShop([...shopItems]);
