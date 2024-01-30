@@ -11,9 +11,7 @@ import {
   IAction,
   IInventoryItems,
   IItemShop,
-  IPlayerActions,
   ISettings,
-  IUpdatePlayerArgs,
   IWorld,
 } from "./interfaces";
 import {
@@ -34,7 +32,7 @@ import {
 import { NPC, NPC_GREETINGS, TNPC_TYPES } from "./constants/npc";
 import NpcTalk from "./components/NpcTalk";
 import Shop from "./components/Shop";
-import { IITEM, ITEM, ITEM_TYPES } from "./constants/items";
+import { ITEM, ITEM_TYPES } from "./constants/items";
 import PersonWalk from "./components/svgIcons/personWalk";
 import Menu from "./components/Menu";
 
@@ -162,85 +160,6 @@ const useApp = () => {
     return getRandomItemFromArray(NPC_GREETINGS);
   };
 
-  const formatToInventoryItems = (shopItems: IItemShop[]) => {
-    const inventory = [...player().inventoryItems];
-
-    shopItems.forEach((shopItem) => {
-      const index = inventory.findIndex((item) => {
-        return item.key === shopItem.key;
-      });
-
-      if (index < 0) {
-        inventory.push({
-          ...shopItem,
-          quantity: shopItem.quantitySelected,
-          playerActions: [
-            {
-              name: "Equip",
-              click: () => {},
-            },
-            {
-              name: "Consume",
-              click: () => {},
-            },
-            {
-              name: "Info",
-              click: () => {},
-            },
-          ],
-        });
-      } else {
-        inventory[index] = {
-          ...inventory[index],
-          quantity: shopItem.quantitySelected + inventory[index].quantity,
-        };
-      }
-
-      /* let actions: IPlayerActions[] = [];
-
-      if (shopItem.canEquip) {
-        actions.push({
-          name: "Equip",
-          click: () => {},
-        });
-      }
-
-      if (shopItem.consumableEffects) {
-        actions.push({
-          name: "Consume",
-          click: () => {},
-        });
-      }
-
-      actions.push({
-        name: "Info",
-        click: () => {},
-      });
-
-      return {
-        ...shopItem,
-        playerActions: actions,
-        quantity: shopItem.quantitySelected,
-      }; */
-    });
-
-    setPlayer((val) => ({
-      ...val,
-      inventoryItems: inventory,
-    }));
-  };
-
-  const updatePlayerInventory = (newValues: IUpdatePlayerArgs) => {
-    formatToInventoryItems(newValues.purchasedItems);
-
-    setPlayer((val) => {
-      return {
-        ...val,
-        money: newValues.money,
-      };
-    });
-  };
-
   const _getPlayerTotalWeight = () => {
     return getPlayerTotalWiehgt(player().inventoryItems);
   };
@@ -287,18 +206,18 @@ const useApp = () => {
         });
 
         if (_subType == "MERCHANT") {
-          const shopItems = ITEM_TYPES.map((itemName) => ({
-            ...ITEM[itemName],
-            maxQuantity: 5,
-            quantitySelected: 0,
-            key: itemName,
-          }));
-
-          setShop([...shopItems]);
-
           actions.push({
             name: "Buy",
             click: () => {
+              const shopItems = ITEM_TYPES.map((itemName) => ({
+                ...ITEM[itemName],
+                maxQuantity: 5,
+                quantitySelected: 0,
+                key: itemName,
+              }));
+
+              setShop([...shopItems]);
+
               setModalContent({
                 title: `${randomName}'s Shop`,
                 isOpen: true,
@@ -313,7 +232,44 @@ const useApp = () => {
                       setShop([...shopItems]);
                     }}
                     updatePlayer={(newValues) => {
-                      updatePlayerInventory(newValues);
+                      /* updatePlayerInventory(newValues); */
+                    }}
+                    playerInventoryMaxCapacity={player().inventoryMaxCapacity}
+                    playerCurrentWeight={_getPlayerTotalWeight()}
+                    isBuying
+                  />
+                ),
+              });
+            },
+          });
+
+          actions.push({
+            name: "Sell",
+            click: () => {
+              const itemsToSell = ITEM_TYPES.map((itemName) => ({
+                ...ITEM[itemName],
+                maxQuantity: 5,
+                quantitySelected: 0,
+                key: itemName,
+              }));
+
+              setShop([...itemsToSell]);
+
+              setModalContent({
+                title: `Selling to ${randomName}`,
+                isOpen: true,
+                children: (
+                  <Shop
+                    items={shop()}
+                    playerMoney={player().money}
+                    closeModal={() => {
+                      closeModal();
+                    }}
+                    update={() => {
+                      setShop([...itemsToSell]);
+                    }}
+                    updatePlayer={(newValues) => {
+                      /* updatePlayerInventory(newValues); */
                     }}
                     playerInventoryMaxCapacity={player().inventoryMaxCapacity}
                     playerCurrentWeight={_getPlayerTotalWeight()}

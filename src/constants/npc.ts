@@ -1,5 +1,6 @@
 //people
 import malePerson0 from "../components/svgIcons/malePerson0";
+import femalePerson0 from "../components/svgIcons/femalePerson0";
 
 export const NPC_GREETINGS = [
   "O dia está lindo hoje!",
@@ -21,7 +22,7 @@ export const NPC = {
     },
     FEMALE: {
       IMAGES: [
-        malePerson0,
+        femalePerson0,
         /*  femaleVillager1,
         femaleVillager2,
         femaleVillager3,
@@ -43,7 +44,7 @@ export const NPC = {
     },
     FEMALE: {
       IMAGES: [
-        malePerson0,
+        femalePerson0,
         /* femaleVillager1,
         femaleVillager2,
         femaleVillager3,
@@ -57,7 +58,7 @@ export const NPC = {
       IMAGES: [malePerson0],
     },
     FEMALE: {
-      IMAGES: [malePerson0],
+      IMAGES: [femalePerson0],
     },
   },
 };

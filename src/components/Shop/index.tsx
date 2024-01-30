@@ -2,7 +2,7 @@ import { onMount } from "solid-js";
 import { Dynamic } from "solid-js/web";
 import { IItemShop, IUpdatePlayerArgs } from "../../interfaces";
 import Button from "../Button";
-import Card from "../card";
+import Card from "../Card";
 
 interface IShop {
   items: IItemShop[];
@@ -12,6 +12,7 @@ interface IShop {
   closeModal: () => void;
   update: () => void;
   updatePlayer: (args: IUpdatePlayerArgs) => void;
+  isBuying?: boolean;
 }
 
 const getTotalPrice = (items: IItemShop[]) => {
@@ -39,10 +40,13 @@ const Shop = (props: IShop) => {
     });
   });
 
+  const getConfirmButtonText = () => {
+    return props.isBuying ? "Buy" : "Sell";
+  };
+
   const updateItemsQuantity = () => {
     props.items.forEach((item) => {
       item.maxQuantity = item.maxQuantity - item.quantitySelected;
-      //item.quantitySelected = 0;
     });
   };
 
@@ -159,17 +163,26 @@ const Shop = (props: IShop) => {
         {canShowBuyButton() && (
           <Button
             onClick={() => {
-              console.log("props.items");
+              /* console.log("props.items");
               console.log(props.items);
               props.updatePlayer({
                 money: props.playerMoney - getTotalPrice(props.items),
                 purchasedItems: getPurchasedItems(),
+              }); */
+
+              const event = new CustomEvent("UPDATE_PLAYER_INVENTORY", {
+                detail: {
+                  purchasedItems: getPurchasedItems(),
+                },
               });
+
+              document.dispatchEvent(event);
+
               updateItemsQuantity();
               props.closeModal();
             }}
           >
-            Buy
+            {getConfirmButtonText()}
           </Button>
         )}
       </div>
