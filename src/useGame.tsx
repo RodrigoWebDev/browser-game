@@ -1,6 +1,8 @@
 import { createSignal, onMount, JSXElement, createEffect } from "solid-js";
 import { Dynamic } from "solid-js/web";
 import {
+  ACTIONS,
+  event,
   getPlayerTotalWiehgt,
   getRandomIntFromInterval,
   getRandomItemFromArray,
@@ -69,7 +71,7 @@ const useApp = () => {
     inventoryMaxCapacity: 4,
     inventoryItems: [],
   });
-  const [shop, setShop] = createSignal<IItemShop[]>([]);
+  /* const [shop, setShop] = createSignal<IItemShop[]>([]); */
   const [combatScreen, setCombatScreen] = createSignal({
     enemies: [new Enemy(0, ENEMY["TROLL"]), new Enemy(1, ENEMY["GOBLIN"])],
   });
@@ -209,37 +211,34 @@ const useApp = () => {
           actions.push({
             name: "Buy",
             click: () => {
-              const shopItems = ITEM_TYPES.map((itemName) => ({
-                ...ITEM[itemName],
-                maxQuantity: 5,
-                quantitySelected: 0,
-                key: itemName,
-              }));
-
-              setShop([...shopItems]);
-
               setModalContent({
                 title: `${randomName}'s Shop`,
                 isOpen: true,
                 children: (
                   <Shop
-                    items={shop()}
+                    /* items={shop()} */
                     playerMoney={player().money}
                     closeModal={() => {
                       closeModal();
                     }}
-                    update={() => {
+                    /* update={() => {
                       setShop([...shopItems]);
-                    }}
-                    updatePlayer={(newValues) => {
-                      /* updatePlayerInventory(newValues); */
-                    }}
+                    }} */
                     playerInventoryMaxCapacity={player().inventoryMaxCapacity}
                     playerCurrentWeight={_getPlayerTotalWeight()}
                     isBuying
                   />
                 ),
               });
+
+              const items = ITEM_TYPES.map((itemName) => ({
+                ...ITEM[itemName],
+                maxQuantity: 5,
+                quantitySelected: 0,
+                key: itemName,
+              }));
+
+              event.dispatch(ACTIONS.UPDATE_SHOP_ITEMS, items);
             },
           });
 
@@ -253,23 +252,16 @@ const useApp = () => {
                 key: itemName,
               }));
 
-              setShop([...itemsToSell]);
+              //setShop([...itemsToSell]);
 
               setModalContent({
                 title: `Selling to ${randomName}`,
                 isOpen: true,
                 children: (
                   <Shop
-                    items={shop()}
                     playerMoney={player().money}
                     closeModal={() => {
                       closeModal();
-                    }}
-                    update={() => {
-                      setShop([...itemsToSell]);
-                    }}
-                    updatePlayer={(newValues) => {
-                      /* updatePlayerInventory(newValues); */
                     }}
                     playerInventoryMaxCapacity={player().inventoryMaxCapacity}
                     playerCurrentWeight={_getPlayerTotalWeight()}
@@ -412,6 +404,10 @@ const useApp = () => {
   };
 
   onMount(() => {
+    event.subscribe(ACTIONS.CLOSE_MODAL, () => {
+      closeModal();
+    });
+
     loadSettings();
     createPlaces();
   });

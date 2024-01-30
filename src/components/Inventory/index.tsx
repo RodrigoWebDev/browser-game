@@ -1,6 +1,6 @@
 import { Dynamic } from "solid-js/web";
-import { createSignal, onMount } from "solid-js";
-import { getPlayerTotalWiehgt } from "../../helpers";
+import { createSignal, onCleanup, onMount } from "solid-js";
+import { ACTIONS, event, getPlayerTotalWiehgt } from "../../helpers";
 import { IInventoryItems, IItemShop } from "../../interfaces";
 import ToolTip from "../Tooltip";
 import DropDown from "../dropwdown";
@@ -65,9 +65,10 @@ const Inventory = (props: IInventory) => {
       items: inventory,
     }));
   };
+
   onMount(() => {
-    document.addEventListener("UPDATE_PLAYER_INVENTORY", (e: any) => {
-      formatToInventoryItems([...e.detail.purchasedItems]);
+    event.subscribe(ACTIONS.UPDATE_PLAYER_INVENTORY, (items: any) => {
+      formatToInventoryItems([...items]);
     });
   });
 

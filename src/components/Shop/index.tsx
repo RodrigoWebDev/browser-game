@@ -1,17 +1,15 @@
-import { onMount } from "solid-js";
+import { createSignal, onMount, onCleanup } from "solid-js";
 import { Dynamic } from "solid-js/web";
-import { IItemShop, IUpdatePlayerArgs } from "../../interfaces";
+import { ACTIONS, event } from "../../helpers";
+import { IItemShop } from "../../interfaces";
 import Button from "../Button";
 import Card from "../Card";
 
 interface IShop {
-  items: IItemShop[];
   playerMoney: number;
   playerCurrentWeight: number;
   playerInventoryMaxCapacity: number;
   closeModal: () => void;
-  update: () => void;
-  updatePlayer: (args: IUpdatePlayerArgs) => void;
   isBuying?: boolean;
 }
 
@@ -34,30 +32,29 @@ const getTotalPrice = (items: IItemShop[]) => {
 };
 
 const Shop = (props: IShop) => {
-  onMount(() => {
-    props.items.forEach((item) => {
-      item.quantitySelected = 0;
-    });
-  });
+  const [items, setItems] = createSignal<IItemShop[]>([]);
+
+  console.log("items()");
+  console.log(items());
 
   const getConfirmButtonText = () => {
     return props.isBuying ? "Buy" : "Sell";
   };
 
   const updateItemsQuantity = () => {
-    props.items.forEach((item) => {
+    items().forEach((item) => {
       item.maxQuantity = item.maxQuantity - item.quantitySelected;
     });
   };
 
   const getPurchasedItems = () => {
-    return props.items.filter((item) => {
+    return items().filter((item) => {
       return item.quantitySelected > 0;
     });
   };
 
   const hasEnoughMoney = () => {
-    return props.playerMoney > getTotalPrice(props.items);
+    return props.playerMoney > getTotalPrice(items());
   };
 
   const getBuyedItemsTotalWeight = () => {
@@ -88,16 +85,50 @@ const Shop = (props: IShop) => {
 
   const canShowBuyButton = () => {
     return (
-      getTotalPrice(props.items) > 0 &&
+      getTotalPrice(items()) > 0 &&
       hasEnoughMoney() &&
       !isPlayerInMaxWeightCapacity() &&
       !willByPassMaxWeight()
     );
   };
 
+  const update = () => {
+    setItems([...items()]);
+  };
+
+  const resetItemsQuantitySelected = () => {
+    setItems((items) => {
+      return items.map((item) => {
+        return {
+          ...item,
+          quantitySelected: 0,
+        };
+      });
+    });
+  };
+
+  onMount(() => {
+    event.subscribe(ACTIONS.UPDATE_SHOP_ITEMS, (_items: any) => {
+      setItems(() => _items);
+    });
+
+    resetItemsQuantitySelected();
+
+    /* items().forEach((item) => {
+      item.quantitySelected = 0;
+    }); */
+  });
+
+  onCleanup(() => {
+    document.removeEventListener(
+      ACTIONS.UPDATE_SHOP_ITEMS.toString(),
+      () => {}
+    );
+  });
+
   return (
     <div class="flex flex-wrap justify-between mt-4">
-      {props.items.map((item) => {
+      {items().map((item) => {
         return (
           <div class="w-[49%] mb-2">
             <Card
@@ -111,7 +142,7 @@ const Shop = (props: IShop) => {
                       onClick={() => {
                         if (item.quantitySelected > 0) {
                           item.quantitySelected--;
-                          props.update();
+                          update();
                         }
                       }}
                     >
@@ -122,7 +153,7 @@ const Shop = (props: IShop) => {
                       onClick={() => {
                         if (item.quantitySelected < item.maxQuantity) {
                           item.quantitySelected++;
-                          props.update();
+                          update();
                         }
                       }}
                     >
@@ -141,7 +172,7 @@ const Shop = (props: IShop) => {
           <strong>Your money</strong>: {props.playerMoney}
         </div>
         <div class="mb-2">
-          <strong>Total price</strong>: {getTotalPrice(props.items)}
+          <strong>Total price</strong>: {getTotalPrice(items())}
         </div>
         <div class="mb-4">
           <strong>Your weight after buy</strong>: {totalWeightAfterBuy()}/
@@ -163,23 +194,14 @@ const Shop = (props: IShop) => {
         {canShowBuyButton() && (
           <Button
             onClick={() => {
-              /* console.log("props.items");
-              console.log(props.items);
-              props.updatePlayer({
-                money: props.playerMoney - getTotalPrice(props.items),
-                purchasedItems: getPurchasedItems(),
-              }); */
-
-              const event = new CustomEvent("UPDATE_PLAYER_INVENTORY", {
-                detail: {
-                  purchasedItems: getPurchasedItems(),
-                },
-              });
-
-              document.dispatchEvent(event);
+              event.dispatch(
+                ACTIONS.UPDATE_PLAYER_INVENTORY,
+                getPurchasedItems()
+              );
 
               updateItemsQuantity();
-              props.closeModal();
+
+              event.dispatch(ACTIONS.CLOSE_MODAL);
             }}
           >
             {getConfirmButtonText()}

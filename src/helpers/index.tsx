@@ -29,3 +29,27 @@ export const getPlayerTotalWiehgt = (inventoryItems: IInventoryItems[]) => {
     return 0;
   }
 };
+
+export enum ACTIONS {
+  CLOSE_MODAL,
+  UPDATE_PLAYER_INVENTORY,
+  UPDATE_SHOP_ITEMS,
+}
+
+export const event = {
+  dispatch: (event: number, data?: any) => {
+    const newCustomEvent = new CustomEvent(event.toString(), {
+      detail: data,
+    });
+    document.dispatchEvent(newCustomEvent);
+    /* console.log("DISPATCH");
+    console.log(data); */
+  },
+  subscribe: (event: number, action: (e: any) => void) => {
+    document.addEventListener(event.toString(), (e: any) => {
+      /* console.log("SUBSCRIBE");
+      console.log(e.detail); */
+      action(e.detail);
+    });
+  },
+};
