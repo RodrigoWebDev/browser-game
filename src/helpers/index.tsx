@@ -35,6 +35,7 @@ export enum ACTIONS {
   UPDATE_PLAYER_INVENTORY,
   UPDATE_SHOP_ITEMS,
   SELL_ITEMS,
+  SPEND_MONEY,
 }
 
 export const event = {

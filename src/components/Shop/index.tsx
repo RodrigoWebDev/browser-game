@@ -109,7 +109,6 @@ const Shop = (props: IShop) => {
 
   onMount(() => {
     event.subscribe(ACTIONS.UPDATE_SHOP_ITEMS, (_items: any) => {
-      console.log({ _items });
       setItems(() => _items);
     });
 
@@ -203,6 +202,7 @@ const Shop = (props: IShop) => {
               updateItemsQuantity();
 
               event.dispatch(ACTIONS.SET_MODAL);
+              event.dispatch(ACTIONS.SPEND_MONEY, getTotalPrice(items()));
             }}
           >
             {getConfirmButtonText()}

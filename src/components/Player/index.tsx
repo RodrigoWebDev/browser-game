@@ -3,6 +3,7 @@ import Knight from "../svgIcons/knight";
 import ToolTip from "../Tooltip";
 import Inventory from "../Inventory";
 import { IInventoryItems } from "../../interfaces";
+import { ACTIONS, event } from "../../helpers";
 
 /* interface IPlayer {
   children: JSXElement;
@@ -17,8 +18,6 @@ interface IPlayer {
   currentLocationIndex: number;
   isInCombat: boolean;
   money: number;
-  inventoryMaxCapacity: number;
-  inventoryItems: IInventoryItems[];
 }
 
 const Player = () => {
@@ -31,8 +30,15 @@ const Player = () => {
     currentLocationIndex: 0,
     isInCombat: true,
     money: 10000,
-    inventoryMaxCapacity: 4,
-    inventoryItems: [],
+  });
+
+  onMount(() => {
+    event.subscribe(ACTIONS.SPEND_MONEY, (moneySpent: number) => {
+      setPlayer((val) => ({
+        ...val,
+        money: val.money - moneySpent,
+      }));
+    });
   });
 
   return (
@@ -65,10 +71,7 @@ const Player = () => {
 
       <div>Money: {player().money}</div>
 
-      <Inventory
-        items={player().inventoryItems}
-        maxCapacity={player().inventoryMaxCapacity}
-      />
+      <Inventory />
     </div>
   );
 };

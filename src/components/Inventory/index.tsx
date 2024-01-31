@@ -5,17 +5,12 @@ import { IInventoryItems, IItemShop } from "../../interfaces";
 import ToolTip from "../Tooltip";
 import DropDown from "../dropwdown";
 
-interface IInventory {
-  items: IInventoryItems[];
-  maxCapacity: number;
-}
-
 interface IPlayerInventory {
   maxCapacity: number;
   items: IInventoryItems[];
 }
 
-const Inventory = (props: IInventory) => {
+const Inventory = () => {
   const [playerInventory, setPlayerInventory] = createSignal<IPlayerInventory>({
     //money: 10000,
     maxCapacity: 4,
@@ -99,7 +94,7 @@ const Inventory = (props: IInventory) => {
         <h2 class="mb-2">Inventory</h2>
         <div>
           {getPlayerTotalWiehgt(playerInventory().items).toFixed(1)}/
-          {props.maxCapacity.toFixed(1)} kg
+          {playerInventory().maxCapacity.toFixed(1)} kg
         </div>
       </div>
 
