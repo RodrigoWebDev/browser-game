@@ -66,9 +66,30 @@ const Inventory = (props: IInventory) => {
     }));
   };
 
+  const formatItemsToSell = () => {
+    return playerInventory().items.map((item) => {
+      return {
+        ...item,
+        maxQuantity: item.quantity,
+      };
+    });
+  };
+
   onMount(() => {
     event.subscribe(ACTIONS.UPDATE_PLAYER_INVENTORY, (items: any) => {
       formatToInventoryItems([...items]);
+    });
+
+    event.subscribe(ACTIONS.SELL_ITEMS, () => {
+      if (playerInventory().items.length) {
+        event.dispatch(ACTIONS.UPDATE_SHOP_ITEMS, formatItemsToSell());
+      } else {
+        event.dispatch(ACTIONS.SET_MODAL, {
+          title: "You have no items to sell",
+          isOpen: true,
+          children: <></>,
+        });
+      }
     });
   });
 

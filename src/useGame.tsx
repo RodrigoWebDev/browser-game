@@ -245,15 +245,6 @@ const useApp = () => {
           actions.push({
             name: "Sell",
             click: () => {
-              const itemsToSell = ITEM_TYPES.map((itemName) => ({
-                ...ITEM[itemName],
-                maxQuantity: 5,
-                quantitySelected: 0,
-                key: itemName,
-              }));
-
-              //setShop([...itemsToSell]);
-
               setModalContent({
                 title: `Selling to ${randomName}`,
                 isOpen: true,
@@ -268,6 +259,15 @@ const useApp = () => {
                   />
                 ),
               });
+
+              /* const items = ITEM_TYPES.map((itemName) => ({
+                ...ITEM[itemName],
+                maxQuantity: 5,
+                quantitySelected: 0,
+                key: itemName,
+              })); */
+
+              event.dispatch(ACTIONS.SELL_ITEMS);
             },
           });
         }
@@ -404,8 +404,8 @@ const useApp = () => {
   };
 
   onMount(() => {
-    event.subscribe(ACTIONS.CLOSE_MODAL, () => {
-      closeModal();
+    event.subscribe(ACTIONS.SET_MODAL, (modalData) => {
+      setModalContent({ ...modalData });
     });
 
     loadSettings();

@@ -31,9 +31,10 @@ export const getPlayerTotalWiehgt = (inventoryItems: IInventoryItems[]) => {
 };
 
 export enum ACTIONS {
-  CLOSE_MODAL,
+  SET_MODAL,
   UPDATE_PLAYER_INVENTORY,
   UPDATE_SHOP_ITEMS,
+  SELL_ITEMS,
 }
 
 export const event = {
