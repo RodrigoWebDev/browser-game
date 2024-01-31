@@ -1,23 +1,24 @@
 import { Dynamic } from "solid-js/web";
-import { createSignal, onCleanup, onMount } from "solid-js";
+import { createSignal, onMount } from "solid-js";
 import { ACTIONS, event, getPlayerTotalWiehgt } from "../../helpers";
 import { IInventoryItems, IItemShop } from "../../interfaces";
 import ToolTip from "../Tooltip";
 import DropDown from "../dropwdown";
 
 interface IPlayerInventory {
+  money: number;
   maxCapacity: number;
   items: IInventoryItems[];
 }
 
 const Inventory = () => {
   const [playerInventory, setPlayerInventory] = createSignal<IPlayerInventory>({
-    //money: 10000,
+    money: 10000,
     maxCapacity: 4,
     items: [],
   });
 
-  const updateInventoruItems = (
+  const updateInventoryItems = (
     purchasedItems: IItemShop[],
     operation: "SUM" | "SUBTRACTION"
   ) => {
@@ -56,7 +57,7 @@ const Inventory = () => {
           quantity:
             operation === "SUM"
               ? shopItem.quantitySelected + inventory[index].quantity
-              : shopItem.quantitySelected - inventory[index].quantity,
+              : inventory[index].quantity - shopItem.quantitySelected,
         };
       }
     });
@@ -82,16 +83,19 @@ const Inventory = () => {
 
   onMount(() => {
     event.subscribe(ACTIONS.ADD_ITEMS_TO_PLAYER_INVENTORY, (items: any) => {
-      updateInventoruItems([...items], "SUM");
+      updateInventoryItems([...items], "SUM");
     });
 
     event.subscribe(ACTIONS.REMOVE_ITEMS_TO_PLAYER_INVENTORY, (items: any) => {
-      updateInventoruItems([...items], "SUBTRACTION");
+      updateInventoryItems([...items], "SUBTRACTION");
     });
 
     event.subscribe(ACTIONS.SELL_ITEMS, () => {
       if (playerInventory().items.length) {
-        event.dispatch(ACTIONS.UPDATE_SHOP_ITEMS, formatItemsToSell());
+        event.dispatch(ACTIONS.UPDATE_SHOP, {
+          items: formatItemsToSell(),
+          money: playerInventory().money,
+        });
       } else {
         event.dispatch(ACTIONS.SET_MODAL, {
           title: "You have no items to sell",
@@ -100,10 +104,26 @@ const Inventory = () => {
         });
       }
     });
+
+    event.subscribe(ACTIONS.SPEND_MONEY, (moneySpent: number) => {
+      setPlayerInventory((val) => ({
+        ...val,
+        money: val.money - moneySpent,
+      }));
+    });
+
+    event.subscribe(ACTIONS.RECEIVE_MONEY, (moneySpent: number) => {
+      setPlayerInventory((val) => ({
+        ...val,
+        money: val.money + moneySpent,
+      }));
+    });
   });
 
   return (
     <div id="inventory">
+      <div>Money: {playerInventory().money}</div>
+
       <div class="flex justify-between">
         <h2 class="mb-2">Inventory</h2>
         <div>

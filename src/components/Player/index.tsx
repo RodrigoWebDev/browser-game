@@ -32,22 +32,6 @@ const Player = () => {
     money: 10000,
   });
 
-  onMount(() => {
-    event.subscribe(ACTIONS.SPEND_MONEY, (moneySpent: number) => {
-      setPlayer((val) => ({
-        ...val,
-        money: val.money - moneySpent,
-      }));
-    });
-
-    event.subscribe(ACTIONS.RECEIVE_MONEY, (moneySpent: number) => {
-      setPlayer((val) => ({
-        ...val,
-        money: val.money + moneySpent,
-      }));
-    });
-  });
-
   return (
     <div>
       <Knight className="bg-[#15191e] rounded-box mb-4" />
@@ -75,8 +59,6 @@ const Player = () => {
       </ToolTip>
 
       <div class="divider">Inventory</div>
-
-      <div>Money: {player().money}</div>
 
       <Inventory />
     </div>

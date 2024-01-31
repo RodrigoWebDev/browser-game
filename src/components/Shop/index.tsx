@@ -33,6 +33,7 @@ const getTotalPrice = (items: IItemShop[]) => {
 
 const Shop = (props: IShop) => {
   const [items, setItems] = createSignal<IItemShop[]>([]);
+  const [money, setMoney] = createSignal(0);
 
   const getConfirmButtonText = () => {
     return props.isBuying ? "Buy" : "Sell";
@@ -105,8 +106,10 @@ const Shop = (props: IShop) => {
   };
 
   onMount(() => {
-    event.subscribe(ACTIONS.UPDATE_SHOP_ITEMS, (_items: any) => {
-      setItems(() => _items);
+    event.subscribe(ACTIONS.UPDATE_SHOP, (shop: any) => {
+      console.log({ shop });
+      setItems(() => shop.items);
+      setMoney(() => shop.money);
     });
 
     resetItemsQuantitySelected();
@@ -117,10 +120,7 @@ const Shop = (props: IShop) => {
   });
 
   onCleanup(() => {
-    document.removeEventListener(
-      ACTIONS.UPDATE_SHOP_ITEMS.toString(),
-      () => {}
-    );
+    document.removeEventListener(ACTIONS.UPDATE_SHOP.toString(), () => {});
   });
 
   return (
@@ -166,7 +166,7 @@ const Shop = (props: IShop) => {
 
       <div class="mt-4">
         <div class="mb-2">
-          <strong>Your money</strong>: {props.playerMoney}
+          <strong>Your money</strong>: {money()}
         </div>
         <div class="mb-2">
           <strong>Total price</strong>: {getTotalPrice(items())}

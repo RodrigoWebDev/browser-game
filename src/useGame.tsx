@@ -238,7 +238,10 @@ const useApp = () => {
                 key: itemName,
               }));
 
-              event.dispatch(ACTIONS.UPDATE_SHOP_ITEMS, items);
+              event.dispatch(ACTIONS.UPDATE_SHOP, {
+                items,
+                money: 9992,
+              });
             },
           });
 
@@ -259,13 +262,6 @@ const useApp = () => {
                   />
                 ),
               });
-
-              /* const items = ITEM_TYPES.map((itemName) => ({
-                ...ITEM[itemName],
-                maxQuantity: 5,
-                quantitySelected: 0,
-                key: itemName,
-              })); */
 
               event.dispatch(ACTIONS.SELL_ITEMS);
             },
