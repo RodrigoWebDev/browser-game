@@ -39,6 +39,13 @@ const Player = () => {
         money: val.money - moneySpent,
       }));
     });
+
+    event.subscribe(ACTIONS.RECEIVE_MONEY, (moneySpent: number) => {
+      setPlayer((val) => ({
+        ...val,
+        money: val.money + moneySpent,
+      }));
+    });
   });
 
   return (

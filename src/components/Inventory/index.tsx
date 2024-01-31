@@ -17,7 +17,10 @@ const Inventory = () => {
     items: [],
   });
 
-  const formatToInventoryItems = (purchasedItems: IItemShop[]) => {
+  const updateInventoruItems = (
+    purchasedItems: IItemShop[],
+    operation: "SUM" | "SUBTRACTION"
+  ) => {
     if (!purchasedItems) return [];
 
     const inventory = [...playerInventory().items];
@@ -50,14 +53,21 @@ const Inventory = () => {
       } else {
         inventory[index] = {
           ...inventory[index],
-          quantity: shopItem.quantitySelected + inventory[index].quantity,
+          quantity:
+            operation === "SUM"
+              ? shopItem.quantitySelected + inventory[index].quantity
+              : shopItem.quantitySelected - inventory[index].quantity,
         };
       }
     });
 
+    const no0QuantityItems = inventory.filter((item) => {
+      return item.quantity > 0;
+    });
+
     setPlayerInventory((val) => ({
       ...val,
-      items: inventory,
+      items: no0QuantityItems,
     }));
   };
 
@@ -71,8 +81,12 @@ const Inventory = () => {
   };
 
   onMount(() => {
-    event.subscribe(ACTIONS.UPDATE_PLAYER_INVENTORY, (items: any) => {
-      formatToInventoryItems([...items]);
+    event.subscribe(ACTIONS.ADD_ITEMS_TO_PLAYER_INVENTORY, (items: any) => {
+      updateInventoruItems([...items], "SUM");
+    });
+
+    event.subscribe(ACTIONS.REMOVE_ITEMS_TO_PLAYER_INVENTORY, (items: any) => {
+      updateInventoruItems([...items], "SUBTRACTION");
     });
 
     event.subscribe(ACTIONS.SELL_ITEMS, () => {

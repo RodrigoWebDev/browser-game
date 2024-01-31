@@ -32,10 +32,12 @@ export const getPlayerTotalWiehgt = (inventoryItems: IInventoryItems[]) => {
 
 export enum ACTIONS {
   SET_MODAL,
-  UPDATE_PLAYER_INVENTORY,
+  ADD_ITEMS_TO_PLAYER_INVENTORY,
+  REMOVE_ITEMS_TO_PLAYER_INVENTORY,
   UPDATE_SHOP_ITEMS,
   SELL_ITEMS,
   SPEND_MONEY,
+  RECEIVE_MONEY,
 }
 
 export const event = {
@@ -44,13 +46,9 @@ export const event = {
       detail: data,
     });
     document.dispatchEvent(newCustomEvent);
-    /* console.log("DISPATCH");
-    console.log(data); */
   },
   subscribe: (event: number, action: (e: any) => void) => {
     document.addEventListener(event.toString(), (e: any) => {
-      /* console.log("SUBSCRIBE");
-      console.log(e.detail); */
       action(e.detail);
     });
   },

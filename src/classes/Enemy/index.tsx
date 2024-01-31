@@ -23,7 +23,6 @@ export class Enemy {
     this.id = id;
     this.name = refference.NAME;
     this.description = refference.DESCRIPTION;
-    console.log({ refference });
     this.img = <Dynamic component={refference.IMAGE} />;
     this.hueRotation = hueRotation;
   }

@@ -34,9 +34,6 @@ const getTotalPrice = (items: IItemShop[]) => {
 const Shop = (props: IShop) => {
   const [items, setItems] = createSignal<IItemShop[]>([]);
 
-  console.log("items()");
-  console.log(items());
-
   const getConfirmButtonText = () => {
     return props.isBuying ? "Buy" : "Sell";
   };
@@ -47,7 +44,7 @@ const Shop = (props: IShop) => {
     });
   };
 
-  const getPurchasedItems = () => {
+  const getTransactionItems = () => {
     return items().filter((item) => {
       return item.quantitySelected > 0;
     });
@@ -58,7 +55,7 @@ const Shop = (props: IShop) => {
   };
 
   const getBuyedItemsTotalWeight = () => {
-    const weights = getPurchasedItems().map((item) => {
+    const weights = getTransactionItems().map((item) => {
       return item.weight * item.quantitySelected;
     });
 
@@ -194,15 +191,29 @@ const Shop = (props: IShop) => {
         {canShowBuyButton() && (
           <Button
             onClick={() => {
-              event.dispatch(
-                ACTIONS.UPDATE_PLAYER_INVENTORY,
-                getPurchasedItems()
-              );
+              if (props.isBuying) {
+                event.dispatch(
+                  ACTIONS.ADD_ITEMS_TO_PLAYER_INVENTORY,
+                  getTransactionItems()
+                );
 
-              updateItemsQuantity();
+                event.dispatch(ACTIONS.SPEND_MONEY, getTotalPrice(items()));
 
-              event.dispatch(ACTIONS.SET_MODAL);
-              event.dispatch(ACTIONS.SPEND_MONEY, getTotalPrice(items()));
+                updateItemsQuantity();
+              } else {
+                event.dispatch(
+                  ACTIONS.REMOVE_ITEMS_TO_PLAYER_INVENTORY,
+                  getTransactionItems()
+                );
+
+                event.dispatch(ACTIONS.RECEIVE_MONEY, getTotalPrice(items()));
+              }
+
+              event.dispatch(ACTIONS.SET_MODAL, {
+                title: "",
+                isOpen: false,
+                children: <></>,
+              });
             }}
           >
             {getConfirmButtonText()}
