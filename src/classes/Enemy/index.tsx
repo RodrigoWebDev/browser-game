@@ -1,4 +1,3 @@
-import { Dynamic } from "solid-js/web";
 import { IENEMY } from "../../constants/enemies";
 
 export class Enemy {
@@ -23,7 +22,7 @@ export class Enemy {
     this.id = id;
     this.name = refference.NAME;
     this.description = refference.DESCRIPTION;
-    this.img = <Dynamic component={refference.IMAGE} />;
+    this.img = refference.IMAGE;
     this.hueRotation = hueRotation;
   }
 

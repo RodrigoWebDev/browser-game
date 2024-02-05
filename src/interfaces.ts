@@ -1,5 +1,4 @@
 import { IITEM, TITEM_TYPES } from "./constants/items";
-import { JSXElement } from "solid-js";
 
 export interface IPlayerActions {
   name: string;
@@ -15,7 +14,7 @@ export interface ILocation {
     thing: {
       name: string;
       type: string;
-      img: JSXElement;
+      img: string;
       playerActions: IPlayerActions[];
     };
   }[];

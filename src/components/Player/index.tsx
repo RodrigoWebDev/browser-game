@@ -1,13 +1,7 @@
-import { JSXElement, createSignal, onMount } from "solid-js";
+import { createSignal, onMount } from "solid-js";
 import Knight from "../svgIcons/knight";
 import ToolTip from "../Tooltip";
 import Inventory from "../Inventory";
-import { IInventoryItems } from "../../interfaces";
-import { ACTIONS, event } from "../../helpers";
-
-/* interface IPlayer {
-  children: JSXElement;
-} */
 
 interface IPlayer {
   name: string;
@@ -31,10 +25,22 @@ const Player = () => {
     isInCombat: true,
     money: 10000,
   });
+  const [imageSize, setImageSize] = createSignal(0);
+  let playerContainerRef: any;
+
+  onMount(() => {
+    setImageSize(playerContainerRef.offsetWidth);
+  });
 
   return (
-    <div>
-      <Knight className="bg-[#15191e] rounded-box mb-4" />
+    <div ref={playerContainerRef}>
+      {/* <Knight className="bg-[#15191e] rounded-box mb-4" /> */}
+      <div
+        class="text-center"
+        style={{ "font-size": `${imageSize() / 1.5}px` }}
+      >
+        😐
+      </div>
       <div>
         <strong>Name</strong>: {player().name}
       </div>

@@ -1,5 +1,4 @@
 import { createSignal, onMount, JSXElement, createEffect } from "solid-js";
-import { Dynamic } from "solid-js/web";
 import {
   getPlayerTotalWiehgt,
   getRandomIntFromInterval,
@@ -179,7 +178,7 @@ const useApp = () => {
       };
 
       let randomName = "";
-      let randomImage: JSXElement = <></>;
+      let randomImage = "";
       let actions: IAction[] = [];
       let subType = randomThing.SUBTYPE.toLocaleLowerCase();
       const thingType = randomThing.TYPE;
@@ -275,7 +274,7 @@ const useApp = () => {
         const _subType = randomThing.SUBTYPE as TINNER_PLACE_TYPES;
         const thing = INNER_PLACE[_subType];
         const image = getRandomItemFromArray(thing.IMAGES);
-        randomImage = <Dynamic component={image} />;
+        randomImage = image;
         randomName = getRandomItemFromArray(thing.NAMES);
 
         actions = [
@@ -292,7 +291,7 @@ const useApp = () => {
         const thingSubType = randomThing.SUBTYPE as TENEMY_TYPES;
         const thing = ENEMY[thingSubType];
         const image = ENEMY[thingSubType].IMAGE;
-        randomImage = <Dynamic component={image} />;
+        randomImage = image;
         randomName = thing.NAME;
 
         actions = [

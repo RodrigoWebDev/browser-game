@@ -1,7 +1,3 @@
-//people
-import malePerson0 from "../components/svgIcons/malePerson0";
-import femalePerson0 from "../components/svgIcons/femalePerson0";
-
 export const NPC_GREETINGS = [
   "O dia está lindo hoje!",
   "Olá, posso ajuda-lo?",
@@ -12,7 +8,7 @@ export const NPC = {
   VILLAGER: {
     MALE: {
       IMAGES: [
-        malePerson0,
+        "🧑",
         /* maleVillager1,
         maleVillager2,
         maleVillager3,
@@ -22,7 +18,7 @@ export const NPC = {
     },
     FEMALE: {
       IMAGES: [
-        femalePerson0,
+        "👩",
         /*  femaleVillager1,
         femaleVillager2,
         femaleVillager3,
@@ -34,7 +30,7 @@ export const NPC = {
   TRAVELLER: {
     MALE: {
       IMAGES: [
-        malePerson0,
+        "🧑",
         /* maleVillager1,
         maleVillager2,
         maleVillager3,
@@ -44,7 +40,7 @@ export const NPC = {
     },
     FEMALE: {
       IMAGES: [
-        femalePerson0,
+        "👩‍🦰",
         /* femaleVillager1,
         femaleVillager2,
         femaleVillager3,
@@ -55,10 +51,10 @@ export const NPC = {
   },
   MERCHANT: {
     MALE: {
-      IMAGES: [malePerson0],
+      IMAGES: ["🧑"],
     },
     FEMALE: {
-      IMAGES: [femalePerson0],
+      IMAGES: ["👩‍🦰"],
     },
   },
 };

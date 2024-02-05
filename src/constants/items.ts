@@ -1,11 +1,7 @@
-import ringImg from "../components/svgIcons/ring";
-import potionImg from "../components/svgIcons/potion";
-import { JSXElement } from "solid-js";
-
 export const ITEM = {
   HEALING_POTION: {
     name: "Healing potion",
-    img: potionImg,
+    img: "💊",
     price: 12,
     canEquip: false,
     consumableEffects: {
@@ -15,7 +11,7 @@ export const ITEM = {
   },
   RING: {
     name: "Ring",
-    img: ringImg,
+    img: "💍",
     price: 58,
     canEquip: true,
     consumableEffects: null,
@@ -25,7 +21,7 @@ export const ITEM = {
 
 export interface IITEM {
   name: string;
-  img: (props: any) => JSXElement;
+  img: string;
   price: number;
   canEquip: boolean;
   consumableEffects?: {

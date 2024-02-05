@@ -1,7 +1,7 @@
-import { JSXElement } from "solid-js";
+import { JSXElement, createSignal, onMount } from "solid-js";
 
 interface ICARD {
-  img?: JSXElement;
+  img?: string;
   title?: string;
   subTitle?: string;
   footer?: JSXElement;
@@ -13,14 +13,27 @@ interface ICARD {
 }
 
 const Card = (props: ICARD) => {
+  const [imageSize, setImageSize] = createSignal(0);
+  let cardContainerRef: any;
+
+  onMount(() => {
+    setImageSize(cardContainerRef.offsetWidth);
+  });
+
   return (
     <div
+      ref={cardContainerRef}
       class={`card bg-base-100 shadow-xl ${props.className}`}
       onClick={() => {
         props.onClick && props.onClick();
       }}
     >
-      <div class="bg-[#15191e] rounded-t-xl">{props.img}</div>
+      <div
+        class="bg-[#15191e] rounded-t-xl text-center"
+        style={{ "font-size": `${imageSize() / 1.5}px` }}
+      >
+        {props.img}
+      </div>
       <div class={`card-body ${props.cardBodyClassName}`}>
         {props.title && <h2 class="card-title text-[16px]">{props.title}</h2>}
         {props.subTitle && (

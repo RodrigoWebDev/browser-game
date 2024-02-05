@@ -1,4 +1,3 @@
-import { Dynamic } from "solid-js/web";
 import { onMount } from "solid-js";
 import { getPlayerTotalWiehgt } from "../../helpers";
 import { IItemShop } from "../../interfaces";
@@ -95,12 +94,7 @@ const Inventory = () => {
                 className="block"
               >
                 <DropDown
-                  trigger={
-                    <Dynamic
-                      component={item.img}
-                      className="bg-[#15191e] rounded-box"
-                    />
-                  }
+                  trigger={item.img}
                   items={item.playerActions.map((playerAction) => {
                     return (
                       <li

@@ -6,12 +6,10 @@ import Modal from "./components/Modal";
 
 // Assets
 import useApp from "./useGame";
-import Inventory from "./components/Inventory";
 import ToolTip from "./components/Tooltip";
 import Player from "./components/Player";
 import ExploreSvg from "./components/svgIcons/explore";
 import ArrowSvg from "./components/svgIcons/arrow";
-import Knight from "./components/svgIcons/knight";
 
 const cardContainerStyle = "w-[25%] mr-2 mb-2";
 

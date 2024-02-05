@@ -1,7 +1,5 @@
-import { JSXElement } from "solid-js";
-
 interface IModalContent {
-  img?: JSXElement;
+  img?: string;
   text?: string;
 }
 

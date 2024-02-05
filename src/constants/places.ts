@@ -60,7 +60,7 @@ export const PLACES = {
       "Sable Point",
       "Harmony Hollow",
     ],
-    IMAGES: [village0],
+    IMAGES: ["🏘️"],
     THINGS: [
       {
         TYPE: "NPC",
@@ -128,7 +128,7 @@ export const PLACES = {
       "Lunarwood",
       "Briarheart Grove",
     ],
-    IMAGES: [village0],
+    IMAGES: ["🏞"],
     THINGS: [
       {
         TYPE: "NPC",
@@ -158,7 +158,7 @@ export const INNER_PLACE = {
   DUNGEON: {
     ID: "DUNEGON",
     NAMES: ["Mistery", "Shadow", "Death", "Fear"],
-    IMAGES: [village0],
+    IMAGES: ["🏟️"],
     THINGS: [
       {
         TYPE: "ENEMY",
@@ -185,7 +185,7 @@ export const INNER_PLACE = {
       "The Terrific Mice",
       "The Next Best Whisper",
     ],
-    IMAGES: [village0],
+    IMAGES: ["🏨"],
     THINGS: [
       {
         TYPE: "NPC",
@@ -196,7 +196,7 @@ export const INNER_PLACE = {
   CAVERN: {
     ID: "CAVERN",
     NAMES: ["Mistery", "Shadow", "Death", "Fear"],
-    IMAGES: [village0],
+    IMAGES: ["🎪"],
     THINGS: [
       {
         TYPE: "ENEMY",
