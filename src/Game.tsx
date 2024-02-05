@@ -22,7 +22,7 @@ function Game() {
     escapeFromCombat,
     combatScreen,
     attackEnemy,
-    modalContent,
+    modal,
     explore,
     world,
     getCurrentLocation,
@@ -200,8 +200,8 @@ function Game() {
         </main>
       )}
 
-      <Modal title={modalContent().title} isOpen={modalContent().isOpen}>
-        {modalContent().children}
+      <Modal title={modal().title} isOpen={modal().isOpen}>
+        {modal().children}
       </Modal>
 
       <Button

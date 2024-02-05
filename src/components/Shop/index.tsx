@@ -1,9 +1,16 @@
-import { createSignal, onMount, onCleanup } from "solid-js";
+import { onMount } from "solid-js";
 import { Dynamic } from "solid-js/web";
-import { ACTIONS, event } from "../../helpers";
 import { IItemShop } from "../../interfaces";
 import Button from "../Button";
 import Card from "../Card";
+import { shopState } from "../../state/shop";
+import { inventoryState } from "../../state/inventory";
+import { modalState } from "../../state/modal";
+
+//States
+/* import inventoryState from "../../state/inventory";
+import shopState from "../../state/shop";
+import modalState from "../../state/modal"; */
 
 interface IShop {
   playerMoney: number;
@@ -32,27 +39,30 @@ const getTotalPrice = (items: IItemShop[]) => {
 };
 
 const Shop = (props: IShop) => {
-  const [items, setItems] = createSignal<IItemShop[]>([]);
-  const [money, setMoney] = createSignal(0);
+  //const [items, setItems] = createSignal<IItemShop[]>([]);
+  const [shop, setShop] = shopState;
+  const [inventory, setInventory] = inventoryState;
+  const [modal, setModal] = modalState;
+  //const [money, setMoney] = createSignal(0);
 
   const getConfirmButtonText = () => {
     return props.isBuying ? "Buy" : "Sell";
   };
 
   const updateItemsQuantity = () => {
-    items().forEach((item) => {
+    shop().items.forEach((item) => {
       item.maxQuantity = item.maxQuantity - item.quantitySelected;
     });
   };
 
   const getTransactionItems = () => {
-    return items().filter((item) => {
+    return shop().items.filter((item) => {
       return item.quantitySelected > 0;
     });
   };
 
   const hasEnoughMoney = () => {
-    return props.playerMoney > getTotalPrice(items());
+    return props.playerMoney > getTotalPrice(shop().items);
   };
 
   const getBuyedItemsTotalWeight = () => {
@@ -83,7 +93,7 @@ const Shop = (props: IShop) => {
 
   const canShowBuyButton = () => {
     return (
-      getTotalPrice(items()) > 0 &&
+      getTotalPrice(shop().items) > 0 &&
       hasEnoughMoney() &&
       !isPlayerInMaxWeightCapacity() &&
       !willByPassMaxWeight()
@@ -91,41 +101,89 @@ const Shop = (props: IShop) => {
   };
 
   const update = () => {
-    setItems([...items()]);
+    setShop((val) => ({
+      ...val,
+      items: [...shop().items],
+    }));
   };
 
   const resetItemsQuantitySelected = () => {
-    setItems((items) => {
-      return items.map((item) => {
+    setShop((val) => ({
+      ...val,
+      items: val.items.map((item) => {
         return {
           ...item,
           quantitySelected: 0,
         };
+      }),
+    }));
+  };
+
+  const updateInventory = (
+    purchasedItems: IItemShop[],
+    operation: "SUM" | "SUBTRACTION"
+  ) => {
+    if (!purchasedItems) return [];
+
+    const _inventory = [...inventory().items];
+
+    purchasedItems.forEach((shopItem) => {
+      //TODO: ao invés de usar o findIdex, talvez seja melhor fazer com que o inventário seja um objeto de objetos e buscar o item pelo index. Talvez seja necessário refatorar também como o componente Shop exibe os itens
+      const index = _inventory.findIndex((item) => {
+        return item.key === shopItem.key;
       });
+
+      if (index < 0) {
+        _inventory.push({
+          ...shopItem,
+          quantity: shopItem.quantitySelected,
+          playerActions: [
+            {
+              name: "Equip",
+              click: () => {},
+            },
+            {
+              name: "Consume",
+              click: () => {},
+            },
+            {
+              name: "Info",
+              click: () => {},
+            },
+          ],
+        });
+      } else {
+        _inventory[index] = {
+          ..._inventory[index],
+          quantity:
+            operation === "SUM"
+              ? shopItem.quantitySelected + _inventory[index].quantity
+              : _inventory[index].quantity - shopItem.quantitySelected,
+        };
+      }
     });
+
+    const no0QuantityItems = _inventory.filter((item) => {
+      return item.quantity > 0;
+    });
+
+    setInventory((val) => ({
+      ...val,
+      items: no0QuantityItems,
+      money:
+        operation === "SUM"
+          ? val.money - getTotalPrice(shop().items)
+          : val.money + getTotalPrice(shop().items),
+    }));
   };
 
   onMount(() => {
-    event.subscribe(ACTIONS.UPDATE_SHOP, (shop: any) => {
-      console.log({ shop });
-      setItems(() => shop.items);
-      setMoney(() => shop.money);
-    });
-
     resetItemsQuantitySelected();
-
-    /* items().forEach((item) => {
-      item.quantitySelected = 0;
-    }); */
-  });
-
-  onCleanup(() => {
-    document.removeEventListener(ACTIONS.UPDATE_SHOP.toString(), () => {});
   });
 
   return (
     <div class="flex flex-wrap justify-between mt-4">
-      {items().map((item) => {
+      {shop().items.map((item) => {
         return (
           <div class="w-[49%] mb-2">
             <Card
@@ -166,10 +224,10 @@ const Shop = (props: IShop) => {
 
       <div class="mt-4">
         <div class="mb-2">
-          <strong>Your money</strong>: {money()}
+          <strong>Your money</strong>: {inventory().money}
         </div>
         <div class="mb-2">
-          <strong>Total price</strong>: {getTotalPrice(items())}
+          <strong>Total price</strong>: {getTotalPrice(shop().items)}
         </div>
         <div class="mb-4">
           <strong>Your weight after buy</strong>: {totalWeightAfterBuy()}/
@@ -192,27 +250,14 @@ const Shop = (props: IShop) => {
           <Button
             onClick={() => {
               if (props.isBuying) {
-                event.dispatch(
-                  ACTIONS.ADD_ITEMS_TO_PLAYER_INVENTORY,
-                  getTransactionItems()
-                );
-
-                event.dispatch(ACTIONS.SPEND_MONEY, getTotalPrice(items()));
-
+                updateInventory(getTransactionItems(), "SUM");
                 updateItemsQuantity();
               } else {
-                event.dispatch(
-                  ACTIONS.REMOVE_ITEMS_TO_PLAYER_INVENTORY,
-                  getTransactionItems()
-                );
-
-                event.dispatch(ACTIONS.RECEIVE_MONEY, getTotalPrice(items()));
+                updateInventory(getTransactionItems(), "SUBTRACTION");
               }
 
-              event.dispatch(ACTIONS.SET_MODAL, {
-                title: "",
+              setModal({
                 isOpen: false,
-                children: <></>,
               });
             }}
           >

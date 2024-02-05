@@ -2,7 +2,7 @@ import { createEffect, createSignal, JSXElement } from "solid-js";
 
 interface IModal {
   isOpen?: boolean;
-  title: string;
+  title?: string;
   hideCloseButton?: boolean;
   children?: JSXElement;
 }

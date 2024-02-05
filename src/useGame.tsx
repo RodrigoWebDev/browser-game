@@ -1,21 +1,13 @@
 import { createSignal, onMount, JSXElement, createEffect } from "solid-js";
 import { Dynamic } from "solid-js/web";
 import {
-  ACTIONS,
-  event,
   getPlayerTotalWiehgt,
   getRandomIntFromInterval,
   getRandomItemFromArray,
 } from "./helpers";
 import Enemy from "./classes/Enemy";
 
-import {
-  IAction,
-  IInventoryItems,
-  IItemShop,
-  ISettings,
-  IWorld,
-} from "./interfaces";
+import { IAction, IInventoryItems, ISettings, IWorld } from "./interfaces";
 import {
   GENDERS,
   MAX_THINGS_NUMBER,
@@ -37,6 +29,11 @@ import Shop from "./components/Shop";
 import { ITEM, ITEM_TYPES } from "./constants/items";
 import PersonWalk from "./components/svgIcons/personWalk";
 import Menu from "./components/Menu";
+import { modalState } from "./state/modal";
+import { inventoryState } from "./state/inventory";
+import { shopState } from "./state/shop";
+
+//States
 
 interface IPlayer {
   name: string;
@@ -51,7 +48,12 @@ interface IPlayer {
   inventoryItems: IInventoryItems[];
 }
 
+console.log({ shopState });
+
 const useApp = () => {
+  const [shop, setShop] = shopState;
+  const [inventory, setInventory] = inventoryState;
+
   const [settings, setSettings] = createSignal<ISettings>({
     isNightMode: false,
   });
@@ -71,15 +73,11 @@ const useApp = () => {
     inventoryMaxCapacity: 4,
     inventoryItems: [],
   });
-  /* const [shop, setShop] = createSignal<IItemShop[]>([]); */
   const [combatScreen, setCombatScreen] = createSignal({
     enemies: [new Enemy(0, ENEMY["TROLL"]), new Enemy(1, ENEMY["GOBLIN"])],
   });
-  const [modalContent, setModalContent] = createSignal({
-    title: "",
-    isOpen: false,
-    children: <></>,
-  });
+
+  const [modal, setModal] = modalState;
 
   const getCurrentLocation = () => {
     return world().locations[player().currentLocationIndex];
@@ -109,10 +107,9 @@ const useApp = () => {
   };
 
   const closeModal = () => {
-    setModalContent((val) => ({
-      ...val,
+    setModal({
       isOpen: false,
-    }));
+    });
   };
 
   const hasThingToFind = () => {
@@ -137,8 +134,7 @@ const useApp = () => {
 
   const explore = () => {
     if (hasThingToFind()) {
-      setModalContent((val) => ({
-        ...val,
+      setModal(() => ({
         title: `Exploring ${getCurrentLocation().name}`,
         children: <PersonWalk />,
         isOpen: true,
@@ -149,8 +145,7 @@ const useApp = () => {
         findSomething();
       }, 1000);
     } else {
-      setModalContent((val) => ({
-        ...val,
+      setModal(() => ({
         title: "Você ja explorou tudo",
         children: <></>,
         isOpen: true,
@@ -199,7 +194,7 @@ const useApp = () => {
         actions.push({
           name: "Talk",
           click: () => {
-            setModalContent({
+            setModal({
               title: randomName,
               isOpen: true,
               children: <NpcTalk img={randomImage} text={getRandomTalk()} />,
@@ -211,26 +206,6 @@ const useApp = () => {
           actions.push({
             name: "Buy",
             click: () => {
-              setModalContent({
-                title: `${randomName}'s Shop`,
-                isOpen: true,
-                children: (
-                  <Shop
-                    /* items={shop()} */
-                    playerMoney={player().money}
-                    closeModal={() => {
-                      closeModal();
-                    }}
-                    /* update={() => {
-                      setShop([...shopItems]);
-                    }} */
-                    playerInventoryMaxCapacity={player().inventoryMaxCapacity}
-                    playerCurrentWeight={_getPlayerTotalWeight()}
-                    isBuying
-                  />
-                ),
-              });
-
               const items = ITEM_TYPES.map((itemName) => ({
                 ...ITEM[itemName],
                 maxQuantity: 5,
@@ -238,9 +213,25 @@ const useApp = () => {
                 key: itemName,
               }));
 
-              event.dispatch(ACTIONS.UPDATE_SHOP, {
+              setShop((val) => ({
+                ...val,
                 items,
-                money: 9992,
+              }));
+
+              setModal({
+                title: `${randomName}'s Shop`,
+                isOpen: true,
+                children: (
+                  <Shop
+                    playerMoney={player().money}
+                    closeModal={() => {
+                      closeModal();
+                    }}
+                    playerInventoryMaxCapacity={player().inventoryMaxCapacity}
+                    playerCurrentWeight={_getPlayerTotalWeight()}
+                    isBuying
+                  />
+                ),
               });
             },
           });
@@ -248,7 +239,19 @@ const useApp = () => {
           actions.push({
             name: "Sell",
             click: () => {
-              setModalContent({
+              const items = inventory().items.map((item) => ({
+                ...ITEM[item.key],
+                maxQuantity: item.quantity,
+                quantitySelected: 0,
+                key: item.key,
+              }));
+
+              setShop((val) => ({
+                ...val,
+                items,
+              }));
+
+              setModal({
                 title: `Selling to ${randomName}`,
                 isOpen: true,
                 children: (
@@ -262,8 +265,6 @@ const useApp = () => {
                   />
                 ),
               });
-
-              event.dispatch(ACTIONS.SELL_ITEMS);
             },
           });
         }
@@ -340,7 +341,7 @@ const useApp = () => {
   };
 
   const goToNextArea = () => {
-    setModalContent({
+    setModal({
       title: `Going to the next area`,
       children: <PersonWalk />,
       isOpen: true,
@@ -376,7 +377,7 @@ const useApp = () => {
   };
 
   const openMenu = () => {
-    setModalContent({
+    setModal({
       title: "Menu",
       isOpen: true,
       children: <Menu settings={settings()} setSettings={setSettings} />,
@@ -400,10 +401,6 @@ const useApp = () => {
   };
 
   onMount(() => {
-    event.subscribe(ACTIONS.SET_MODAL, (modalData) => {
-      setModalContent({ ...modalData });
-    });
-
     loadSettings();
     createPlaces();
   });
@@ -418,7 +415,7 @@ const useApp = () => {
     escapeFromCombat,
     combatScreen,
     attackEnemy,
-    modalContent,
+    modal,
     explore,
     world,
     getCurrentLocation,

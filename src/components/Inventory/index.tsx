@@ -1,22 +1,13 @@
 import { Dynamic } from "solid-js/web";
-import { createSignal, onMount } from "solid-js";
-import { ACTIONS, event, getPlayerTotalWiehgt } from "../../helpers";
-import { IInventoryItems, IItemShop } from "../../interfaces";
+import { onMount } from "solid-js";
+import { getPlayerTotalWiehgt } from "../../helpers";
+import { IItemShop } from "../../interfaces";
 import ToolTip from "../Tooltip";
 import DropDown from "../dropwdown";
-
-interface IPlayerInventory {
-  money: number;
-  maxCapacity: number;
-  items: IInventoryItems[];
-}
+import { inventoryState } from "../../state/inventory";
 
 const Inventory = () => {
-  const [playerInventory, setPlayerInventory] = createSignal<IPlayerInventory>({
-    money: 10000,
-    maxCapacity: 4,
-    items: [],
-  });
+  const [inventory, setInventory] = inventoryState;
 
   const updateInventoryItems = (
     purchasedItems: IItemShop[],
@@ -24,16 +15,16 @@ const Inventory = () => {
   ) => {
     if (!purchasedItems) return [];
 
-    const inventory = [...playerInventory().items];
+    const _inventory = [...inventory().items];
 
     purchasedItems.forEach((shopItem) => {
       //TODO: ao invés de usar o findIdex, talvez seja melhor fazer com que o inventário seja um objeto de objetos e buscar o item pelo index. Talvez seja necessário refatorar também como o componente Shop exibe os itens
-      const index = inventory.findIndex((item) => {
+      const index = _inventory.findIndex((item) => {
         return item.key === shopItem.key;
       });
 
       if (index < 0) {
-        inventory.push({
+        _inventory.push({
           ...shopItem,
           quantity: shopItem.quantitySelected,
           playerActions: [
@@ -52,28 +43,28 @@ const Inventory = () => {
           ],
         });
       } else {
-        inventory[index] = {
-          ...inventory[index],
+        _inventory[index] = {
+          ..._inventory[index],
           quantity:
             operation === "SUM"
-              ? shopItem.quantitySelected + inventory[index].quantity
-              : inventory[index].quantity - shopItem.quantitySelected,
+              ? shopItem.quantitySelected + _inventory[index].quantity
+              : _inventory[index].quantity - shopItem.quantitySelected,
         };
       }
     });
 
-    const no0QuantityItems = inventory.filter((item) => {
+    const no0QuantityItems = _inventory.filter((item) => {
       return item.quantity > 0;
     });
 
-    setPlayerInventory((val) => ({
+    setInventory((val) => ({
       ...val,
       items: no0QuantityItems,
     }));
   };
 
   const formatItemsToSell = () => {
-    return playerInventory().items.map((item) => {
+    return inventory().items.map((item) => {
       return {
         ...item,
         maxQuantity: item.quantity,
@@ -81,59 +72,22 @@ const Inventory = () => {
     });
   };
 
-  onMount(() => {
-    event.subscribe(ACTIONS.ADD_ITEMS_TO_PLAYER_INVENTORY, (items: any) => {
-      updateInventoryItems([...items], "SUM");
-    });
-
-    event.subscribe(ACTIONS.REMOVE_ITEMS_TO_PLAYER_INVENTORY, (items: any) => {
-      updateInventoryItems([...items], "SUBTRACTION");
-    });
-
-    event.subscribe(ACTIONS.SELL_ITEMS, () => {
-      if (playerInventory().items.length) {
-        event.dispatch(ACTIONS.UPDATE_SHOP, {
-          items: formatItemsToSell(),
-          money: playerInventory().money,
-        });
-      } else {
-        event.dispatch(ACTIONS.SET_MODAL, {
-          title: "You have no items to sell",
-          isOpen: true,
-          children: <></>,
-        });
-      }
-    });
-
-    event.subscribe(ACTIONS.SPEND_MONEY, (moneySpent: number) => {
-      setPlayerInventory((val) => ({
-        ...val,
-        money: val.money - moneySpent,
-      }));
-    });
-
-    event.subscribe(ACTIONS.RECEIVE_MONEY, (moneySpent: number) => {
-      setPlayerInventory((val) => ({
-        ...val,
-        money: val.money + moneySpent,
-      }));
-    });
-  });
+  onMount(() => {});
 
   return (
     <div id="inventory">
-      <div>Money: {playerInventory().money}</div>
+      <div>Money: {inventory().money}</div>
 
       <div class="flex justify-between">
         <h2 class="mb-2">Inventory</h2>
         <div>
-          {getPlayerTotalWiehgt(playerInventory().items).toFixed(1)}/
-          {playerInventory().maxCapacity.toFixed(1)} kg
+          {getPlayerTotalWiehgt(inventory().items).toFixed(1)}/
+          {inventory().maxCapacity.toFixed(1)} kg
         </div>
       </div>
 
       <div class="flex flex-wrap gap-[2%]">
-        {playerInventory().items.map((item) => {
+        {inventory().items.map((item) => {
           return (
             <div class="w-[23%]">
               <ToolTip
