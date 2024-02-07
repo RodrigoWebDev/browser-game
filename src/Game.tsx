@@ -1,6 +1,6 @@
 import Card from "./components/Card";
 import SwordsSvg from "./components/svgIcons/swords";
-import DropDown from "./components/dropwdown";
+import DropDown from "./components/Dropwdown";
 import Button from "./components/Button";
 import Modal from "./components/Modal";
 
@@ -40,7 +40,7 @@ function Game() {
               <div id="combat" class="p-4 bg-black/40">
                 <div id="enemies" class="flex mb-4">
                   {combatScreen().enemies.map((enemy) => {
-                    const enemyIsDead = enemy.hp <= 0;
+                    const enemyIsDead = enemy.HP <= 0;
                     return (
                       <div
                         class={`${cardContainerStyle} ${
@@ -48,22 +48,22 @@ function Game() {
                         }`}
                       >
                         <Card
-                          img={enemy.img}
-                          imgHueRotation={enemy.hueRotation}
-                          imgBrighter={enemy.damageEffetct}
-                          title={enemy.name}
+                          img={enemy.IMAGE}
+                          imgHueRotation={0}
+                          imgBrighter={false}
+                          title={enemy.NAME}
                           subTitle="ENEMY"
                           footer={
                             <>
                               <ToolTip
-                                text={`HP: ${enemy.hp}`}
+                                text={`HP: ${enemy.HP}`}
                                 className="flex items-center"
                               >
                                 <div class="mr-2">HP:</div>
                                 <progress
                                   class="progress progress-error"
-                                  value={enemy.hp}
-                                  max={enemy.maxHp}
+                                  value={enemy.HP}
+                                  max={enemy.MAX_HP}
                                 ></progress>
                               </ToolTip>
                               <div data-id="actions" class="flex">
@@ -74,7 +74,7 @@ function Game() {
                                   items={enemy.playerActions.map((item) => (
                                     <li
                                       onClick={() => {
-                                        attackEnemy(item, enemy);
+                                        //attackEnemy(item, enemy);
                                       }}
                                     >
                                       <a data-id="action">{item.name}</a>

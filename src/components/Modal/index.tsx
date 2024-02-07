@@ -1,4 +1,5 @@
 import { createEffect, createSignal, JSXElement } from "solid-js";
+import Button from "../Button";
 
 interface IModal {
   isOpen?: boolean;
@@ -16,39 +17,39 @@ const Modal = (props: IModal) => {
 
   return (
     <dialog
-      id="my_modal_1"
       class={`modal ${_isOpen() ? "opacity-100 pointer-events-auto" : ""}`}
     >
-      <div class="modal-box">
-        <h3 class="font-bold text-lg">{props.title}</h3>
-        {props.children}
-        {!props.hideCloseButton && (
-          <div class="modal-action">
-            <form method="dialog">
-              <button
-                class="btn"
-                onClick={() => {
-                  _setIsOpen(false);
-                }}
-              >
-                Fechar
-              </button>
-            </form>
-          </div>
-        )}
-        {/* <div class="modal-action">
-          <form method="dialog">
-            <button
-              class="btn"
-              onClick={() => {
-                _setIsOpen(false);
-              }}
-            >
-              Close
-            </button>
-          </form>
-        </div> */}
-      </div>
+      {_isOpen() && (
+        <div class="modal-box">
+          <h3 class="font-bold text-lg">{props.title}</h3>
+          <div class="w-full">{props.children}</div>
+          {!props.hideCloseButton && (
+            <div class="modal-action">
+              <form method="dialog">
+                <Button
+                  onClick={() => {
+                    _setIsOpen(false);
+                  }}
+                >
+                  Fechar
+                </Button>
+              </form>
+            </div>
+          )}
+          {/* <div class="modal-action">
+      <form method="dialog">
+        <button
+          class="btn"
+          onClick={() => {
+            _setIsOpen(false);
+          }}
+        >
+          Close
+        </button>
+      </form>
+    </div> */}
+        </div>
+      )}
     </dialog>
   );
 };

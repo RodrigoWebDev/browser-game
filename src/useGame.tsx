@@ -6,14 +6,21 @@ import {
 } from "./helpers";
 import Enemy from "./classes/Enemy";
 
-import { IAction, IInventoryItems, ISettings, IWorld } from "./interfaces";
+import {
+  IAction,
+  IEnemyInCombat,
+  IInventoryItems,
+  ISettings,
+  IThing,
+  IWorld,
+} from "./interfaces";
 import {
   GENDERS,
   MAX_THINGS_NUMBER,
   MIN_THINGS_NUMBER,
   NPC_NAMES,
 } from "./constants";
-import { ENEMY, TENEMY_TYPES } from "./constants/enemies";
+import { ENEMY, IENEMY, TENEMY_TYPES } from "./constants/enemies";
 import {
   INNER_PLACE,
   IPlace,
@@ -31,21 +38,9 @@ import Menu from "./components/Menu";
 import { modalState } from "./state/modal";
 import { inventoryState } from "./state/inventory";
 import { shopState } from "./state/shop";
+import { playerState } from "./state/player";
 
 //States
-
-interface IPlayer {
-  name: string;
-  class: string;
-  hp: number;
-  maxHp: number;
-  attackDamage: number;
-  currentLocationIndex: number;
-  isInCombat: boolean;
-  money: number;
-  inventoryMaxCapacity: number;
-  inventoryItems: IInventoryItems[];
-}
 
 console.log({ shopState });
 
@@ -60,20 +55,12 @@ const useApp = () => {
     locations: [],
   });
   const [showHit, setShowHit] = createSignal(false);
-  const [player, setPlayer] = createSignal<IPlayer>({
-    name: "Tekomo Nakama",
-    class: "Guerreiro",
-    hp: 100,
-    maxHp: 100,
-    attackDamage: 50,
-    currentLocationIndex: 0,
-    isInCombat: true,
-    money: 10000,
-    inventoryMaxCapacity: 4,
-    inventoryItems: [],
-  });
-  const [combatScreen, setCombatScreen] = createSignal({
-    enemies: [new Enemy(0, ENEMY["TROLL"]), new Enemy(1, ENEMY["GOBLIN"])],
+  const [player, setPlayer] = playerState;
+
+  const [combatScreen, setCombatScreen] = createSignal<{
+    enemies: IEnemyInCombat[];
+  }>({
+    enemies: [],
   });
 
   const [modal, setModal] = modalState;
@@ -157,7 +144,7 @@ const useApp = () => {
   };
 
   const _getPlayerTotalWeight = () => {
-    return getPlayerTotalWiehgt(player().inventoryItems);
+    return getPlayerTotalWiehgt(inventory().items);
   };
 
   const getPlaceInformation = (place: IPlace) => {
@@ -171,11 +158,11 @@ const useApp = () => {
     );
 
     for (let i = 0; i < interval; i++) {
-      //const randomThing = getRandomItemFromArray(place.THINGS) as IThing;
-      const randomThing = {
+      const randomThing = getRandomItemFromArray(place.THINGS) as IThing;
+      /* const randomThing = {
         TYPE: "NPC",
         SUBTYPE: "MERCHANT",
-      };
+      }; */
 
       let randomName = "";
       let randomImage = "";
@@ -226,7 +213,7 @@ const useApp = () => {
                     closeModal={() => {
                       closeModal();
                     }}
-                    playerInventoryMaxCapacity={player().inventoryMaxCapacity}
+                    playerInventoryMaxCapacity={inventory().maxCapacity}
                     playerCurrentWeight={_getPlayerTotalWeight()}
                     isBuying
                   />
@@ -259,7 +246,7 @@ const useApp = () => {
                     closeModal={() => {
                       closeModal();
                     }}
-                    playerInventoryMaxCapacity={player().inventoryMaxCapacity}
+                    playerInventoryMaxCapacity={inventory().maxCapacity}
                     playerCurrentWeight={_getPlayerTotalWeight()}
                   />
                 ),
@@ -289,15 +276,34 @@ const useApp = () => {
 
       if (thingType === "ENEMY") {
         const thingSubType = randomThing.SUBTYPE as TENEMY_TYPES;
-        const thing = ENEMY[thingSubType];
-        const image = ENEMY[thingSubType].IMAGE;
+        const enemy = ENEMY[thingSubType];
+        const image = enemy.IMAGE;
+        randomName = enemy.NAME;
         randomImage = image;
-        randomName = thing.NAME;
 
         actions = [
           {
-            name: "Attack",
+            name: "Start combat",
             click: () => {
+              setPlayer((val) => ({
+                ...val,
+                isInCombat: true,
+              }));
+
+              setCombatScreen((val) => ({
+                ...val,
+                enemies: [
+                  {
+                    ...enemy,
+                    playerActions: [
+                      {
+                        name: "Atacar",
+                        click: () => {},
+                      },
+                    ],
+                  },
+                ],
+              }));
               //this.talk();
             },
           },

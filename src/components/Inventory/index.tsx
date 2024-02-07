@@ -2,8 +2,9 @@ import { onMount } from "solid-js";
 import { getPlayerTotalWiehgt } from "../../helpers";
 import { IItemShop } from "../../interfaces";
 import ToolTip from "../Tooltip";
-import DropDown from "../dropwdown";
+import DropDown from "../Dropwdown";
 import { inventoryState } from "../../state/inventory";
+import EmojiDisplay from "../EmojiDsplay";
 
 const Inventory = () => {
   const [inventory, setInventory] = inventoryState;
@@ -94,7 +95,7 @@ const Inventory = () => {
                 className="block"
               >
                 <DropDown
-                  trigger={item.img}
+                  trigger={<EmojiDisplay code={item.img} />}
                   items={item.playerActions.map((playerAction) => {
                     return (
                       <li

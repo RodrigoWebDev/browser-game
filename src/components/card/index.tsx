@@ -1,4 +1,5 @@
 import { JSXElement, createSignal, onMount } from "solid-js";
+import EmojiDisplay from "../EmojiDsplay";
 
 interface ICARD {
   img?: string;
@@ -13,27 +14,15 @@ interface ICARD {
 }
 
 const Card = (props: ICARD) => {
-  const [imageSize, setImageSize] = createSignal(0);
-  let cardContainerRef: any;
-
-  onMount(() => {
-    setImageSize(cardContainerRef.offsetWidth);
-  });
-
   return (
     <div
-      ref={cardContainerRef}
       class={`card bg-base-100 shadow-xl ${props.className}`}
       onClick={() => {
         props.onClick && props.onClick();
       }}
     >
-      <div
-        class="bg-[#15191e] rounded-t-xl text-center"
-        style={{ "font-size": `${imageSize() / 1.5}px` }}
-      >
-        {props.img}
-      </div>
+      <EmojiDisplay code={props.img || ""} />
+
       <div class={`card-body ${props.cardBodyClassName}`}>
         {props.title && <h2 class="card-title text-[16px]">{props.title}</h2>}
         {props.subTitle && (

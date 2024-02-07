@@ -1,3 +1,4 @@
+import { IENEMY } from "./constants/enemies";
 import { IITEM, TITEM_TYPES } from "./constants/items";
 
 export interface IPlayerActions {
@@ -59,4 +60,8 @@ export interface IThing {
 
 export interface ISettings {
   isNightMode: boolean;
+}
+
+export interface IEnemyInCombat extends IENEMY {
+  playerActions: IAction[];
 }

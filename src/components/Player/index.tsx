@@ -1,46 +1,21 @@
-import { createSignal, onMount } from "solid-js";
-import Knight from "../svgIcons/knight";
 import ToolTip from "../Tooltip";
 import Inventory from "../Inventory";
-
-interface IPlayer {
-  name: string;
-  class: string;
-  hp: number;
-  maxHp: number;
-  attackDamage: number;
-  currentLocationIndex: number;
-  isInCombat: boolean;
-  money: number;
-}
+import EmojiDisplay from "../EmojiDsplay";
+import { playerState } from "../../state/player";
 
 const Player = () => {
-  const [player, setPlayer] = createSignal<IPlayer>({
-    name: "Tekomo Nakama",
-    class: "Guerreiro",
-    hp: 100,
-    maxHp: 100,
-    attackDamage: 50,
-    currentLocationIndex: 0,
-    isInCombat: true,
-    money: 10000,
-  });
-  const [imageSize, setImageSize] = createSignal(0);
-  let playerContainerRef: any;
-
-  onMount(() => {
-    setImageSize(playerContainerRef.offsetWidth);
-  });
+  const [player] = playerState;
 
   return (
-    <div ref={playerContainerRef}>
+    <div>
       {/* <Knight className="bg-[#15191e] rounded-box mb-4" /> */}
-      <div
+      {/* <div
         class="text-center"
         style={{ "font-size": `${imageSize() / 1.5}px` }}
       >
-        😐
-      </div>
+        
+      </div> */}
+      <EmojiDisplay code="😐" />
       <div>
         <strong>Name</strong>: {player().name}
       </div>
