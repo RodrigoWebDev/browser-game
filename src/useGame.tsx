@@ -1,4 +1,4 @@
-import { createSignal, onMount, JSXElement, createEffect } from "solid-js";
+import { createSignal, onMount, createEffect } from "solid-js";
 import {
   getPlayerTotalWiehgt,
   getRandomIntFromInterval,
@@ -6,21 +6,14 @@ import {
 } from "./helpers";
 import Enemy from "./classes/Enemy";
 
-import {
-  IAction,
-  IEnemyInCombat,
-  IInventoryItems,
-  ISettings,
-  IThing,
-  IWorld,
-} from "./interfaces";
+import { IAction, ISettings, IThing, IWorld } from "./interfaces";
 import {
   GENDERS,
   MAX_THINGS_NUMBER,
   MIN_THINGS_NUMBER,
   NPC_NAMES,
 } from "./constants";
-import { ENEMY, IENEMY, TENEMY_TYPES } from "./constants/enemies";
+import { ENEMY, TENEMY_TYPES } from "./constants/enemies";
 import {
   INNER_PLACE,
   IPlace,
@@ -35,18 +28,16 @@ import Shop from "./components/Shop";
 import { ITEM, ITEM_TYPES } from "./constants/items";
 import PersonWalk from "./components/svgIcons/personWalk";
 import Menu from "./components/Menu";
+
+//States
 import { modalState } from "./state/modal";
 import { inventoryState } from "./state/inventory";
 import { shopState } from "./state/shop";
 import { playerState } from "./state/player";
 
-//States
-
-console.log({ shopState });
-
 const useApp = () => {
-  const [shop, setShop] = shopState;
-  const [inventory, setInventory] = inventoryState;
+  const [, setShop] = shopState;
+  const [inventory] = inventoryState;
 
   const [settings, setSettings] = createSignal<ISettings>({
     isNightMode: false,
@@ -54,11 +45,11 @@ const useApp = () => {
   const [world, setWorld] = createSignal<IWorld>({
     locations: [],
   });
-  const [showHit, setShowHit] = createSignal(false);
+  const [, setShowHit] = createSignal(false);
   const [player, setPlayer] = playerState;
 
   const [combatScreen, setCombatScreen] = createSignal<{
-    enemies: IEnemyInCombat[];
+    enemies: Enemy[];
   }>({
     enemies: [],
   });
@@ -90,6 +81,20 @@ const useApp = () => {
     setTimeout(() => {
       updateCombatScreen();
     }, 150);
+
+    const isWinBattle = !combatScreen().enemies.some((item) => item.hp > 0);
+
+    if (isWinBattle) {
+      setCombatScreen((val) => ({
+        ...val,
+        enemies: [],
+      }));
+
+      setPlayer((val) => ({
+        ...val,
+        isInCombat: false,
+      }));
+    }
   };
 
   const closeModal = () => {
@@ -158,11 +163,11 @@ const useApp = () => {
     );
 
     for (let i = 0; i < interval; i++) {
-      const randomThing = getRandomItemFromArray(place.THINGS) as IThing;
-      /* const randomThing = {
-        TYPE: "NPC",
-        SUBTYPE: "MERCHANT",
-      }; */
+      //const randomThing = getRandomItemFromArray(place.THINGS) as IThing;
+      const randomThing = {
+        TYPE: "ENEMY",
+        SUBTYPE: "TROLL",
+      };
 
       let randomName = "";
       let randomImage = "";
@@ -290,20 +295,26 @@ const useApp = () => {
                 isInCombat: true,
               }));
 
-              setCombatScreen((val) => ({
-                ...val,
-                enemies: [
-                  {
-                    ...enemy,
-                    playerActions: [
-                      {
-                        name: "Atacar",
-                        click: () => {},
-                      },
-                    ],
-                  },
-                ],
-              }));
+              setCombatScreen((val) => {
+                return {
+                  ...val,
+                  enemies: [
+                    new Enemy(enemy, 0),
+                    /* {
+                      ...enemy,
+                      playerActions: [
+                        {
+                          name: "Atacar",
+                          click: () => {},
+                        },
+                      ],
+                    } */
+                  ],
+                };
+              });
+
+              if (combatScreen()) {
+              }
               //this.talk();
             },
           },
@@ -330,7 +341,8 @@ const useApp = () => {
   };
 
   const getPlace = () => {
-    const randomPlaceType = getRandomItemFromArray(PLACE_TYPES) as TPLACE_TYPES;
+    //const randomPlaceType = getRandomItemFromArray(PLACE_TYPES) as TPLACE_TYPES;
+    const randomPlaceType = "FOREST";
 
     return getPlaceInformation(PLACES[randomPlaceType]);
   };

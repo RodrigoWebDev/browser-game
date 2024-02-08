@@ -40,7 +40,7 @@ function Game() {
               <div id="combat" class="p-4 bg-black/40">
                 <div id="enemies" class="flex mb-4">
                   {combatScreen().enemies.map((enemy) => {
-                    const enemyIsDead = enemy.HP <= 0;
+                    const enemyIsDead = enemy.hp <= 0;
                     return (
                       <div
                         class={`${cardContainerStyle} ${
@@ -48,22 +48,22 @@ function Game() {
                         }`}
                       >
                         <Card
-                          img={enemy.IMAGE}
+                          img={enemy.img}
                           imgHueRotation={0}
                           imgBrighter={false}
-                          title={enemy.NAME}
+                          title={enemy.name}
                           subTitle="ENEMY"
                           footer={
                             <>
                               <ToolTip
-                                text={`HP: ${enemy.HP}`}
+                                text={`HP: ${enemy.hp}`}
                                 className="flex items-center"
                               >
                                 <div class="mr-2">HP:</div>
                                 <progress
                                   class="progress progress-error"
-                                  value={enemy.HP}
-                                  max={enemy.MAX_HP}
+                                  value={enemy.hp}
+                                  max={enemy.maxHp}
                                 ></progress>
                               </ToolTip>
                               <div data-id="actions" class="flex">
@@ -74,7 +74,7 @@ function Game() {
                                   items={enemy.playerActions.map((item) => (
                                     <li
                                       onClick={() => {
-                                        //attackEnemy(item, enemy);
+                                        attackEnemy(item, enemy);
                                       }}
                                     >
                                       <a data-id="action">{item.name}</a>

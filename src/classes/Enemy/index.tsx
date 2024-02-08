@@ -1,7 +1,6 @@
 import { IENEMY } from "../../constants/enemies";
 
 export class Enemy {
-  id;
   name;
   description;
   img;
@@ -18,8 +17,7 @@ export class Enemy {
   hp = 100;
   maxHp = 100;
 
-  constructor(id: number, refference: IENEMY, hueRotation: number = 0) {
-    this.id = id;
+  constructor(refference: IENEMY, hueRotation: number = 0) {
     this.name = refference.NAME;
     this.description = refference.DESCRIPTION;
     this.img = refference.IMAGE;
