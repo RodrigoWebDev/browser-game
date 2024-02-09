@@ -26,6 +26,7 @@ function Game() {
     getCurrentLocation,
     goToNextArea,
     goToPreviousArea,
+    winCombat,
   } = useApp();
 
   return (
@@ -48,10 +49,10 @@ function Game() {
                         }`}
                       >
                         <Card
-                          img={enemy.img}
+                          img={enemy.refference.IMAGE}
                           imgHueRotation={0}
                           imgBrighter={false}
-                          title={enemy.name}
+                          title={enemy.refference.NAME}
                           subTitle="ENEMY"
                           footer={
                             <>
@@ -75,6 +76,7 @@ function Game() {
                                     <li
                                       onClick={() => {
                                         attackEnemy(item, enemy);
+                                        winCombat();
                                       }}
                                     >
                                       <a data-id="action">{item.name}</a>

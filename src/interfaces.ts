@@ -28,13 +28,11 @@ export interface IWorld {
 export interface IItemShop extends IITEM {
   maxQuantity: number;
   quantitySelected: number;
-  key: TITEM_TYPES;
 }
 
 export interface IInventoryItems extends IITEM {
   playerActions: IPlayerActions[];
   quantity: number;
-  key: TITEM_TYPES;
 }
 
 export interface IUpdatePlayerArgs {

@@ -3,11 +3,11 @@ export const ITEM = {
     name: "Healing potion",
     img: "💊",
     price: 12,
-    canEquip: false,
     consumableEffects: {
       heal: 50,
     },
     weight: 0.2,
+    key: "HEALING_POTION",
   },
   RING: {
     name: "Ring",
@@ -16,6 +16,21 @@ export const ITEM = {
     canEquip: true,
     consumableEffects: null,
     weight: 0.1,
+    key: "RING",
+  },
+  BONE: {
+    name: "Bone",
+    img: "🦴",
+    price: 1,
+    weight: 0.2,
+    key: "BONE",
+  },
+  FANG: {
+    name: "Fang",
+    img: "🦷",
+    price: 1,
+    weight: 0.1,
+    key: "FANG",
   },
 };
 
@@ -23,11 +38,12 @@ export interface IITEM {
   name: string;
   img: string;
   price: number;
-  canEquip: boolean;
+  canEquip?: boolean;
   consumableEffects?: {
     heal?: number | null;
   } | null;
   weight: number;
+  key: TITEM_TYPES;
 }
 
 export type TITEM_TYPES = keyof typeof ITEM;

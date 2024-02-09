@@ -1,4 +1,4 @@
-import { IInventoryItems } from "../interfaces";
+import { IInventoryItems, IItemShop } from "../interfaces";
 
 export const randomFloatFromInterval = (min: number, max: number) => {
   return Math.floor(Math.random() * (max - min + 1) + min);
@@ -23,6 +23,24 @@ export const getPlayerTotalWiehgt = (inventoryItems: IInventoryItems[]) => {
 
   if (itemWeights.length) {
     return itemWeights.reduce((prev: number, curr: number) => {
+      return prev + curr;
+    });
+  } else {
+    return 0;
+  }
+};
+
+export const getTotalPrice = (items: IItemShop[]) => {
+  const selectedItems = items.filter((item) => {
+    return item.quantitySelected > 0;
+  });
+
+  const selectedItemsPriceOnly = selectedItems.map((item) => {
+    return item.price * item.quantitySelected;
+  });
+
+  if (selectedItemsPriceOnly.length > 0) {
+    return selectedItemsPriceOnly.reduce((prev: number, curr: number) => {
       return prev + curr;
     });
   } else {

@@ -8,7 +8,10 @@ interface IToolTip {
 
 const ToolTip = (props: IToolTip) => {
   return (
-    <div class={`tooltip ${props.className}`} data-tip={props.text}>
+    <div
+      class={`${props.text && "tooltip"} ${props.className}`}
+      data-tip={props.text}
+    >
       {props.children}
     </div>
   );

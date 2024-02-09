@@ -6,14 +6,20 @@ import {
 } from "./helpers";
 import Enemy from "./classes/Enemy";
 
-import { IAction, ISettings, IThing, IWorld } from "./interfaces";
+import {
+  IAction,
+  IInventoryItems,
+  ISettings,
+  IThing,
+  IWorld,
+} from "./interfaces";
 import {
   GENDERS,
   MAX_THINGS_NUMBER,
   MIN_THINGS_NUMBER,
   NPC_NAMES,
 } from "./constants";
-import { ENEMY, TENEMY_TYPES } from "./constants/enemies";
+import { ENEMY, IENEMY, TENEMY_TYPES } from "./constants/enemies";
 import {
   INNER_PLACE,
   IPlace,
@@ -25,19 +31,20 @@ import {
 import { NPC, NPC_GREETINGS, TNPC_TYPES } from "./constants/npc";
 import NpcTalk from "./components/NpcTalk";
 import Shop from "./components/Shop";
-import { ITEM, ITEM_TYPES } from "./constants/items";
+import { IITEM, ITEM, ITEM_TYPES } from "./constants/items";
 import PersonWalk from "./components/svgIcons/personWalk";
 import Menu from "./components/Menu";
 
 //States
 import { modalState } from "./state/modal";
-import { inventoryState } from "./state/inventory";
+import { inventoryState, updateInventory } from "./state/inventory";
 import { shopState } from "./state/shop";
 import { playerState } from "./state/player";
+import EmojiDisplay from "./components/EmojiDsplay";
 
 const useApp = () => {
   const [, setShop] = shopState;
-  const [inventory] = inventoryState;
+  const [inventory, setInventory] = inventoryState;
 
   const [settings, setSettings] = createSignal<ISettings>({
     isNightMode: false,
@@ -81,10 +88,59 @@ const useApp = () => {
     setTimeout(() => {
       updateCombatScreen();
     }, 150);
+  };
 
-    const isWinBattle = !combatScreen().enemies.some((item) => item.hp > 0);
+  const winCombat = () => {
+    const isWinCombat = !combatScreen().enemies.some((item) => item.hp > 0);
 
-    if (isWinBattle) {
+    if (isWinCombat) {
+      const itemsDrop = combatScreen()
+        .enemies.map((enemy) => {
+          return enemy.refference.DROPS.map((drop) => {
+            return {
+              key: drop,
+              quantity: 1,
+            };
+          });
+        })
+        .flat();
+
+      setModal({
+        isOpen: true,
+        title: "You won the fight",
+        children: (
+          <div>
+            <p>You have obtained the following items:</p>
+            <div class="flex">
+              {itemsDrop.map((item) => {
+                const itemInfo = ITEM[item.key];
+                return (
+                  <div class="w-[10%] text-center">
+                    <EmojiDisplay
+                      code={itemInfo.img}
+                      tooltipText={itemInfo.name}
+                    />
+                    <div>x{item.quantity}</div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        ),
+      });
+
+      const itemsToInventory = itemsDrop.map((item) => {
+        const itemRefference = ITEM[item.key] as IITEM;
+
+        return {
+          ...itemRefference,
+          playerActions: [],
+          quantity: 1,
+        };
+      });
+
+      updateInventory(itemsToInventory, "SUM");
+
       setCombatScreen((val) => ({
         ...val,
         enemies: [],
@@ -165,8 +221,8 @@ const useApp = () => {
     for (let i = 0; i < interval; i++) {
       //const randomThing = getRandomItemFromArray(place.THINGS) as IThing;
       const randomThing = {
-        TYPE: "ENEMY",
-        SUBTYPE: "TROLL",
+        TYPE: "NPC",
+        SUBTYPE: "MERCHANT",
       };
 
       let randomName = "";
@@ -281,7 +337,7 @@ const useApp = () => {
 
       if (thingType === "ENEMY") {
         const thingSubType = randomThing.SUBTYPE as TENEMY_TYPES;
-        const enemy = ENEMY[thingSubType];
+        const enemy = ENEMY[thingSubType] as IENEMY;
         const image = enemy.IMAGE;
         randomName = enemy.NAME;
         randomImage = image;
@@ -438,6 +494,7 @@ const useApp = () => {
     getCurrentLocation,
     goToNextArea,
     goToPreviousArea,
+    winCombat,
   };
 };
 

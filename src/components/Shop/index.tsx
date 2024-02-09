@@ -3,8 +3,9 @@ import { IItemShop } from "../../interfaces";
 import Button from "../Button";
 import Card from "../Card";
 import { shopState } from "../../state/shop";
-import { inventoryState } from "../../state/inventory";
+import { inventoryState, updateInventory } from "../../state/inventory";
 import { modalState } from "../../state/modal";
+import { IITEM, ITEM, TITEM_TYPES } from "../../constants/items";
 
 //States
 /* import inventoryState from "../../state/inventory";
@@ -54,9 +55,18 @@ const Shop = (props: IShop) => {
     });
   };
 
-  const getTransactionItems = () => {
+  const getSelectedItems = () => {
     return shop().items.filter((item) => {
       return item.quantitySelected > 0;
+    });
+  };
+
+  const getTransactionItems = () => {
+    return getSelectedItems().map((item) => {
+      return {
+        key: item.key,
+        quantity: item.quantitySelected,
+      };
     });
   };
 
@@ -65,7 +75,7 @@ const Shop = (props: IShop) => {
   };
 
   const getBuyedItemsTotalWeight = () => {
-    const weights = getTransactionItems().map((item) => {
+    const weights = getSelectedItems().map((item) => {
       return item.weight * item.quantitySelected;
     });
 
@@ -115,64 +125,6 @@ const Shop = (props: IShop) => {
           quantitySelected: 0,
         };
       }),
-    }));
-  };
-
-  const updateInventory = (
-    purchasedItems: IItemShop[],
-    operation: "SUM" | "SUBTRACTION"
-  ) => {
-    if (!purchasedItems) return [];
-
-    const _inventory = [...inventory().items];
-
-    purchasedItems.forEach((shopItem) => {
-      //TODO: ao invés de usar o findIdex, talvez seja melhor fazer com que o inventário seja um objeto de objetos e buscar o item pelo index. Talvez seja necessário refatorar também como o componente Shop exibe os itens
-      const index = _inventory.findIndex((item) => {
-        return item.key === shopItem.key;
-      });
-
-      if (index < 0) {
-        _inventory.push({
-          ...shopItem,
-          quantity: shopItem.quantitySelected,
-          playerActions: [
-            {
-              name: "Equip",
-              click: () => {},
-            },
-            {
-              name: "Consume",
-              click: () => {},
-            },
-            {
-              name: "Info",
-              click: () => {},
-            },
-          ],
-        });
-      } else {
-        _inventory[index] = {
-          ..._inventory[index],
-          quantity:
-            operation === "SUM"
-              ? shopItem.quantitySelected + _inventory[index].quantity
-              : _inventory[index].quantity - shopItem.quantitySelected,
-        };
-      }
-    });
-
-    const no0QuantityItems = _inventory.filter((item) => {
-      return item.quantity > 0;
-    });
-
-    setInventory((val) => ({
-      ...val,
-      items: no0QuantityItems,
-      money:
-        operation === "SUM"
-          ? val.money - getTotalPrice(shop().items)
-          : val.money + getTotalPrice(shop().items),
     }));
   };
 

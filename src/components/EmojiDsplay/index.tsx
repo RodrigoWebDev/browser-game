@@ -1,7 +1,9 @@
 import { createEffect, createSignal } from "solid-js";
+import ToolTip from "../Tooltip";
 
 interface IEmojiDisplay {
   code: string;
+  tooltipText?: string;
 }
 
 const EmojiDisplay = (props: IEmojiDisplay) => {
@@ -20,7 +22,7 @@ const EmojiDisplay = (props: IEmojiDisplay) => {
       ref={setMyRef}
       style={{ "font-size": `${imageSize() / 1.5}px` }}
     >
-      {props.code}
+      <ToolTip text={props.tooltipText || ""}>{props.code}</ToolTip>
     </div>
   );
 };
