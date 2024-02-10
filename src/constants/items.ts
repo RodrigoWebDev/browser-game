@@ -1,13 +1,13 @@
 export const ITEM = {
   HEALING_POTION: {
-    name: "Healing potion",
+    name: "Healing pill",
     img: "💊",
     price: 12,
     consumableEffects: {
       heal: 50,
     },
-    weight: 0.2,
-    key: "HEALING_POTION",
+    weight: 0.1,
+    key: "HEALING_PILL",
   },
   RING: {
     name: "Ring",
@@ -31,6 +31,20 @@ export const ITEM = {
     price: 1,
     weight: 0.1,
     key: "FANG",
+  },
+  POISON: {
+    name: "Poison",
+    img: "🧪",
+    price: 3,
+    weight: 0.1,
+    key: "POISON",
+  },
+  SAFETY_PIN: {
+    name: "Safety pin",
+    img: "🧷",
+    price: 1,
+    weight: 0.1,
+    key: "SAFETY_PIN",
   },
 };
 

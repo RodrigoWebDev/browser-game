@@ -41,6 +41,7 @@ import { inventoryState, updateInventory } from "./state/inventory";
 import { shopState } from "./state/shop";
 import { playerState } from "./state/player";
 import EmojiDisplay from "./components/EmojiDsplay";
+import { CONTAINER, TCONTAINER_TYPES } from "./constants/containers";
 
 const useApp = () => {
   const [, setShop] = shopState;
@@ -153,14 +154,10 @@ const useApp = () => {
     }
   };
 
-  const removeEnemyFromMap = (id: number) => {
-    //getCurrentLocation()
+  const removeThingFromLocation = (id: number) => {
     const _world = { ...world() };
-    _world.locations[player().currentLocationIndex].things = _world.locations[
-      player().currentLocationIndex
-    ].things.filter((item) => {
-      return item.id !== id;
-    });
+
+    delete _world.locations[player().currentLocationIndex].things[id];
 
     setWorld({ ..._world });
   };
@@ -327,9 +324,7 @@ const useApp = () => {
             },
           });
         }
-      }
-
-      if (thingType === "INNER_PLACE") {
+      } else if (thingType === "INNER_PLACE") {
         //Create INNER_PLACE Info
         const _subType = randomThing.SUBTYPE as TINNER_PLACE_TYPES;
         const thing = INNER_PLACE[_subType];
@@ -345,9 +340,7 @@ const useApp = () => {
             },
           },
         ];
-      }
-
-      if (thingType === "ENEMY") {
+      } else if (thingType === "ENEMY") {
         const thingSubType = randomThing.SUBTYPE as TENEMY_TYPES;
         const enemy = ENEMY[thingSubType] as IENEMY;
         const image = enemy.IMAGE;
@@ -387,6 +380,14 @@ const useApp = () => {
             },
           },
         ];
+      } else {
+        const thingSubType = randomThing.SUBTYPE as TCONTAINER_TYPES;
+        const container = CONTAINER[thingSubType];
+        const image = container.IMAGE;
+        randomName = container.NAME;
+        randomImage = image;
+
+        actions = [];
       }
 
       things.push({
@@ -492,8 +493,6 @@ const useApp = () => {
   });
 
   createEffect(() => {
-    console.log("=== world() ===");
-    console.log(world());
     updateSettings();
   });
 
@@ -510,7 +509,7 @@ const useApp = () => {
     goToNextArea,
     goToPreviousArea,
     winCombat,
-    removeEnemyFromMap,
+    removeThingFromLocation,
   };
 };
 

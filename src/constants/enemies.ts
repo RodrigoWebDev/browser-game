@@ -34,7 +34,7 @@ export const ENEMY = {
     DESCRIPTION: "A spider",
     HP: 100,
     MAX_HP: 100,
-    DROPS: ["BONE"],
+    DROPS: ["POISON"],
   },
 };
 

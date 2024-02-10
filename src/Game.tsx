@@ -27,7 +27,7 @@ function Game() {
     goToNextArea,
     goToPreviousArea,
     winCombat,
-    removeEnemyFromMap,
+    removeThingFromLocation,
   } = useGame();
 
   return (
@@ -78,7 +78,7 @@ function Game() {
                                       onClick={() => {
                                         attackEnemy(item, enemy);
                                         winCombat();
-                                        removeEnemyFromMap(enemy.id);
+                                        removeThingFromLocation(enemy.id);
                                       }}
                                     >
                                       <a data-id="action">{item.name}</a>

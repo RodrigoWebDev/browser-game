@@ -130,7 +130,7 @@ export const PLACES = {
     ],
     IMAGES: ["🏞"],
     THINGS: [
-      {
+      /* {
         TYPE: "NPC",
         SUBTYPE: "TRAVELLER",
       },
@@ -149,6 +149,10 @@ export const PLACES = {
       {
         TYPE: "INNER_PLACE",
         SUBTYPE: "DUNGEON",
+      }, */
+      {
+        TYPE: "CONTAINER",
+        SUBTYPE: "WASTE_BASKET",
       },
     ],
   },
