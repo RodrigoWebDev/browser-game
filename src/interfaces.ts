@@ -11,6 +11,7 @@ export interface ILocation {
   type: string;
   bg: string;
   things: {
+    id: number;
     found: boolean;
     thing: {
       name: string;

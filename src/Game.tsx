@@ -5,7 +5,7 @@ import Button from "./components/Button";
 import Modal from "./components/Modal";
 
 // Assets
-import useApp from "./useGame";
+import useGame from "./useGame";
 import ToolTip from "./components/Tooltip";
 import Player from "./components/Player";
 import ExploreSvg from "./components/svgIcons/explore";
@@ -27,7 +27,8 @@ function Game() {
     goToNextArea,
     goToPreviousArea,
     winCombat,
-  } = useApp();
+    removeEnemyFromMap,
+  } = useGame();
 
   return (
     <div class="flex justify-between h-screen max-w-[1360px] mx-auto">
@@ -77,6 +78,7 @@ function Game() {
                                       onClick={() => {
                                         attackEnemy(item, enemy);
                                         winCombat();
+                                        removeEnemyFromMap(enemy.id);
                                       }}
                                     >
                                       <a data-id="action">{item.name}</a>

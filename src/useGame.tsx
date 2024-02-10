@@ -153,6 +153,18 @@ const useApp = () => {
     }
   };
 
+  const removeEnemyFromMap = (id: number) => {
+    //getCurrentLocation()
+    const _world = { ...world() };
+    _world.locations[player().currentLocationIndex].things = _world.locations[
+      player().currentLocationIndex
+    ].things.filter((item) => {
+      return item.id !== id;
+    });
+
+    setWorld({ ..._world });
+  };
+
   const closeModal = () => {
     setModal({
       isOpen: false,
@@ -219,11 +231,11 @@ const useApp = () => {
     );
 
     for (let i = 0; i < interval; i++) {
-      //const randomThing = getRandomItemFromArray(place.THINGS) as IThing;
-      const randomThing = {
+      const randomThing = getRandomItemFromArray(place.THINGS) as IThing;
+      /* const randomThing = {
         TYPE: "NPC",
         SUBTYPE: "MERCHANT",
-      };
+      }; */
 
       let randomName = "";
       let randomImage = "";
@@ -355,7 +367,7 @@ const useApp = () => {
                 return {
                   ...val,
                   enemies: [
-                    new Enemy(enemy, 0),
+                    new Enemy(i, enemy, 0),
                     /* {
                       ...enemy,
                       playerActions: [
@@ -378,6 +390,7 @@ const useApp = () => {
       }
 
       things.push({
+        id: i,
         found: false,
         thing: {
           name: randomName,
@@ -479,6 +492,8 @@ const useApp = () => {
   });
 
   createEffect(() => {
+    console.log("=== world() ===");
+    console.log(world());
     updateSettings();
   });
 
@@ -495,6 +510,7 @@ const useApp = () => {
     goToNextArea,
     goToPreviousArea,
     winCombat,
+    removeEnemyFromMap,
   };
 };
 

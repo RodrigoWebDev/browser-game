@@ -1,6 +1,7 @@
 import { IENEMY } from "../../constants/enemies";
 
 export class Enemy {
+  id;
   refference;
   damageEffetct = false;
   hueRotation;
@@ -15,7 +16,8 @@ export class Enemy {
   hp = 100;
   maxHp = 100;
 
-  constructor(refference: IENEMY, hueRotation: number = 0) {
+  constructor(id: number, refference: IENEMY, hueRotation: number = 0) {
+    this.id = id;
     this.refference = refference;
     this.hueRotation = hueRotation;
   }
