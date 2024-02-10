@@ -1,157 +1,46 @@
-import { createSignal, onMount, createEffect } from "solid-js";
+import { createSignal } from "solid-js";
+import { IAction, IThing, IWorld } from "../interfaces";
+import { playerState } from "./player";
+import { modalState } from "./modal";
+import PersonWalk from "../components/svgIcons/personWalk";
 import {
-  getPlayerTotalWiehgt,
-  getRandomIntFromInterval,
-  getRandomItemFromArray,
-} from "./helpers";
-import Enemy from "./classes/Enemy";
-
-import {
-  IAction,
-  IInventoryItems,
-  ISettings,
-  IThing,
-  IWorld,
-} from "./interfaces";
+  INNER_PLACE,
+  IPlace,
+  PLACES,
+  TINNER_PLACE_TYPES,
+} from "../constants/places";
+import { CONTAINER, TCONTAINER_TYPES } from "../constants/containers";
+import { combatController } from "./combat";
+import { ENEMY, IENEMY, TENEMY_TYPES } from "../constants/enemies";
+import { getRandomIntFromInterval, getRandomItemFromArray } from "../helpers";
+import { inventoryState, inventoryController } from "./inventory";
+import { NPC, NPC_GREETINGS, TNPC_TYPES } from "../constants/npc";
 import {
   GENDERS,
   MAX_THINGS_NUMBER,
   MIN_THINGS_NUMBER,
   NPC_NAMES,
-} from "./constants";
-import { ENEMY, IENEMY, TENEMY_TYPES } from "./constants/enemies";
-import {
-  INNER_PLACE,
-  IPlace,
-  PLACES,
-  PLACE_TYPES,
-  TINNER_PLACE_TYPES,
-  TPLACE_TYPES,
-} from "./constants/places";
-import { NPC, NPC_GREETINGS, TNPC_TYPES } from "./constants/npc";
-import NpcTalk from "./components/NpcTalk";
-import Shop from "./components/Shop";
-import { IITEM, ITEM, ITEM_TYPES } from "./constants/items";
-import PersonWalk from "./components/svgIcons/personWalk";
-import Menu from "./components/Menu";
+} from "../constants";
+import NpcTalk from "../components/NpcTalk";
+import { ITEM_TYPES, ITEM } from "../constants/items";
+import { shopState } from "./shop";
+import Shop from "../components/Shop";
 
-//States
-import { modalState } from "./state/modal";
-import { inventoryState, updateInventory } from "./state/inventory";
-import { shopState } from "./state/shop";
-import { playerState } from "./state/player";
-import EmojiDisplay from "./components/EmojiDsplay";
-import { CONTAINER, TCONTAINER_TYPES } from "./constants/containers";
+export const worldState = createSignal<IWorld>({
+  locations: [],
+});
 
-const useApp = () => {
-  const [, setShop] = shopState;
-  const [inventory, setInventory] = inventoryState;
-
-  const [settings, setSettings] = createSignal<ISettings>({
-    isNightMode: false,
-  });
-  const [world, setWorld] = createSignal<IWorld>({
-    locations: [],
-  });
-  const [, setShowHit] = createSignal(false);
+export const worldController = () => {
+  const [world, setWorld] = worldState;
   const [player, setPlayer] = playerState;
-
-  const [combatScreen, setCombatScreen] = createSignal<{
-    enemies: Enemy[];
-  }>({
-    enemies: [],
-  });
-
-  const [modal, setModal] = modalState;
+  const [, setModal] = modalState;
+  const [inventory] = inventoryState;
+  const [, setShop] = shopState;
+  const combat = combatController();
+  const _inventoryController = inventoryController();
 
   const getCurrentLocation = () => {
     return world().locations[player().currentLocationIndex];
-  };
-
-  const playerTakeDamage = (damage: number) => {
-    setPlayer((val) => ({
-      ...val,
-      hp: val.hp - damage,
-    }));
-
-    setShowHit(true);
-    setTimeout(() => {
-      setShowHit(false);
-    }, 300);
-  };
-
-  const attackEnemy = (item: IAction, enemy: Enemy) => {
-    item.click(player().attackDamage);
-    updateCombatScreen();
-
-    enemy.resetDamageEffect();
-
-    setTimeout(() => {
-      updateCombatScreen();
-    }, 150);
-  };
-
-  const winCombat = () => {
-    const isWinCombat = !combatScreen().enemies.some((item) => item.hp > 0);
-
-    if (isWinCombat) {
-      const itemsDrop = combatScreen()
-        .enemies.map((enemy) => {
-          return enemy.refference.DROPS.map((drop) => {
-            return {
-              key: drop,
-              quantity: 1,
-            };
-          });
-        })
-        .flat();
-
-      setModal({
-        isOpen: true,
-        title: "You won the fight",
-        children: (
-          <div>
-            <p>You have obtained the following items:</p>
-            <div class="flex">
-              {itemsDrop.map((item) => {
-                const itemInfo = ITEM[item.key];
-                return (
-                  <div class="w-[10%] text-center">
-                    <EmojiDisplay
-                      code={itemInfo.img}
-                      tooltipText={itemInfo.name}
-                    />
-                    <div>x{item.quantity}</div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        ),
-      });
-
-      const itemsToInventory = itemsDrop.map((item) => {
-        const itemRefference = ITEM[item.key] as IITEM;
-
-        return {
-          ...itemRefference,
-          playerActions: [],
-          quantity: 1,
-        };
-      });
-
-      updateInventory(itemsToInventory, "SUM");
-
-      setCombatScreen((val) => ({
-        ...val,
-        enemies: [],
-      }));
-
-      setPlayer((val) => ({
-        ...val,
-        isInCombat: false,
-      }));
-    }
   };
 
   const removeThingFromLocation = (id: number) => {
@@ -160,12 +49,6 @@ const useApp = () => {
     delete _world.locations[player().currentLocationIndex].things[id];
 
     setWorld({ ..._world });
-  };
-
-  const closeModal = () => {
-    setModal({
-      isOpen: false,
-    });
   };
 
   const hasThingToFind = () => {
@@ -186,6 +69,12 @@ const useApp = () => {
 
       setWorld(_world);
     }
+  };
+
+  const closeModal = () => {
+    setModal({
+      isOpen: false,
+    });
   };
 
   const explore = () => {
@@ -211,10 +100,6 @@ const useApp = () => {
 
   const getRandomTalk = () => {
     return getRandomItemFromArray(NPC_GREETINGS);
-  };
-
-  const _getPlayerTotalWeight = () => {
-    return getPlayerTotalWiehgt(inventory().items);
   };
 
   const getPlaceInformation = (place: IPlace) => {
@@ -284,7 +169,7 @@ const useApp = () => {
                       closeModal();
                     }}
                     playerInventoryMaxCapacity={inventory().maxCapacity}
-                    playerCurrentWeight={_getPlayerTotalWeight()}
+                    playerCurrentWeight={_inventoryController.getInventoryWeight()}
                     isBuying
                   />
                 ),
@@ -317,7 +202,7 @@ const useApp = () => {
                       closeModal();
                     }}
                     playerInventoryMaxCapacity={inventory().maxCapacity}
-                    playerCurrentWeight={_getPlayerTotalWeight()}
+                    playerCurrentWeight={_inventoryController.getInventoryWeight()}
                   />
                 ),
               });
@@ -356,26 +241,10 @@ const useApp = () => {
                 isInCombat: true,
               }));
 
-              setCombatScreen((val) => {
-                return {
-                  ...val,
-                  enemies: [
-                    new Enemy(i, enemy, 0),
-                    /* {
-                      ...enemy,
-                      playerActions: [
-                        {
-                          name: "Atacar",
-                          click: () => {},
-                        },
-                      ],
-                    } */
-                  ],
-                };
-              });
+              combat.setEnemiesToCombat(i, enemy);
 
-              if (combatScreen()) {
-              }
+              /* if (combat()) {
+              } */
               //this.talk();
             },
           },
@@ -450,67 +319,12 @@ const useApp = () => {
     }));
   };
 
-  const escapeFromCombat = () => {
-    setPlayer((val) => ({
-      ...val,
-      isInCombat: false,
-    }));
-  };
-
-  const updateCombatScreen = () => {
-    setCombatScreen((val) => ({
-      ...val,
-    }));
-  };
-
-  const openMenu = () => {
-    setModal({
-      title: "Menu",
-      isOpen: true,
-      children: <Menu settings={settings()} setSettings={setSettings} />,
-    });
-  };
-
-  const loadSettings = () => {
-    const settingsFromLocalStorage = window.localStorage.getItem("settings");
-
-    if (settingsFromLocalStorage) {
-      const jsonSettings = JSON.parse(settingsFromLocalStorage) as ISettings;
-      setSettings(jsonSettings);
-    }
-  };
-
-  const updateSettings = () => {
-    window.localStorage.setItem("settings", JSON.stringify(settings()));
-    const theme = settings().isNightMode ? "dark" : "light";
-
-    document.querySelector("html")?.setAttribute("data-theme", theme);
-  };
-
-  onMount(() => {
-    loadSettings();
-    createPlaces();
-  });
-
-  createEffect(() => {
-    updateSettings();
-  });
-
   return {
-    openMenu,
-    player,
-    escapeFromCombat,
-    combatScreen,
-    attackEnemy,
-    modal,
-    explore,
-    world,
-    getCurrentLocation,
-    goToNextArea,
-    goToPreviousArea,
-    winCombat,
+    createPlaces,
     removeThingFromLocation,
+    getCurrentLocation,
+    goToPreviousArea,
+    explore,
+    goToNextArea,
   };
 };
-
-export default useApp;

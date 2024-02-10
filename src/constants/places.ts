@@ -133,12 +133,12 @@ export const PLACES = {
       /* {
         TYPE: "NPC",
         SUBTYPE: "TRAVELLER",
-      },
+      }, */
       {
         TYPE: "ENEMY",
         SUBTYPE: "GOBLIN",
       },
-      {
+      /* {
         TYPE: "ENEMY",
         SUBTYPE: "SPIDER",
       },
@@ -149,11 +149,11 @@ export const PLACES = {
       {
         TYPE: "INNER_PLACE",
         SUBTYPE: "DUNGEON",
-      }, */
+      },
       {
         TYPE: "CONTAINER",
         SUBTYPE: "WASTE_BASKET",
-      },
+      }, */
     ],
   },
 };

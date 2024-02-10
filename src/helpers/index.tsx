@@ -16,20 +16,6 @@ export const getRandomItemFromArray = (arr: any[]) => {
   return arr[getRandomIndexFromArray(arr)];
 };
 
-export const getPlayerTotalWiehgt = (inventoryItems: IInventoryItems[]) => {
-  const itemWeights = inventoryItems.map((item) => {
-    return item.weight;
-  });
-
-  if (itemWeights.length) {
-    return itemWeights.reduce((prev: number, curr: number) => {
-      return prev + curr;
-    });
-  } else {
-    return 0;
-  }
-};
-
 export const getTotalPrice = (items: IItemShop[]) => {
   const selectedItems = items.filter((item) => {
     return item.quantitySelected > 0;

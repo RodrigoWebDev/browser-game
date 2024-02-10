@@ -1,13 +1,13 @@
 import { onMount } from "solid-js";
-import { getPlayerTotalWiehgt } from "../../helpers";
 import { IItemShop } from "../../interfaces";
 import ToolTip from "../Tooltip";
 import DropDown from "../Dropwdown";
-import { inventoryState } from "../../state/inventory";
+import { inventoryState, inventoryController } from "../../state/inventory";
 import EmojiDisplay from "../EmojiDsplay";
 
 const Inventory = () => {
   const [inventory, setInventory] = inventoryState;
+  const _inventoryController = inventoryController();
 
   const updateInventoryItems = (
     purchasedItems: IItemShop[],
@@ -81,8 +81,10 @@ const Inventory = () => {
       <div class="flex justify-between">
         <h2 class="mb-2">Inventory</h2>
         <div>
-          {getPlayerTotalWiehgt(inventory().items).toFixed(1)}/
-          {inventory().maxCapacity.toFixed(1)} kg
+          {_inventoryController
+            .getPlayerTotalWiehgt(inventory().items)
+            .toFixed(1)}
+          /{inventory().maxCapacity.toFixed(1)} kg
         </div>
       </div>
 

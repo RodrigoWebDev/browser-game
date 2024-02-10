@@ -3,9 +3,8 @@ import { IItemShop } from "../../interfaces";
 import Button from "../Button";
 import Card from "../Card";
 import { shopState } from "../../state/shop";
-import { inventoryState, updateInventory } from "../../state/inventory";
+import { inventoryState, inventoryController } from "../../state/inventory";
 import { modalState } from "../../state/modal";
-import { IITEM, ITEM, TITEM_TYPES } from "../../constants/items";
 
 //States
 /* import inventoryState from "../../state/inventory";
@@ -39,11 +38,10 @@ const getTotalPrice = (items: IItemShop[]) => {
 };
 
 const Shop = (props: IShop) => {
-  //const [items, setItems] = createSignal<IItemShop[]>([]);
   const [shop, setShop] = shopState;
-  const [inventory, setInventory] = inventoryState;
-  const [modal, setModal] = modalState;
-  //const [money, setMoney] = createSignal(0);
+  const [inventory] = inventoryState;
+  const [, setModal] = modalState;
+  const _inventoryController = inventoryController();
 
   const getConfirmButtonText = () => {
     return props.isBuying ? "Buy" : "Sell";
@@ -201,10 +199,16 @@ const Shop = (props: IShop) => {
           <Button
             onClick={() => {
               if (props.isBuying) {
-                updateInventory(getTransactionItems(), "SUM");
+                _inventoryController.updateInventory(
+                  getTransactionItems(),
+                  "SUM"
+                );
                 updateItemsQuantity();
               } else {
-                updateInventory(getTransactionItems(), "SUBTRACTION");
+                _inventoryController.updateInventory(
+                  getTransactionItems(),
+                  "SUBTRACTION"
+                );
               }
 
               setModal({

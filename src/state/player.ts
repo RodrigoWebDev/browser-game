@@ -21,3 +21,20 @@ export const playerState = createSignal<IPlayer>({
   isInCombat: false,
   money: 10000,
 });
+
+const playerController = () => {
+  const [player, setPlayer] = playerState;
+
+  const playerTakeDamage = (damage: number) => {
+    setPlayer((val) => ({
+      ...val,
+      hp: val.hp - damage,
+    }));
+
+    /* setShowHit(true);
+    setTimeout(() => {
+      setShowHit(false);
+    }, 300); */
+  };
+  return {};
+};
