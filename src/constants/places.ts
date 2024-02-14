@@ -1,10 +1,11 @@
-import village0 from "../assets/backgrounds/village/0.webp";
+import { JSXElement, ValidComponent } from "solid-js";
+import { Cave, Dungeon, Forest, Tavern, Village } from "../components/Icons";
 import { IThing } from "../interfaces";
 
 export interface IPlace {
   ID: string;
   NAMES: string[];
-  IMAGES: string[];
+  IMAGES: ValidComponent[];
   THINGS: IThing[];
 }
 
@@ -60,7 +61,7 @@ export const PLACES = {
       "Sable Point",
       "Harmony Hollow",
     ],
-    IMAGES: ["🏘️"],
+    IMAGES: [Village],
     THINGS: [
       {
         TYPE: "NPC",
@@ -128,17 +129,17 @@ export const PLACES = {
       "Lunarwood",
       "Briarheart Grove",
     ],
-    IMAGES: ["🏞"],
+    IMAGES: [Forest],
     THINGS: [
-      /* {
+      {
         TYPE: "NPC",
         SUBTYPE: "TRAVELLER",
-      }, */
+      },
       {
         TYPE: "ENEMY",
         SUBTYPE: "GOBLIN",
       },
-      /* {
+      {
         TYPE: "ENEMY",
         SUBTYPE: "SPIDER",
       },
@@ -152,8 +153,8 @@ export const PLACES = {
       },
       {
         TYPE: "CONTAINER",
-        SUBTYPE: "WASTE_BASKET",
-      }, */
+        SUBTYPE: "CHEST",
+      },
     ],
   },
 };
@@ -162,7 +163,7 @@ export const INNER_PLACE = {
   DUNGEON: {
     ID: "DUNEGON",
     NAMES: ["Mistery", "Shadow", "Death", "Fear"],
-    IMAGES: ["🏟️"],
+    IMAGES: [Dungeon],
     THINGS: [
       {
         TYPE: "ENEMY",
@@ -189,7 +190,7 @@ export const INNER_PLACE = {
       "The Terrific Mice",
       "The Next Best Whisper",
     ],
-    IMAGES: ["🏨"],
+    IMAGES: [Tavern],
     THINGS: [
       {
         TYPE: "NPC",
@@ -200,7 +201,7 @@ export const INNER_PLACE = {
   CAVERN: {
     ID: "CAVERN",
     NAMES: ["Mistery", "Shadow", "Death", "Fear"],
-    IMAGES: ["🎪"],
+    IMAGES: [Cave],
     THINGS: [
       {
         TYPE: "ENEMY",

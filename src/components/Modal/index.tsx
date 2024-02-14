@@ -1,5 +1,6 @@
-import { createEffect, createSignal, JSXElement } from "solid-js";
+import { createEffect, createSignal, JSXElement, onMount } from "solid-js";
 import Button from "../Button";
+import { modalState } from "../../state/modal";
 
 interface IModal {
   isOpen?: boolean;
@@ -10,6 +11,17 @@ interface IModal {
 
 const Modal = (props: IModal) => {
   const [_isOpen, _setIsOpen] = createSignal(props.isOpen);
+  const [, setModal] = modalState;
+
+  onMount(() => {
+    document.addEventListener("keyup", (e) => {
+      if (e.key === "Escape") {
+        setModal({
+          isOpen: false,
+        });
+      }
+    });
+  });
 
   createEffect(() => {
     _setIsOpen(props.isOpen);
@@ -17,7 +29,9 @@ const Modal = (props: IModal) => {
 
   return (
     <dialog
-      class={`modal ${_isOpen() ? "opacity-100 pointer-events-auto" : ""}`}
+      class={`modal bg-black/50 ${
+        _isOpen() ? "opacity-100 pointer-events-auto" : ""
+      }`}
     >
       {_isOpen() && (
         <div class="modal-box">

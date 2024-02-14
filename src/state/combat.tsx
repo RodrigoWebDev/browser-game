@@ -3,10 +3,10 @@ import Enemy from "../classes/Enemy";
 import { IAction } from "../interfaces";
 import { playerState } from "./player";
 import { modalState } from "./modal";
-import EmojiDisplay from "../components/EmojiDsplay";
-import { IITEM, ITEM } from "../constants/items";
+import { IITEM, ITEM } from "../constants/items.ts";
 import { IENEMY } from "../constants/enemies";
 import { inventoryController } from "./inventory";
+import { Dynamic } from "solid-js/web";
 
 interface ICombat {
   enemies: Enemy[];
@@ -65,10 +65,7 @@ export const combatController = () => {
                 const itemInfo = ITEM[item.key];
                 return (
                   <div class="w-[10%] text-center">
-                    <EmojiDisplay
-                      code={itemInfo.img}
-                      tooltipText={itemInfo.name}
-                    />
+                    <Dynamic component={itemInfo.img} />
                     <div>x{item.quantity}</div>
                   </div>
                 );

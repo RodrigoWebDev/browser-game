@@ -9,18 +9,8 @@ const DropDown = (props: IDropDown) => {
   return (
     <>
       <div class="dropdown block">
-        <div tabindex="0" role="button">
-          {props.trigger}
-          {/* <div class="avatar">
-            <div class="rounded-xl">
-              <img src={item.img} />
-            </div>
-          </div> */}
-        </div>
-        <ul
-          tabindex="0"
-          class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
-        >
+        <div role="button">{props.trigger}</div>
+        <ul class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
           {props.items}
         </ul>
       </div>

@@ -15,12 +15,13 @@ import { settingsController } from "./state/settings";
 import { playerState } from "./state/player";
 import { modalState } from "./state/modal";
 import { createEffect, onMount } from "solid-js";
+import { Dynamic } from "solid-js/web";
 
 const cardContainerStyle = "w-[25%] mr-2 mb-2";
 
 function Game() {
   const [player] = playerState;
-  const [modal] = modalState;
+  const [modal, setModal] = modalState;
   const [world] = worldState;
   const [combat] = combatState;
   const _combatController = combatController();
@@ -56,7 +57,7 @@ function Game() {
                         }`}
                       >
                         <Card
-                          img={enemy.refference.IMAGE}
+                          img={<Dynamic component={enemy.refference.IMAGE} />}
                           imgHueRotation={0}
                           imgBrighter={false}
                           title={enemy.refference.NAME}
@@ -80,19 +81,21 @@ function Game() {
                                     <SwordsSvg className="w-[16px] text-white" />
                                   }
                                   items={enemy.playerActions.map((item) => (
-                                    <li
-                                      onClick={() => {
-                                        _combatController.attackEnemy(
-                                          item,
-                                          enemy
-                                        );
-                                        _combatController.winCombat();
-                                        _worldController.removeThingFromLocation(
-                                          enemy.id
-                                        );
-                                      }}
-                                    >
-                                      <a data-id="action">{item.name}</a>
+                                    <li>
+                                      <Button
+                                        onClick={() => {
+                                          _combatController.attackEnemy(
+                                            item,
+                                            enemy
+                                          );
+                                          _combatController.winCombat();
+                                          _worldController.removeThingFromLocation(
+                                            enemy.id
+                                          );
+                                        }}
+                                      >
+                                        {item.name}
+                                      </Button>
                                     </li>
                                   ))}
                                 />
@@ -179,7 +182,7 @@ function Game() {
                               <Card
                                 title={thing.name}
                                 subTitle={thing.type}
-                                img={thing.img}
+                                img={<Dynamic component={thing.img} />}
                                 imgBrighter={false}
                                 footer={
                                   <>
@@ -192,14 +195,14 @@ function Game() {
                                         }
                                         items={thing.playerActions.map(
                                           (item) => (
-                                            <li
-                                              onClick={() => {
-                                                item.click();
-                                              }}
-                                            >
-                                              <a data-id="action">
+                                            <li>
+                                              <Button
+                                                onClick={() => {
+                                                  item.click();
+                                                }}
+                                              >
                                                 {item.name}
-                                              </a>
+                                              </Button>
                                             </li>
                                           )
                                         )}

@@ -1,18 +1,23 @@
-import { createSignal } from "solid-js";
+import { JSXElement, ValidComponent, createSignal } from "solid-js";
 import { IAction, IThing, IWorld } from "../interfaces";
 import { playerState } from "./player";
 import { modalState } from "./modal";
-import PersonWalk from "../components/svgIcons/personWalk";
 import {
   INNER_PLACE,
   IPlace,
   PLACES,
+  PLACE_TYPES,
   TINNER_PLACE_TYPES,
+  TPLACE_TYPES,
 } from "../constants/places";
 import { CONTAINER, TCONTAINER_TYPES } from "../constants/containers";
 import { combatController } from "./combat";
 import { ENEMY, IENEMY, TENEMY_TYPES } from "../constants/enemies";
-import { getRandomIntFromInterval, getRandomItemFromArray } from "../helpers";
+import {
+  getNewArrayWithRandomItems,
+  getRandomIntFromInterval,
+  getRandomItemFromArray,
+} from "../helpers";
 import { inventoryState, inventoryController } from "./inventory";
 import { NPC, NPC_GREETINGS, TNPC_TYPES } from "../constants/npc";
 import {
@@ -22,9 +27,11 @@ import {
   NPC_NAMES,
 } from "../constants";
 import NpcTalk from "../components/NpcTalk";
-import { ITEM_TYPES, ITEM } from "../constants/items";
+import { ITEM_TYPES, ITEM, TITEM_TYPES } from "../constants/items.ts";
 import { shopState } from "./shop";
 import Shop from "../components/Shop";
+import { PersonWalk } from "../components/Icons";
+import { Dynamic } from "solid-js/web";
 
 export const worldState = createSignal<IWorld>({
   locations: [],
@@ -113,14 +120,14 @@ export const worldController = () => {
     );
 
     for (let i = 0; i < interval; i++) {
-      const randomThing = getRandomItemFromArray(place.THINGS) as IThing;
-      /* const randomThing = {
+      //const randomThing = getRandomItemFromArray(place.THINGS) as IThing;
+      const randomThing = {
         TYPE: "NPC",
         SUBTYPE: "MERCHANT",
-      }; */
+      };
 
       let randomName = "";
-      let randomImage = "";
+      let randomImage: JSXElement;
       let actions: IAction[] = [];
       let subType = randomThing.SUBTYPE.toLocaleLowerCase();
       const thingType = randomThing.TYPE;
@@ -130,7 +137,7 @@ export const worldController = () => {
         const _subType = randomThing.SUBTYPE as TNPC_TYPES;
         const gender = getRandomItemFromArray(GENDERS) as "MALE" | "FEMALE";
         const images = NPC[_subType][gender].IMAGES;
-        randomImage = getRandomItemFromArray(images);
+        randomImage = <Dynamic component={getRandomItemFromArray(images)} />;
         randomName = getRandomItemFromArray(NPC_NAMES[gender]);
         actions.push({
           name: "Talk",
@@ -144,10 +151,15 @@ export const worldController = () => {
         });
 
         if (_subType == "MERCHANT") {
+          //Generate inventory items for merchant
+          const inventoryItems = getNewArrayWithRandomItems(
+            ITEM_TYPES
+          ) as TITEM_TYPES[];
+
           actions.push({
             name: "Buy",
             click: () => {
-              const items = ITEM_TYPES.map((itemName) => ({
+              const items = inventoryItems.map((itemName) => ({
                 ...ITEM[itemName],
                 maxQuantity: 5,
                 quantitySelected: 0,
@@ -230,7 +242,7 @@ export const worldController = () => {
         const enemy = ENEMY[thingSubType] as IENEMY;
         const image = enemy.IMAGE;
         randomName = enemy.NAME;
-        randomImage = image;
+        randomImage = <Dynamic component={image} />;
 
         actions = [
           {
@@ -254,7 +266,7 @@ export const worldController = () => {
         const container = CONTAINER[thingSubType];
         const image = container.IMAGE;
         randomName = container.NAME;
-        randomImage = image;
+        randomImage = <Dynamic component={image} />;
 
         actions = [];
       }
@@ -280,8 +292,8 @@ export const worldController = () => {
   };
 
   const getPlace = () => {
-    //const randomPlaceType = getRandomItemFromArray(PLACE_TYPES) as TPLACE_TYPES;
-    const randomPlaceType = "FOREST";
+    const randomPlaceType = getRandomItemFromArray(PLACE_TYPES) as TPLACE_TYPES;
+    //const randomPlaceType = "FOREST";
 
     return getPlaceInformation(PLACES[randomPlaceType]);
   };

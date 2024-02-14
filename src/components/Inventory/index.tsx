@@ -3,7 +3,9 @@ import { IItemShop } from "../../interfaces";
 import ToolTip from "../Tooltip";
 import DropDown from "../Dropwdown";
 import { inventoryState, inventoryController } from "../../state/inventory";
-import EmojiDisplay from "../EmojiDsplay";
+import { Dynamic } from "solid-js/web";
+import { Cash, Weight } from "../Icons";
+import Button from "../Button";
 
 const Inventory = () => {
   const [inventory, setInventory] = inventoryState;
@@ -76,16 +78,24 @@ const Inventory = () => {
 
   return (
     <div id="inventory">
-      <div>Money: {inventory().money}</div>
-
       <div class="flex justify-between">
-        <h2 class="mb-2">Inventory</h2>
-        <div>
-          {_inventoryController
-            .getPlayerTotalWiehgt(inventory().items)
-            .toFixed(1)}
-          /{inventory().maxCapacity.toFixed(1)} kg
-        </div>
+        <ToolTip text="Cash">
+          <div class="flex items-center">
+            <Cash size={32} className="mr-2" /> {inventory().money}
+          </div>
+        </ToolTip>
+
+        <ToolTip text="Weight">
+          <div class="flex items-center">
+            <Weight size={32} className="mr-2" />{" "}
+            <div>
+              {_inventoryController
+                .getPlayerTotalWiehgt(inventory().items)
+                .toFixed(1)}
+              /{inventory().maxCapacity.toFixed(1)} kg
+            </div>
+          </div>
+        </ToolTip>
       </div>
 
       <div class="flex flex-wrap gap-[2%]">
@@ -95,17 +105,20 @@ const Inventory = () => {
               <ToolTip
                 text={`${item.name}(x${item.quantity})`}
                 className="block"
+                direction="right"
               >
                 <DropDown
-                  trigger={<EmojiDisplay code={item.img} />}
+                  trigger={<Dynamic component={item.img} />}
                   items={item.playerActions.map((playerAction) => {
                     return (
-                      <li
-                        onClick={() => {
-                          playerAction.click();
-                        }}
-                      >
-                        <a>{playerAction.name}</a>
+                      <li>
+                        <Button
+                          onClick={() => {
+                            playerAction.click();
+                          }}
+                        >
+                          {playerAction.name}
+                        </Button>
                       </li>
                     );
                   })}
@@ -115,6 +128,10 @@ const Inventory = () => {
           );
         })}
       </div>
+
+      {!inventory().items.length && (
+        <div class="text-center py-4">Empty inventory</div>
+      )}
     </div>
   );
 };

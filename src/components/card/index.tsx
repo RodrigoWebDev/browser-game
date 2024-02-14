@@ -1,8 +1,8 @@
-import { JSXElement, createSignal, onMount } from "solid-js";
-import EmojiDisplay from "../EmojiDsplay";
+import { JSXElement, ValidComponent } from "solid-js";
+import { Dynamic } from "solid-js/web";
 
 interface ICARD {
-  img?: string;
+  img?: JSXElement;
   title?: string;
   subTitle?: string;
   footer?: JSXElement;
@@ -21,8 +21,7 @@ const Card = (props: ICARD) => {
         props.onClick && props.onClick();
       }}
     >
-      <EmojiDisplay code={props.img || ""} />
-
+      {props.img}
       <div class={`card-body ${props.cardBodyClassName}`}>
         {props.title && <h2 class="card-title text-[16px]">{props.title}</h2>}
         {props.subTitle && (

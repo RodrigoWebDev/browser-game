@@ -33,3 +33,27 @@ export const getTotalPrice = (items: IItemShop[]) => {
     return 0;
   }
 };
+
+export const getNewArrayWithRandomItems = (arr: any[]) => {
+  const howMany = Math.trunc(arr.length / 2);
+  let generatedIndexes: number[] = [];
+  let newArray: any[] = [];
+
+  const getUniqueIndex = () => {
+    let generateIndex = getRandomIndexFromArray(arr);
+
+    while (generatedIndexes.some((item) => item === generateIndex)) {
+      generateIndex = getRandomIndexFromArray(arr);
+    }
+
+    return generateIndex;
+  };
+
+  for (let i = 0; i < howMany; i++) {
+    let generateIndex = getUniqueIndex();
+    generatedIndexes.push(generateIndex);
+    newArray.push(arr[generateIndex]);
+  }
+
+  return newArray;
+};

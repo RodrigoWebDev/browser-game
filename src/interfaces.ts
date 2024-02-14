@@ -1,5 +1,6 @@
+import { JSXElement, ValidComponent } from "solid-js";
 import { IENEMY } from "./constants/enemies";
-import { IITEM, TITEM_TYPES } from "./constants/items";
+import { IITEM, TITEM_TYPES } from "./constants/items.ts";
 
 export interface IPlayerActions {
   name: string;
@@ -9,14 +10,14 @@ export interface IPlayerActions {
 export interface ILocation {
   name: string;
   type: string;
-  bg: string;
+  bg: ValidComponent;
   things: {
     id: number;
     found: boolean;
     thing: {
       name: string;
       type: string;
-      img: string;
+      img: JSXElement;
       playerActions: IPlayerActions[];
     };
   }[];

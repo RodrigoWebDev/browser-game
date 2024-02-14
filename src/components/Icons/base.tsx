@@ -1,4 +1,4 @@
-import { ISVG } from "../../../interfaces";
+import { ISVG } from "../../interfaces";
 import { JSXElement } from "solid-js";
 
 interface IBaseSvg extends ISVG {
@@ -12,8 +12,8 @@ const BaseSvg = (props: IBaseSvg) => {
       viewBox="0 0 512 512"
       width={props.size}
       height={props.size}
-      /* fill={props.fill || "#a6adbb"} */
-      class={`${props.className} fill-neutral-content`}
+      fill={props.fill || "#a6adbb"}
+      class={`${props.className}`}
     >
       {props.children}
     </svg>

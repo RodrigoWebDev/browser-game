@@ -1,3 +1,5 @@
+import { Chest } from "../components/Icons";
+
 export interface ICONTAINER {
   NAME: string;
   IMAGE: string;
@@ -5,9 +7,9 @@ export interface ICONTAINER {
 }
 
 export const CONTAINER = {
-  WASTE_BASKET: {
-    NAME: "Waste Basket",
-    IMAGE: "🗑️",
+  CHEST: {
+    NAME: "Chest",
+    IMAGE: Chest,
     ITEMS_INSIDE: ["SAFETY_PIN"],
   },
 };
