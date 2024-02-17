@@ -16,6 +16,7 @@ import { playerState } from "./state/player";
 import { modalState } from "./state/modal";
 import { createEffect, onMount } from "solid-js";
 import { Dynamic } from "solid-js/web";
+import WorldMap from "./components/WorldMap";
 
 const cardContainerStyle = "w-[25%] mr-2 mb-2";
 
@@ -42,7 +43,7 @@ function Game() {
       <aside class="w-[29%] p-4">
         <Player />
       </aside>
-      {world().locations.length && (
+      {/* {world().locations.length && (
         <main class="w-[69%]">
           <div class="h-full bg-contain">
             {player().isInCombat ? (
@@ -78,7 +79,9 @@ function Game() {
                               <div data-id="actions" class="flex">
                                 <DropDown
                                   trigger={
-                                    <SwordsSvg className="w-[16px] text-white" />
+                                    <Button>
+                                      <SwordsSvg className="w-[16px] text-white" />
+                                    </Button>
                                   }
                                   items={enemy.playerActions.map((item) => (
                                     <li>
@@ -99,10 +102,6 @@ function Game() {
                                     </li>
                                   ))}
                                 />
-
-                                <Button className="btn-sm">
-                                  <SwordsSvg className="w-[16px] text-white" />
-                                </Button>
                               </div>
                             </>
                           }
@@ -221,7 +220,9 @@ function Game() {
             )}
           </div>
         </main>
-      )}
+      )} */}
+
+      <WorldMap />
 
       <Modal title={modal().title} isOpen={modal().isOpen}>
         {modal().children}

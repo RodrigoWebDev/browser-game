@@ -120,11 +120,11 @@ export const worldController = () => {
     );
 
     for (let i = 0; i < interval; i++) {
-      //const randomThing = getRandomItemFromArray(place.THINGS) as IThing;
-      const randomThing = {
+      const randomThing = getRandomItemFromArray(place.THINGS) as IThing;
+      /* const randomThing = {
         TYPE: "NPC",
         SUBTYPE: "MERCHANT",
-      };
+      }; */
 
       let randomName = "";
       let randomImage: JSXElement;

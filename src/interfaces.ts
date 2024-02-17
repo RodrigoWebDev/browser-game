@@ -1,6 +1,6 @@
 import { JSXElement, ValidComponent } from "solid-js";
 import { IENEMY } from "./constants/enemies";
-import { IITEM, TITEM_TYPES } from "./constants/items.ts";
+import { IITEM } from "./constants/items.ts";
 
 export interface IPlayerActions {
   name: string;
@@ -17,7 +17,7 @@ export interface ILocation {
     thing: {
       name: string;
       type: string;
-      img: JSXElement;
+      img: any;
       playerActions: IPlayerActions[];
     };
   }[];

@@ -157,6 +157,55 @@ export const PLACES = {
       },
     ],
   },
+  DUNGEON: {
+    ID: "DUNEGON",
+    NAMES: ["Mistery", "Shadow", "Death", "Fear"],
+    IMAGES: [Dungeon],
+    THINGS: [
+      {
+        TYPE: "ENEMY",
+        SUBTYPE: "TROLL",
+      },
+      {
+        TYPE: "ENEMY",
+        SUBTYPE: "GOBLIN",
+      },
+    ],
+  },
+  TAVERN: {
+    ID: "TAVERN",
+    NAMES: [
+      "The Curious Flame",
+      "The Nostalgic Wood Elf",
+      "The Excited Hand",
+      "The Ivory Cliff",
+      "The Simple Pepper",
+      "The Boar Hat",
+      "The Obedient",
+      "The Old Crocodile",
+      "The Bloody Barricade",
+      "The Terrific Mice",
+      "The Next Best Whisper",
+    ],
+    IMAGES: [Tavern],
+    THINGS: [
+      {
+        TYPE: "NPC",
+        SUBTYPE: "VILLAGER",
+      },
+    ],
+  },
+  CAVERN: {
+    ID: "CAVERN",
+    NAMES: ["Mistery", "Shadow", "Death", "Fear"],
+    IMAGES: [Cave],
+    THINGS: [
+      {
+        TYPE: "ENEMY",
+        SUBTYPE: "SPIDER",
+      },
+    ],
+  },
 };
 
 export const INNER_PLACE = {
