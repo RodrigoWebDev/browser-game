@@ -1,5 +1,5 @@
 import { createSignal } from "solid-js";
-import Enemy from "../classes/Enemy";
+import Enemy from "../classes/Enemy.tsx";
 import { IAction } from "../interfaces";
 import { playerState } from "./player";
 import { modalState } from "./modal";

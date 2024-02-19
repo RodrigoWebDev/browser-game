@@ -1,3 +1,0 @@
-class InnerPlace {
-  name = "";
-}

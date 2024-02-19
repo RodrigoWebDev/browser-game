@@ -1,7 +1,9 @@
 import { PLACES, PLACE_TYPES, TPLACE_TYPES } from "../../constants/places";
 import { Dynamic } from "solid-js/web";
 import { QuestionMark } from "../Icons";
-import { getRandomIntFromInterval } from "../../helpers";
+import { worldMapController, worldMapState } from "../../state/worldMap";
+import { worldController } from "../../state/world";
+import Button from "../Button";
 
 enum MapLocations {
   "FOREST" = 1,
@@ -24,68 +26,38 @@ enum MapLocations {
   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 ]; */
 
-const generateWorldMap = () => {
-  const initialPosition = {
-    x: 5,
-    y: 5,
-  };
-  const worldSize = 11;
-  const worldMap: any = [];
-
-  for (let i = 0; i < worldSize; i++) {
-    worldMap.push(Array.apply(null, Array(worldSize)).map(function () {}));
-  }
-
-  worldMap[initialPosition.y][initialPosition.x] = getRandomIntFromInterval(
-    1,
-    5
-  );
-  worldMap[initialPosition.y][initialPosition.x + 1] = getRandomIntFromInterval(
-    1,
-    5
-  );
-  worldMap[initialPosition.y][initialPosition.x - 1] = getRandomIntFromInterval(
-    1,
-    5
-  );
-  worldMap[initialPosition.y - 1][initialPosition.x] = getRandomIntFromInterval(
-    1,
-    5
-  );
-  worldMap[initialPosition.y - 1][initialPosition.x + 1] =
-    getRandomIntFromInterval(1, 5);
-  worldMap[initialPosition.y - 1][initialPosition.x - 1] =
-    getRandomIntFromInterval(1, 5);
-  worldMap[initialPosition.y + 1][initialPosition.x] = getRandomIntFromInterval(
-    1,
-    5
-  );
-  worldMap[initialPosition.y + 1][initialPosition.x + 1] =
-    getRandomIntFromInterval(1, 5);
-  worldMap[initialPosition.y + 1][initialPosition.x - 1] =
-    getRandomIntFromInterval(1, 5);
-
-  return worldMap;
-};
-
 const WorldMap = () => {
+  const { mapWithVisibleArea } = worldMapController();
+
+  console.log("=== mapWithVisibleArea() ===");
+  console.log(mapWithVisibleArea());
+
   return (
     <div class="w-[70%] p-4">
-      {generateWorldMap().map((row: any) => {
+      {mapWithVisibleArea()?.map((row: any) => {
         return (
           <div class="flex justify-between mb-2">
             {row.map((col: any) => {
+              console.log({ row, col });
               if (col) {
-                const myCol = MapLocations[col] as TPLACE_TYPES;
+                const myCol = MapLocations[col.index] as TPLACE_TYPES;
                 const location = PLACES[myCol];
                 return (
-                  <div class="w-[8%] bg-accent-content p-2 rounded">
+                  <div
+                    tabIndex={0}
+                    class={`w-[8%] bg-accent-content p-2 rounded ${
+                      col.isCurrent && "animate-pulse"
+                    }`}
+                  >
                     <Dynamic component={location.IMAGES[0]} />
                   </div>
                 );
               } else {
                 return (
-                  <div class="w-[8%] bg-accent-content text-center p-2 rounded">
+                  <div
+                    class="w-[8%] bg-accent-content text-center p-2 rounded"
+                    tabIndex={0}
+                  >
                     <QuestionMark />
                   </div>
                 );

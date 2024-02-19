@@ -1,4 +1,4 @@
-import { IENEMY } from "../../constants/enemies";
+import { IENEMY } from "../constants/enemies";
 
 export class Enemy {
   id;

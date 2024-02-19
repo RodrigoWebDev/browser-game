@@ -65,3 +65,8 @@ export interface ISettings {
 export interface IEnemyInCombat extends IENEMY {
   playerActions: IAction[];
 }
+
+export interface Vector2 {
+  x: number;
+  y: number;
+}

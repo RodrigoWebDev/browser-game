@@ -1,4 +1,5 @@
 import { createSignal } from "solid-js";
+import { Vector2 } from "../interfaces";
 
 interface IPlayer {
   name: string;
@@ -9,6 +10,8 @@ interface IPlayer {
   currentLocationIndex: number;
   isInCombat: boolean;
   money: number;
+  worldPosition: Vector2;
+  previousWorldPosition?: Vector2;
 }
 
 export const playerState = createSignal<IPlayer>({
@@ -20,6 +23,11 @@ export const playerState = createSignal<IPlayer>({
   currentLocationIndex: 0,
   isInCombat: false,
   money: 10000,
+  previousWorldPosition: undefined,
+  worldPosition: {
+    x: 5,
+    y: 5,
+  },
 });
 
 const playerController = () => {
