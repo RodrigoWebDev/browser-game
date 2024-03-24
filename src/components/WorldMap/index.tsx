@@ -27,7 +27,7 @@ enum MapLocations {
 ]; */
 
 const WorldMap = () => {
-  const { mapWithVisibleArea, updateCurrentWorldPlace } = worldMapController();
+  const { mapWithVisibleArea, move } = worldMapController();
 
   return (
     <div id="WorldMap" class="w-[70%] p-4">
@@ -35,42 +35,58 @@ const WorldMap = () => {
         return (
           <div class="flex justify-between mb-2">
             {row.map((col: any, colIndex: number) => {
-              const _updateCurrentWorldPlace = () => {
-                updateCurrentWorldPlace({
-                  x: colIndex,
-                  y: rowIndex,
-                });
-              };
+              console.log("col.isVisible ===", col.isVisible);
+              /* if (col) { */
+
+              let myCol: TPLACE_TYPES;
+              let worldLocation: any;
 
               if (col) {
-                const myCol = MapLocations[col.type] as TPLACE_TYPES;
-                const location = PLACES[myCol];
-                return (
-                  <div
-                    tabIndex={0}
-                    class={`w-[8%] bg-accent-content p-2 rounded ${
-                      col.isCurrent && "animate-pulse"
-                    }`}
-                    onClick={() => {
-                      _updateCurrentWorldPlace();
-                    }}
-                  >
-                    <Dynamic component={location.IMAGES[0]} />
-                  </div>
-                );
-              } else {
+                myCol = MapLocations[col.type] as TPLACE_TYPES;
+                worldLocation = PLACES[myCol];
+              }
+
+              return (
+                <div
+                  tabIndex={0}
+                  class={`w-[8%] bg-accent-content p-2 rounded ${
+                    col.isCurrent && "animate-pulse"
+                  }`}
+                  onClick={() => {
+                    move(
+                      {
+                        x: colIndex,
+                        y: rowIndex,
+                      },
+                      worldLocation
+                    );
+                  }}
+                >
+                  {col.isVisible ? (
+                    <>
+                      <Dynamic component={worldLocation.IMAGES[0]} />
+                    </>
+                  ) : (
+                    <QuestionMark />
+                  )}
+                </div>
+              );
+              /* } else {
                 return (
                   <div
                     class="w-[8%] bg-accent-content text-center p-2 rounded"
                     tabIndex={0}
                     onClick={() => {
-                      _updateCurrentWorldPlace();
+                      move({
+                        x: colIndex,
+                        y: rowIndex,
+                      });
                     }}
                   >
                     <QuestionMark />
                   </div>
                 );
-              }
+              } */
             })}
           </div>
         );
