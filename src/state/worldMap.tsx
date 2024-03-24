@@ -1,6 +1,7 @@
 import { createSignal, onMount } from "solid-js";
-import { playerState } from "./player";
 import { WorldPlace } from "../classes/WorldPlace";
+import { Vector2 } from "../interfaces";
+import { playerState } from "./player";
 
 export const worldMapState = createSignal<any[][]>([]);
 
@@ -16,12 +17,15 @@ export const worldMapController = () => {
       _worldMap.push(Array.apply(null, Array(worldSize)).map(function () {}));
     }
 
+    console.log({ _worldMap });
+
     return setWorldMap(_worldMap);
   };
 
   const mapWithVisibleArea = () => {
     if (!worldMap().length) return;
 
+    const _worldMap = worldMap();
     const pos = player().worldPosition;
     const prevPos = player().previousWorldPosition;
     const tilesToShow = [
@@ -63,30 +67,51 @@ export const worldMapController = () => {
       }, //Down/Right
     ];
 
+    console.log({ tilesToShow });
+
     //Update visible tiles
     tilesToShow.forEach((tile) => {
-      worldMap()[tile.y][tile.x] = !worldMap()[tile.y][tile.x]
+      _worldMap[tile.y][tile.x] = !_worldMap[tile.y][tile.x]
         ? new WorldPlace()
-        : worldMap()[tile.y][tile.x];
+        : _worldMap[tile.y][tile.x];
     });
 
     if (prevPos) {
-      worldMap()[prevPos.y][prevPos.x].isCurrent = false;
+      _worldMap[prevPos.y][prevPos.x].isCurrent = false;
     }
 
     //Set current position
-    worldMap()[pos.y][pos.x].isCurrent = true;
+    _worldMap[pos.y][pos.x].isCurrent = true;
 
-    return worldMap();
+    setWorldMap(_worldMap);
+
+    return _worldMap;
+  };
+
+  const updateCurrentWorldPlace = (cords: Vector2) => {
+    console.log({ cords });
+
+    setPlayer((val) => ({
+      ...val,
+      previousWorldPosition: {
+        x: val.worldPosition.x,
+        y: val.worldPosition.y,
+      },
+    }));
+
+    setPlayer((val) => ({
+      ...val,
+      worldPosition: {
+        ...cords,
+      },
+    }));
   };
 
   onMount(() => {
     generatedWorldMap();
 
     document.addEventListener("click", () => {
-      console.log("clique");
-
-      setPlayer((val) => ({
+      /* setPlayer((val) => ({
         ...val,
         previousWorldPosition: {
           x: val.worldPosition.x,
@@ -100,11 +125,12 @@ export const worldMapController = () => {
           x: val.worldPosition.x + 1,
           y: val.worldPosition.y + 1,
         },
-      }));
+      })); */
     });
   });
 
   return {
     mapWithVisibleArea,
+    updateCurrentWorldPlace,
   };
 };

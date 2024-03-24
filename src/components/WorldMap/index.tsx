@@ -27,14 +27,21 @@ enum MapLocations {
 ]; */
 
 const WorldMap = () => {
-  const { mapWithVisibleArea } = worldMapController();
+  const { mapWithVisibleArea, updateCurrentWorldPlace } = worldMapController();
 
   return (
     <div id="WorldMap" class="w-[70%] p-4">
-      {mapWithVisibleArea()?.map((row: any) => {
+      {mapWithVisibleArea()?.map((row: any, rowIndex: number) => {
         return (
           <div class="flex justify-between mb-2">
-            {row.map((col: any) => {
+            {row.map((col: any, colIndex: number) => {
+              const _updateCurrentWorldPlace = () => {
+                updateCurrentWorldPlace({
+                  x: colIndex,
+                  y: rowIndex,
+                });
+              };
+
               if (col) {
                 const myCol = MapLocations[col.type] as TPLACE_TYPES;
                 const location = PLACES[myCol];
@@ -44,7 +51,9 @@ const WorldMap = () => {
                     class={`w-[8%] bg-accent-content p-2 rounded ${
                       col.isCurrent && "animate-pulse"
                     }`}
-                    onClick={() => {}}
+                    onClick={() => {
+                      _updateCurrentWorldPlace();
+                    }}
                   >
                     <Dynamic component={location.IMAGES[0]} />
                   </div>
@@ -54,7 +63,9 @@ const WorldMap = () => {
                   <div
                     class="w-[8%] bg-accent-content text-center p-2 rounded"
                     tabIndex={0}
-                    onClick={() => {}}
+                    onClick={() => {
+                      _updateCurrentWorldPlace();
+                    }}
                   >
                     <QuestionMark />
                   </div>

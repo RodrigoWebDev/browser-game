@@ -1,11 +1,11 @@
 import { getRandomIntFromInterval } from "../helpers";
 
 export class WorldPlace {
-  index;
+  type;
   isCurrent = false;
 
   constructor(isCurrent: boolean = false) {
-    this.index = getRandomIntFromInterval(1, 5);
+    this.type = getRandomIntFromInterval(1, 5);
     this.isCurrent = isCurrent;
   }
 }
