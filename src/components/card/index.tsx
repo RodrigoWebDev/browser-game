@@ -1,7 +1,6 @@
-import { JSXElement, ValidComponent } from "solid-js";
-import { Dynamic } from "solid-js/web";
+import { JSXElement } from "solid-js";
 
-interface ICARD {
+interface ICard {
   img?: JSXElement;
   title?: string;
   subTitle?: string;
@@ -13,7 +12,7 @@ interface ICARD {
   onClick?: () => void;
 }
 
-const Card = (props: ICARD) => {
+const Card = (props: ICard) => {
   return (
     <div
       class={`card bg-base-100 shadow-xl ${props.className}`}

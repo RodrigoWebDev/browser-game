@@ -1,4 +1,4 @@
-import { JSXElement, ValidComponent } from "solid-js";
+import { /* JSXElement, */ ValidComponent } from "solid-js";
 import { Cave, Dungeon, Forest, Tavern, Village } from "../components/Icons";
 import { IThing } from "../interfaces";
 

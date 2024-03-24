@@ -1,17 +1,16 @@
 import { onMount } from "solid-js";
-import { IItemShop } from "../../interfaces";
-import ToolTip from "../Tooltip";
-import DropDown from "../Dropwdown";
-import { inventoryState, inventoryController } from "../../state/inventory";
 import { Dynamic } from "solid-js/web";
-import { Cash, Weight } from "../Icons";
+import { inventoryController, inventoryState } from "../../state/inventory";
 import Button from "../Button";
+import DropDown from "../Dropwdown";
+import { Cash, Weight } from "../Icons";
+import ToolTip from "../Tooltip";
 
 const Inventory = () => {
-  const [inventory, setInventory] = inventoryState;
+  const [inventory /* setInventory */] = inventoryState;
   const _inventoryController = inventoryController();
 
-  const updateInventoryItems = (
+  /* const updateInventoryItems = (
     purchasedItems: IItemShop[],
     operation: "SUM" | "SUBTRACTION"
   ) => {
@@ -72,7 +71,7 @@ const Inventory = () => {
         maxQuantity: item.quantity,
       };
     });
-  };
+  }; */
 
   onMount(() => {});
 

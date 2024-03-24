@@ -30,7 +30,7 @@ export const playerState = createSignal<IPlayer>({
   },
 });
 
-const playerController = () => {
+/* const playerController = () => {
   const [player, setPlayer] = playerState;
 
   const playerTakeDamage = (damage: number) => {
@@ -39,10 +39,10 @@ const playerController = () => {
       hp: val.hp - damage,
     }));
 
-    /* setShowHit(true);
+    setShowHit(true);
     setTimeout(() => {
       setShowHit(false);
-    }, 300); */
+    }, 300);
   };
   return {};
-};
+}; */

@@ -1,9 +1,9 @@
-import { PLACES, PLACE_TYPES, TPLACE_TYPES } from "../../constants/places";
 import { Dynamic } from "solid-js/web";
+import { PLACES, TPLACE_TYPES } from "../../constants/places";
+import { worldMapController } from "../../state/worldMap";
 import { QuestionMark } from "../Icons";
-import { worldMapController, worldMapState } from "../../state/worldMap";
-import { worldController } from "../../state/world";
-import Button from "../Button";
+/* import { worldController } from "../../state/world";
+import Button from "../Button"; */
 
 enum MapLocations {
   "FOREST" = 1,
@@ -29,18 +29,14 @@ enum MapLocations {
 const WorldMap = () => {
   const { mapWithVisibleArea } = worldMapController();
 
-  console.log("=== mapWithVisibleArea() ===");
-  console.log(mapWithVisibleArea());
-
   return (
-    <div class="w-[70%] p-4">
+    <div id="WorldMap" class="w-[70%] p-4">
       {mapWithVisibleArea()?.map((row: any) => {
         return (
           <div class="flex justify-between mb-2">
             {row.map((col: any) => {
-              console.log({ row, col });
               if (col) {
-                const myCol = MapLocations[col.index] as TPLACE_TYPES;
+                const myCol = MapLocations[col.type] as TPLACE_TYPES;
                 const location = PLACES[myCol];
                 return (
                   <div
@@ -48,6 +44,7 @@ const WorldMap = () => {
                     class={`w-[8%] bg-accent-content p-2 rounded ${
                       col.isCurrent && "animate-pulse"
                     }`}
+                    onClick={() => {}}
                   >
                     <Dynamic component={location.IMAGES[0]} />
                   </div>
@@ -57,6 +54,7 @@ const WorldMap = () => {
                   <div
                     class="w-[8%] bg-accent-content text-center p-2 rounded"
                     tabIndex={0}
+                    onClick={() => {}}
                   >
                     <QuestionMark />
                   </div>

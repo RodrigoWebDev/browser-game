@@ -1,10 +1,11 @@
 import { onMount } from "solid-js";
+import { Dynamic } from "solid-js/web";
 import { IItemShop } from "../../interfaces";
+import { inventoryController, inventoryState } from "../../state/inventory";
+import { modalState } from "../../state/modal";
+import { shopState } from "../../state/shop";
 import Button from "../Button";
 import Card from "../Card";
-import { shopState } from "../../state/shop";
-import { inventoryState, inventoryController } from "../../state/inventory";
-import { modalState } from "../../state/modal";
 
 //States
 /* import inventoryState from "../../state/inventory";
@@ -137,7 +138,7 @@ const Shop = (props: IShop) => {
           <div class="w-[49%] mb-2">
             <Card
               title={`${item.name}(${item.maxQuantity})`}
-              img={item.img}
+              img={<Dynamic component={item.img} />}
               footer={
                 <div>
                   <div class="mb-2">Price: {item.price}</div>

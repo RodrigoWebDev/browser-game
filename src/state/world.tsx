@@ -1,7 +1,18 @@
-import { JSXElement, ValidComponent, createSignal } from "solid-js";
-import { IAction, IThing, IWorld } from "../interfaces";
-import { playerState } from "./player";
-import { modalState } from "./modal";
+import { JSXElement, createSignal } from "solid-js";
+import { Dynamic } from "solid-js/web";
+import { PersonWalk } from "../components/Icons";
+import NpcTalk from "../components/NpcTalk";
+import Shop from "../components/Shop";
+import {
+  GENDERS,
+  MAX_THINGS_NUMBER,
+  MIN_THINGS_NUMBER,
+  NPC_NAMES,
+} from "../constants";
+import { CONTAINER, TCONTAINER_TYPES } from "../constants/containers";
+import { ENEMY, IENEMY, TENEMY_TYPES } from "../constants/enemies";
+import { ITEM, ITEM_TYPES, TITEM_TYPES } from "../constants/items.ts";
+import { NPC, NPC_GREETINGS, TNPC_TYPES } from "../constants/npc";
 import {
   INNER_PLACE,
   IPlace,
@@ -10,28 +21,17 @@ import {
   TINNER_PLACE_TYPES,
   TPLACE_TYPES,
 } from "../constants/places";
-import { CONTAINER, TCONTAINER_TYPES } from "../constants/containers";
-import { combatController } from "./combat";
-import { ENEMY, IENEMY, TENEMY_TYPES } from "../constants/enemies";
 import {
   getNewArrayWithRandomItems,
   getRandomIntFromInterval,
   getRandomItemFromArray,
 } from "../helpers";
-import { inventoryState, inventoryController } from "./inventory";
-import { NPC, NPC_GREETINGS, TNPC_TYPES } from "../constants/npc";
-import {
-  GENDERS,
-  MAX_THINGS_NUMBER,
-  MIN_THINGS_NUMBER,
-  NPC_NAMES,
-} from "../constants";
-import NpcTalk from "../components/NpcTalk";
-import { ITEM_TYPES, ITEM, TITEM_TYPES } from "../constants/items.ts";
+import { IAction, IThing, IWorld } from "../interfaces";
+import { combatController } from "./combat";
+import { inventoryController, inventoryState } from "./inventory";
+import { modalState } from "./modal";
+import { playerState } from "./player";
 import { shopState } from "./shop";
-import Shop from "../components/Shop";
-import { PersonWalk } from "../components/Icons";
-import { Dynamic } from "solid-js/web";
 
 export const worldState = createSignal<IWorld>({
   locations: [],

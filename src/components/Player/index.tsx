@@ -1,7 +1,6 @@
-import ToolTip from "../Tooltip";
-import Inventory from "../Inventory";
 import { playerState } from "../../state/player";
-import { BackPack, Knight, LiquidTube } from "../Icons";
+import { BackPack, Knight } from "../Icons";
+import Inventory from "../Inventory";
 
 const Player = () => {
   const [player] = playerState;

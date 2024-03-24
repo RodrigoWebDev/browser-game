@@ -1,31 +1,22 @@
-import Card from "./components/Card";
-import SwordsSvg from "./components/svgIcons/swords";
-import DropDown from "./components/Dropwdown";
 import Button from "./components/Button";
 import Modal from "./components/Modal";
 
 // Assets
-import ToolTip from "./components/Tooltip";
-import Player from "./components/Player";
-import ExploreSvg from "./components/svgIcons/explore";
-import ArrowSvg from "./components/svgIcons/arrow";
-import { combatState, combatController } from "./state/combat";
-import { worldController, worldState } from "./state/world";
-import { settingsController } from "./state/settings";
-import { playerState } from "./state/player";
-import { modalState } from "./state/modal";
 import { createEffect, onMount } from "solid-js";
-import { Dynamic } from "solid-js/web";
+import Player from "./components/Player";
 import WorldMap from "./components/WorldMap";
+import { modalState } from "./state/modal";
+import { settingsController } from "./state/settings";
+import { worldController } from "./state/world";
 
-const cardContainerStyle = "w-[25%] mr-2 mb-2";
+/* const cardContainerStyle = "w-[25%] mr-2 mb-2"; */
 
 function Game() {
-  const [player] = playerState;
-  const [modal, setModal] = modalState;
-  const [world] = worldState;
+  /* const [player] = playerState; */
+  const [modal /* setModal */] = modalState;
+  /* const [world] = worldState;
   const [combat] = combatState;
-  const _combatController = combatController();
+  const _combatController = combatController(); */
   const _worldController = worldController();
   const _settingsController = settingsController();
 

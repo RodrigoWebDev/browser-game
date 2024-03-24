@@ -1,4 +1,4 @@
-import { JSXElement, ValidComponent } from "solid-js";
+import { /* JSXElement, */ ValidComponent } from "solid-js";
 import { IENEMY } from "./constants/enemies";
 import { IITEM } from "./constants/items.ts";
 
