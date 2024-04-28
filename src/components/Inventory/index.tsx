@@ -1,8 +1,7 @@
-import { onMount } from "solid-js";
 import { inventoryController, inventoryState } from "../../state/inventory";
 import Button from "../Button";
 import DropDown from "../Dropwdown";
-import { Cash, Weight } from "../Icons";
+/* import { Cash, Weight } from "../Icons"; */
 import ToolTip from "../Tooltip";
 
 const Inventory = () => {
@@ -72,20 +71,19 @@ const Inventory = () => {
     });
   }; */
 
-  onMount(() => {});
-
   return (
     <div id="inventory">
       <div class="flex justify-between">
         <ToolTip text="Cash">
           <div class="flex items-center">
-            <Cash size={32} className="mr-2" /> {inventory().money}
+            💵
+            {inventory().money}
           </div>
         </ToolTip>
 
         <ToolTip text="Weight">
           <div class="flex items-center">
-            <Weight size={32} className="mr-2" />{" "}
+            ⚖️
             <div>
               {_inventoryController
                 .getPlayerTotalWiehgt(inventory().items)

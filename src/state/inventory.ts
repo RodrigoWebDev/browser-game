@@ -1,7 +1,7 @@
 import { createSignal } from "solid-js";
-import { IInventoryItems } from "../interfaces";
 import { IITEM, ITEM, TITEM_TYPES } from "../constants/items.ts";
 import { getTotalPrice } from "../helpers";
+import { IInventoryItems } from "../interfaces";
 import { shopState } from "./shop";
 
 interface IPlayerInventory {

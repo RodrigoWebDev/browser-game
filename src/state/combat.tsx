@@ -1,12 +1,11 @@
 import { createSignal } from "solid-js";
 import Enemy from "../classes/Enemy.tsx";
-import { IAction } from "../interfaces";
-import { playerState } from "./player";
-import { modalState } from "./modal";
-import { IITEM, ITEM } from "../constants/items.ts";
 import { IENEMY } from "../constants/enemies";
+import { IITEM, ITEM } from "../constants/items.ts";
+import { IAction } from "../interfaces";
 import { inventoryController } from "./inventory";
-import { Dynamic } from "solid-js/web";
+import { modalState } from "./modal";
+import { playerState } from "./player";
 
 interface ICombat {
   enemies: Enemy[];
@@ -65,7 +64,7 @@ export const combatController = () => {
                 const itemInfo = ITEM[item.key];
                 return (
                   <div class="w-[10%] text-center">
-                    <Dynamic component={itemInfo.img} />
+                    {itemInfo.img}
                     <div>x{item.quantity}</div>
                   </div>
                 );

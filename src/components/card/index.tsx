@@ -1,7 +1,8 @@
 import { JSXElement } from "solid-js";
+import Emoji from "../Emoji";
 
 interface ICard {
-  img?: JSXElement;
+  img?: string;
   title?: string;
   subTitle?: string;
   footer?: JSXElement;
@@ -20,7 +21,8 @@ const Card = (props: ICard) => {
         props.onClick && props.onClick();
       }}
     >
-      {props.img}
+      <Emoji emoji={props.img || ""} />
+
       <div class={`card-body ${props.cardBodyClassName}`}>
         {props.title && <h2 class="card-title text-[16px]">{props.title}</h2>}
         {props.subTitle && (

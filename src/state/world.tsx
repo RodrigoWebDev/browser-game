@@ -1,5 +1,4 @@
 import { JSXElement, createSignal } from "solid-js";
-import { Dynamic } from "solid-js/web";
 import { PersonWalk } from "../components/Icons";
 import NpcTalk from "../components/NpcTalk";
 import Shop from "../components/Shop";
@@ -137,7 +136,7 @@ export const worldController = () => {
         const _subType = randomThing.SUBTYPE as TNPC_TYPES;
         const gender = getRandomItemFromArray(GENDERS) as "MALE" | "FEMALE";
         const images = NPC[_subType][gender].IMAGES;
-        randomImage = <Dynamic component={getRandomItemFromArray(images)} />;
+        randomImage = getRandomItemFromArray(images);
         randomName = getRandomItemFromArray(NPC_NAMES[gender]);
         actions.push({
           name: "Talk",
@@ -242,7 +241,7 @@ export const worldController = () => {
         const enemy = ENEMY[thingSubType] as IENEMY;
         const image = enemy.IMAGE;
         randomName = enemy.NAME;
-        randomImage = <Dynamic component={image} />;
+        randomImage = image;
 
         actions = [
           {
@@ -266,7 +265,7 @@ export const worldController = () => {
         const container = CONTAINER[thingSubType];
         const image = container.IMAGE;
         randomName = container.NAME;
-        randomImage = <Dynamic component={image} />;
+        randomImage = image;
 
         actions = [];
       }

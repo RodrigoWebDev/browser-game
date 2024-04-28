@@ -1,18 +1,33 @@
-import { createEffect, onMount } from "solid-js";
+import { createEffect, createSignal } from "solid-js";
 
 const Emoji = ({ emoji }: { emoji: string }) => {
+  const [width, setWidth] = createSignal(0);
   let ref: any;
 
   createEffect(() => {
-    console.log({ ref });
+    console.log(ref.clientWidth);
+
+    setWidth(ref.clientWidth / 2);
   });
 
-  onMount(() => {
+  /* onMount(() => {
     console.log({ ref });
     ref.style.width = "0px";
-  });
 
-  return <div ref={ref}>{emoji}</div>;
+    console.log("Teste");
+  }); */
+
+  return (
+    <div
+      style={{
+        "font-size": `${width()}px`,
+      }}
+      class="flex items-center justify-center"
+      ref={ref}
+    >
+      {emoji}
+    </div>
+  );
 };
 
 export default Emoji;
