@@ -10,7 +10,7 @@ export const NPC = {
   VILLAGER: {
     MALE: {
       IMAGES: [
-        MalePerson0,
+        "👨",
         /* maleVillager1,
         maleVillager2,
         maleVillager3,
@@ -20,7 +20,7 @@ export const NPC = {
     },
     FEMALE: {
       IMAGES: [
-        FemalePerson0,
+        "👩",
         /*  femaleVillager1,
         femaleVillager2,
         femaleVillager3,

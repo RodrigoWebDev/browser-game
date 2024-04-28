@@ -1,5 +1,4 @@
 import { onMount } from "solid-js";
-import { Dynamic } from "solid-js/web";
 import { inventoryController, inventoryState } from "../../state/inventory";
 import Button from "../Button";
 import DropDown from "../Dropwdown";
@@ -107,7 +106,7 @@ const Inventory = () => {
                 direction="right"
               >
                 <DropDown
-                  trigger={<Dynamic component={item.img} />}
+                  trigger={item.img}
                   items={item.playerActions.map((playerAction) => {
                     return (
                       <li>

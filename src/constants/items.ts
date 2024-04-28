@@ -1,16 +1,6 @@
-import { ValidComponent } from "solid-js";
-import {
-  Bone,
-  Clawn,
-  LiquidTube,
-  Potion,
-  Ring,
-  Rope,
-} from "../components/Icons";
-
 export interface IITEM {
   name: string;
-  img: ValidComponent;
+  img: string;
   price: number;
   canEquip?: boolean;
   color?: string;
@@ -21,10 +11,10 @@ export interface IITEM {
   key: TITEM_TYPES;
 }
 
-export const ITEM = {
+export const ITEM: Record<any, IITEM> = {
   HEALING_POTION: {
     name: "Healing potion",
-    img: Potion,
+    img: "💊",
     price: 12,
     consumableEffects: {
       heal: 50,
@@ -34,7 +24,7 @@ export const ITEM = {
   },
   RING: {
     name: "Ring",
-    img: Ring,
+    img: "💍",
     price: 58,
     canEquip: true,
     consumableEffects: null,
@@ -43,21 +33,21 @@ export const ITEM = {
   },
   BONE: {
     name: "Bone",
-    img: Bone,
+    img: "☠️",
     price: 1,
     weight: 0.2,
     key: "BONE",
   },
   CLAWN: {
     name: "Clawn",
-    img: Clawn,
+    img: "💅",
     price: 1,
     weight: 0.1,
     key: "CLAWN",
   },
   POISON: {
     name: "Poison",
-    img: LiquidTube,
+    img: "🌡",
     color: "green",
     price: 3,
     weight: 0.1,
@@ -65,7 +55,14 @@ export const ITEM = {
   },
   ROPE: {
     name: "Rope",
-    img: Rope,
+    img: "🪢",
+    price: 1,
+    weight: 0.1,
+    key: "ROPE",
+  },
+  FANG: {
+    name: "Fang",
+    img: "🦷",
     price: 1,
     weight: 0.1,
     key: "ROPE",

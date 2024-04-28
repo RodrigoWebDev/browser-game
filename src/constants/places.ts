@@ -1,5 +1,4 @@
 import { /* JSXElement, */ ValidComponent } from "solid-js";
-import { Cave, Dungeon, Forest, Tavern, Village } from "../components/Icons";
 import { IThing } from "../interfaces";
 
 export interface IPlace {
@@ -9,7 +8,7 @@ export interface IPlace {
   THINGS: IThing[];
 }
 
-export const PLACES = {
+export const PLACES: Record<any, IPlace> = {
   VILLAGE: {
     ID: "VILLAGE",
     NAMES: [
@@ -61,7 +60,7 @@ export const PLACES = {
       "Sable Point",
       "Harmony Hollow",
     ],
-    IMAGES: [Village],
+    IMAGES: ["🏘️"],
     THINGS: [
       {
         TYPE: "NPC",
@@ -129,7 +128,7 @@ export const PLACES = {
       "Lunarwood",
       "Briarheart Grove",
     ],
-    IMAGES: [Forest],
+    IMAGES: ["🏞"],
     THINGS: [
       {
         TYPE: "NPC",
@@ -160,7 +159,7 @@ export const PLACES = {
   DUNGEON: {
     ID: "DUNEGON",
     NAMES: ["Mistery", "Shadow", "Death", "Fear"],
-    IMAGES: [Dungeon],
+    IMAGES: ["🕳"],
     THINGS: [
       {
         TYPE: "ENEMY",
@@ -187,7 +186,7 @@ export const PLACES = {
       "The Terrific Mice",
       "The Next Best Whisper",
     ],
-    IMAGES: [Tavern],
+    IMAGES: ["🍺"],
     THINGS: [
       {
         TYPE: "NPC",
@@ -198,7 +197,7 @@ export const PLACES = {
   CAVERN: {
     ID: "CAVERN",
     NAMES: ["Mistery", "Shadow", "Death", "Fear"],
-    IMAGES: [Cave],
+    IMAGES: ["🕳"],
     THINGS: [
       {
         TYPE: "ENEMY",
@@ -212,7 +211,7 @@ export const INNER_PLACE = {
   DUNGEON: {
     ID: "DUNEGON",
     NAMES: ["Mistery", "Shadow", "Death", "Fear"],
-    IMAGES: [Dungeon],
+    IMAGES: ["🕳"],
     THINGS: [
       {
         TYPE: "ENEMY",
@@ -239,7 +238,7 @@ export const INNER_PLACE = {
       "The Terrific Mice",
       "The Next Best Whisper",
     ],
-    IMAGES: [Tavern],
+    IMAGES: ["🍺"],
     THINGS: [
       {
         TYPE: "NPC",
@@ -250,7 +249,7 @@ export const INNER_PLACE = {
   CAVERN: {
     ID: "CAVERN",
     NAMES: ["Mistery", "Shadow", "Death", "Fear"],
-    IMAGES: [Cave],
+    IMAGES: ["🕳"],
     THINGS: [
       {
         TYPE: "ENEMY",
