@@ -10,19 +10,11 @@ import { ILevel } from "./interfaces";
 import { modalState } from "./state/modal";
 import { settingsController } from "./state/settings";
 
-/* const cardContainerStyle = "w-[25%] mr-2 mb-2"; */
-
 function Game() {
-  const [level, setLevel] = createSignal(0);
   const [levels, setLevels] = createSignal<ILevel[]>([]);
   const [currentLevel, setCurrentLevel] = createSignal(0);
 
-  /* const [player] = playerState; */
-  const [modal /* setModal */] = modalState;
-  /* const [world] = worldState;
-  const [combat] = combatState;
-  const _combatController = combatController(); */
-  /* const _worldController = worldController(); */
+  const [modal] = modalState;
   const _settingsController = settingsController();
 
   const getRandomizedEntityType = () => {
@@ -57,15 +49,22 @@ function Game() {
       }
     }
 
-    console.log({ _levels });
-
     setLevels(_levels);
+    window.localStorage["levels"] = JSON.stringify(_levels);
   };
 
   onMount(() => {
+    const levelsInStorage = window.localStorage["levels"]
+      ? JSON.parse(window.localStorage["levels"])
+      : [];
+
     _settingsController.loadSettings();
-    generateLevels();
-    /* _worldController.createPlaces(); */
+
+    if (levelsInStorage.length) {
+      setLevels(levelsInStorage);
+    } else {
+      generateLevels();
+    }
   });
 
   createEffect(() => {
@@ -82,6 +81,7 @@ function Game() {
         <div id="map">
           <div data-id="level" class="my-4">
             <div class="divider">Level {currentLevel()}</div>
+            <Button>Explore</Button>
             <div class="flex items-center justify-center flex-wrap">
               {levels()?.[currentLevel()]?.entities.map((entity) => {
                 return (
