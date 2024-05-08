@@ -1,3 +1,8 @@
+import { CONTAINER } from "./containers";
+import { ENEMY } from "./enemies";
+import { ITEM } from "./items";
+import { NPC } from "./npc";
+
 export const MIN_THINGS_NUMBER = 3;
 export const MAX_THINGS_NUMBER = 11;
 
@@ -37,3 +42,5 @@ export const NPC_NAMES = {
     "Luna",
   ],
 };
+
+export const ENTITIES = [NPC, ENEMY, CONTAINER, ITEM];

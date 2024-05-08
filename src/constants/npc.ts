@@ -1,5 +1,3 @@
-import { FemalePerson0, MalePerson0 } from "../components/Icons";
-
 export const NPC_GREETINGS = [
   "O dia está lindo hoje!",
   "Olá, posso ajuda-lo?",
@@ -7,57 +5,19 @@ export const NPC_GREETINGS = [
 ];
 
 export const NPC = {
-  VILLAGER: {
-    MALE: {
-      IMAGES: [
-        "👨",
-        /* maleVillager1,
-        maleVillager2,
-        maleVillager3,
-        maleVillager4,
-        maleVillager5, */
-      ],
-    },
-    FEMALE: {
-      IMAGES: [
-        "👩",
-        /*  femaleVillager1,
-        femaleVillager2,
-        femaleVillager3,
-        femaleVillager4,
-        femaleVillager5, */
-      ],
-    },
+  FIREMAN: {
+    NAME: "Fireman",
+    IMAGE: "🧑‍🚒️",
+    DESCRIPTION: "",
+    HP: 100,
+    MAX_HP: 100,
   },
-  TRAVELLER: {
-    MALE: {
-      IMAGES: [
-        MalePerson0,
-        /* maleVillager1,
-        maleVillager2,
-        maleVillager3,
-        maleVillager4,
-        maleVillager5, */
-      ],
-    },
-    FEMALE: {
-      IMAGES: [
-        FemalePerson0,
-        /* femaleVillager1,
-        femaleVillager2,
-        femaleVillager3,
-        femaleVillager4,
-        femaleVillager5, */
-      ],
-    },
-  },
-  MERCHANT: {
-    MALE: {
-      IMAGES: [MalePerson0],
-    },
-    FEMALE: {
-      IMAGES: [FemalePerson0],
-    },
+  PERSON: {
+    NAME: "Person",
+    IMAGE: "🧑",
+    DESCRIPTION: "",
+    HP: 100,
+    MAX_HP: 100,
   },
 };
 

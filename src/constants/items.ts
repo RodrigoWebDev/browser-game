@@ -1,71 +1,59 @@
-export interface IITEM {
-  name: string;
-  img: string;
-  price: number;
-  canEquip?: boolean;
-  color?: string;
-  consumableEffects?: {
-    heal?: number | null;
-  } | null;
-  weight: number;
-  key: TITEM_TYPES;
-}
+import { Entity } from "../interfaces";
 
-export const ITEM: Record<any, IITEM> = {
+export const ITEM: Record<any, Entity> = {
   HEALING_POTION: {
-    name: "Healing potion",
-    img: "💊",
-    price: 12,
-    consumableEffects: {
+    NAME: "Healing potion",
+    DESCRIPTION: "",
+    IMAGE: "💊",
+    PRICE: 12,
+    CONSUMABLE_EFFECTS: {
       heal: 50,
     },
-    weight: 0.1,
-    key: "HEALING_POTION",
+    WEIGHT: 0.1,
   },
   RING: {
-    name: "Ring",
-    img: "💍",
-    price: 58,
-    canEquip: true,
-    consumableEffects: null,
-    weight: 0.1,
-    key: "RING",
+    NAME: "Ring",
+    DESCRIPTION: "",
+    IMAGE: "💍",
+    PRICE: 58,
+    CAN_EQUIP: true,
+    WEIGHT: 0.1,
   },
   BONE: {
-    name: "Bone",
-    img: "☠️",
-    price: 1,
-    weight: 0.2,
-    key: "BONE",
+    NAME: "Bone",
+    DESCRIPTION: "",
+    IMAGE: "☠️",
+    PRICE: 1,
+    WEIGHT: 0.2,
   },
   CLAWN: {
-    name: "Clawn",
-    img: "💅",
-    price: 1,
-    weight: 0.1,
-    key: "CLAWN",
+    NAME: "Clawn",
+    DESCRIPTION: "",
+    IMAGE: "💅",
+    PRICE: 1,
+    WEIGHT: 0.1,
   },
   POISON: {
-    name: "Poison",
-    img: "🌡",
-    color: "green",
-    price: 3,
-    weight: 0.1,
-    key: "POISON",
+    NAME: "Poison",
+    DESCRIPTION: "",
+    IMAGE: "🌡",
+    COLOR: "green",
+    PRICE: 3,
+    WEIGHT: 0.1,
   },
   ROPE: {
-    name: "Rope",
-    img: "🪢",
-    price: 1,
-    weight: 0.1,
-    key: "ROPE",
+    NAME: "Rope",
+    DESCRIPTION: "",
+    IMAGE: "🪢",
+    PRICE: 1,
+    WEIGHT: 0.1,
   },
   FANG: {
-    name: "Fang",
-    img: "🦷",
-    price: 1,
-    weight: 0.1,
-    key: "ROPE",
+    NAME: "Fang",
+    DESCRIPTION: "",
+    IMAGE: "🦷",
+    PRICE: 1,
+    WEIGHT: 0.1,
   },
 };
 

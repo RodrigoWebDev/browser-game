@@ -1,10 +1,23 @@
 import { /* JSXElement, */ ValidComponent } from "solid-js";
 import { IENEMY } from "./constants/enemies";
-import { IITEM } from "./constants/items.ts";
 
 export interface IPlayerActions {
   name: string;
   click: (...args: any) => void;
+}
+
+export interface Entity {
+  NAME: string;
+  IMAGE: string;
+  DESCRIPTION: string;
+  COLOR?: string;
+  CAN_EQUIP?: boolean;
+  CONSUMABLE_EFFECTS?: Record<any, any>;
+  WEIGHT?: number;
+  PRICE?: number;
+  HP?: number;
+  MAX_HP?: number;
+  DROPS?: Record<string, any>[];
 }
 
 export interface ILocation {
@@ -27,12 +40,12 @@ export interface IWorld {
   locations: ILocation[];
 }
 
-export interface IItemShop extends IITEM {
+export interface IItemShop extends Entity {
   maxQuantity: number;
   quantitySelected: number;
 }
 
-export interface IInventoryItems extends IITEM {
+export interface IInventoryItems extends Entity {
   playerActions: IPlayerActions[];
   quantity: number;
 }
@@ -69,4 +82,8 @@ export interface IEnemyInCombat extends IENEMY {
 export interface Vector2 {
   x: number;
   y: number;
+}
+
+export interface ILevel {
+  entities: any[];
 }

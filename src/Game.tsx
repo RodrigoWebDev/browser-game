@@ -5,6 +5,8 @@ import Modal from "./components/Modal";
 import { createEffect, createSignal, onMount } from "solid-js";
 import Card from "./components/Card";
 import Player from "./components/Player";
+import { ENTITIES } from "./constants";
+import { ILevel } from "./interfaces";
 import { modalState } from "./state/modal";
 import { settingsController } from "./state/settings";
 
@@ -12,6 +14,9 @@ import { settingsController } from "./state/settings";
 
 function Game() {
   const [level, setLevel] = createSignal(0);
+  const [levels, setLevels] = createSignal<ILevel[]>([]);
+  const [currentLevel, setCurrentLevel] = createSignal(0);
+
   /* const [player] = playerState; */
   const [modal /* setModal */] = modalState;
   /* const [world] = worldState;
@@ -20,8 +25,46 @@ function Game() {
   /* const _worldController = worldController(); */
   const _settingsController = settingsController();
 
+  const getRandomizedEntityType = () => {
+    const n = Math.floor(Math.random() * ENTITIES.length);
+
+    return ENTITIES[n];
+  };
+
+  const getRandomEntityFromType = (entityObject: any) => {
+    const entities = Object.entries(entityObject);
+    const n = Math.floor(Math.random() * entities.length);
+
+    return entities[n][1];
+  };
+
+  const generateLevels = () => {
+    const howManyLevels = 10;
+    let _levels: ILevel[] = [];
+
+    for (let i = 0; i < howManyLevels; i++) {
+      const howManeyThingsInThisLevel = Math.floor(Math.random() * 10);
+
+      _levels.push({
+        entities: [],
+      });
+
+      for (let j = 0; j < howManeyThingsInThisLevel; j++) {
+        const entityType = getRandomizedEntityType();
+        const entity = getRandomEntityFromType(entityType);
+
+        _levels[i].entities.push(entity);
+      }
+    }
+
+    console.log({ _levels });
+
+    setLevels(_levels);
+  };
+
   onMount(() => {
     _settingsController.loadSettings();
+    generateLevels();
     /* _worldController.createPlaces(); */
   });
 
@@ -35,40 +78,21 @@ function Game() {
         <Player />
       </aside>
 
-      {/* <WorldMap /> */}
-
       <main class="w-[69%]">
         <div id="map">
           <div data-id="level" class="my-4">
-            <div class="divider">Level 1</div>
-            <div class="flex items-center justify-center">
-              <Card
-                className="w-[32%]"
-                title="Alien"
-                img="👽"
-                footer={<Button>Select</Button>}
-              />
-              <Card
-                className="w-[32%]"
-                title="Alien"
-                img="👽"
-                footer={<Button>Select</Button>}
-              />
-              <Card
-                className="w-[32%]"
-                title="Alien"
-                img="👽"
-                footer={<Button>Select</Button>}
-              />
-            </div>
-          </div>
-
-          <div data-id="level" class="my-8">
-            <div class="divider">Level 2</div>
-            <div class="flex items-center justify-center">
-              <Card className="w-[32%]" title="Alien" img="😈" />
-              <Card className="w-[32%]" title="Alien" img="😈" />
-              <Card className="w-[32%]" title="Alien" img="😈" />
+            <div class="divider">Level {currentLevel()}</div>
+            <div class="flex items-center justify-center flex-wrap">
+              {levels()?.[currentLevel()]?.entities.map((entity) => {
+                return (
+                  <Card
+                    className="w-[32%]"
+                    title={entity.NAME}
+                    img={entity.IMAGE}
+                    footer={<Button>Select</Button>}
+                  />
+                );
+              })}
             </div>
           </div>
         </div>
