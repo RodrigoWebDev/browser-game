@@ -2,16 +2,9 @@ import { Dynamic } from "solid-js/web";
 import { PLACES, TPLACE_TYPES } from "../../constants/places";
 import { worldMapController } from "../../state/worldMap";
 import { QuestionMark } from "../Icons";
-/* import { worldController } from "../../state/world";
+import { E_LOCATIONS } from "../../enums";
+/* import { placeController } from "../../state/world";
 import Button from "../Button"; */
-
-enum MapLocations {
-  "FOREST" = 1,
-  "VILLAGE",
-  "DUNGEON",
-  "TAVERN",
-  "CAVERN",
-}
 
 /* const worldMap = [
   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -28,6 +21,7 @@ enum MapLocations {
 
 const WorldMap = () => {
   const { mapWithVisibleArea, move } = worldMapController();
+  console.log("🚀 ~ WorldMap ~ mapWithVisibleArea:", mapWithVisibleArea())
 
   return (
     <div id="WorldMap" class="w-[70%] p-4">
@@ -41,7 +35,7 @@ const WorldMap = () => {
               let worldLocation: any;
 
               if (col) {
-                myCol = MapLocations[col.type] as TPLACE_TYPES;
+                myCol = E_LOCATIONS[col.type] as TPLACE_TYPES;
                 worldLocation = PLACES[myCol];
               }
 

@@ -1,18 +1,18 @@
 import { JSXElement, createSignal } from "solid-js";
 import { Dynamic } from "solid-js/web";
-import { PersonWalk } from "../components/Icons";
-import NpcTalk from "../components/NpcTalk";
-import Shop from "../components/Shop";
+import { PersonWalk } from "../components/Icons/index.tsx";
+import NpcTalk from "../components/NpcTalk/index.tsx";
+import Shop from "../components/Shop/index.tsx";
 import {
   GENDERS,
   MAX_THINGS_NUMBER,
   MIN_THINGS_NUMBER,
   NPC_NAMES,
-} from "../constants";
-import { CONTAINER, TCONTAINER_TYPES } from "../constants/containers";
-import { ENEMY, IENEMY, TENEMY_TYPES } from "../constants/enemies";
+} from "../constants/index.ts";
+import { CONTAINER, TCONTAINER_TYPES } from "../constants/containers.ts";
+import { ENEMY, IENEMY, TENEMY_TYPES } from "../constants/enemies.ts";
 import { ITEM, ITEM_TYPES, TITEM_TYPES } from "../constants/items.ts";
-import { NPC, NPC_GREETINGS, TNPC_TYPES } from "../constants/npc";
+import { NPC, NPC_GREETINGS, TNPC_TYPES } from "../constants/npc.ts";
 import {
   INNER_PLACE,
   IPlace,
@@ -20,45 +20,47 @@ import {
   PLACE_TYPES,
   TINNER_PLACE_TYPES,
   TPLACE_TYPES,
-} from "../constants/places";
+} from "../constants/places.ts";
 import {
   getNewArrayWithRandomItems,
   getRandomIntFromInterval,
   getRandomItemFromArray,
-} from "../helpers";
-import { IAction, IThing, IWorld } from "../interfaces";
-import { combatController } from "./combat";
-import { inventoryController, inventoryState } from "./inventory";
-import { modalState } from "./modal";
-import { playerState } from "./player";
-import { shopState } from "./shop";
-import { SCREENS } from "../enums/index.ts";
+} from "../helpers/index.tsx";
+import { IAction, IThing, IWorld } from "../interfaces.ts";
+import { combatController } from "./combat.tsx";
+import { inventoryController, inventoryState } from "./inventory.ts";
+import { modalState } from "./modal.ts";
+import { playerState } from "./player.ts";
+import { shopState } from "./shop.ts";
+import { E_SCREENS } from "../enums/index.ts";
 
-export const worldState = createSignal<IWorld>({
-  locations: [],
-  screen: SCREENS.WORLD_MAP
+export const placeState = createSignal<IWorld>({
+  things: [],
+  screen: E_SCREENS.WORLD_MAP
 });
 
-export const worldController = () => {
-  const [world, setWorld] = worldState;
+export const mockPlayerPos = 0
+
+export const placeController = () => {
+  const [place, setPlace] = placeState;
   const [player, setPlayer] = playerState;
   const [, setModal] = modalState;
   const [inventory] = inventoryState;
   const [, setShop] = shopState;
   const combat = combatController();
   const _inventoryController = inventoryController();
-  const [screen, setScreen] = createSignal(SCREENS.WORLD_MAP)
+  const [screen, setScreen] = createSignal(E_SCREENS.WORLD_MAP)
 
   const getCurrentLocation = () => {
-    return world().locations[player().currentLocationIndex];
+    return place().things[0];
   };
 
   const removeThingFromLocation = (id: number) => {
-    const _world = { ...world() };
+    const _place = { ...place() };
 
-    delete _world.locations[player().currentLocationIndex].things[id];
+    delete _place.things[mockPlayerPos].things[id];
 
-    setWorld({ ..._world });
+    setPlace({ ..._place });
   };
 
   const hasThingToFind = () => {
@@ -68,16 +70,16 @@ export const worldController = () => {
   };
 
   const findSomething = () => {
-    const _world = { ...world() };
-    const currentLocationIndex = player().currentLocationIndex;
-    const notFoundIndex = _world.locations[
+    const _place = { ...place() };
+    const currentLocationIndex = mockPlayerPos;
+    const notFoundIndex = _place.things[
       currentLocationIndex
     ].things.findIndex((item) => !item.found);
 
     if (notFoundIndex !== -1) {
-      _world.locations[currentLocationIndex].things[notFoundIndex].found = true;
+      _place.things[currentLocationIndex].things[notFoundIndex].found = true;
 
-      setWorld(_world);
+      setPlace(_place);
     }
   };
 
@@ -302,13 +304,13 @@ export const worldController = () => {
   };
 
   const createPlaces = () => {
-    const _world = { ...world() };
+    const _place = { ...place() };
 
     for (let i = 0; i < 5; i++) {
-      _world.locations.push(getPlace());
+      _place.things.push(getPlace());
     }
 
-    setWorld({ ..._world });
+    setPlace({ ..._place });
   };
 
   const goToNextArea = () => {
@@ -322,7 +324,7 @@ export const worldController = () => {
       closeModal();
       setPlayer((val) => ({
         ...val,
-        currentLocationIndex: val.currentLocationIndex + 1,
+        currentLocationIndex: mockPlayerPos + 1,
       }));
     }, 1000);
   };
@@ -330,7 +332,7 @@ export const worldController = () => {
   const goToPreviousArea = () => {
     setPlayer((val) => ({
       ...val,
-      currentLocationIndex: val.currentLocationIndex - 1,
+      currentLocationIndex: mockPlayerPos - 1,
     }));
   };
 

@@ -13,7 +13,7 @@ import { CONTAINER, TCONTAINER_TYPES } from "../constants/containers";
 import { ENEMY, IENEMY, TENEMY_TYPES } from "../constants/enemies";
 import { ITEM, ITEM_TYPES, TITEM_TYPES } from "../constants/items";
 import { NPC, NPC_GREETINGS, TNPC_TYPES } from "../constants/npc";
-import { INNER_PLACE, IPlace, TINNER_PLACE_TYPES } from "../constants/places";
+import { INNER_PLACE, IPlace, PLACES, TINNER_PLACE_TYPES, TPLACE_TYPES } from "../constants/places";
 import {
   getNewArrayWithRandomItems,
   getRandomIntFromInterval,
@@ -25,8 +25,8 @@ import { inventoryController, inventoryState } from "./inventory";
 import { modalState } from "./modal";
 import { playerState } from "./player";
 import { shopState } from "./shop";
-import { worldController, worldState } from "./world";
-import { SCREENS } from "../enums";
+import { placeController, placeState } from "./place";
+import { E_LOCATIONS, E_SCREENS } from "../enums";
 
 export const worldMapState = createSignal<any[][]>([]);
 
@@ -35,27 +35,12 @@ export const worldMapController = () => {
   const [player, setPlayer] = playerState;
   const [modal, setModal] = modalState;
   const [shop, setShop] = shopState;
-  const [world, setWorld] = worldState;
+  const [place, setPlace] = placeState;
   const [inventory, setInventory] = inventoryState;
 
   const _combatController = combatController();
   const _inventoryController = inventoryController();
-  const _worldController = worldController();
-
-  const generatedWorldMap = () => {
-    const worldSize = 11;
-    const _worldMap: any = [];
-
-    for (let i = 0; i < worldSize; i++) {
-      _worldMap.push(
-        Array.apply(null, Array(worldSize)).map(function () {
-          return new WorldPlace(false, false);
-        })
-      );
-    }
-
-    return setWorldMap(_worldMap);
-  };
+  const _placeController = placeController();
 
   const mapWithVisibleArea = () => {
     if (!worldMap().length) return;
@@ -138,14 +123,17 @@ export const worldMapController = () => {
         x: val.worldPosition.x,
         y: val.worldPosition.y,
       },
-    }));
-
-    setPlayer((val) => ({
-      ...val,
       worldPosition: {
         ...cords,
       },
     }));
+
+    /* setPlayer((val) => ({
+      ...val,
+      worldPosition: {
+        ...cords,
+      },
+    })); */
   };
 
   const closeModal = () => {
@@ -340,20 +328,29 @@ export const worldMapController = () => {
     };
   };
 
-  const move = (cords: Vector2, place?: any) => {
+  const move = (cords: Vector2, _place?: any) => {
     const _worldMap = worldMap();
 
-    const generatedPlaceInfo = createPlaceInfo(place);
+    const generatedPlaceInfo = createPlaceInfo(_place);
 
-    _worldMap[cords.y][cords.x] = {
-      ..._worldMap[cords.y][cords.x],
-      info: generatedPlaceInfo,
-    };
+    const getLocation = () => _worldMap[cords.y][cords.x]
+    const setLocation = (worldPlace: WorldPlace) => {
+      _worldMap[cords.y][cords.x] = worldPlace
+    }
+
+    if(!getLocation().info){
+      setLocation({
+        ...getLocation(),
+        info: generatedPlaceInfo,
+      })
+    }
+
+    setWorldMap(_worldMap)
 
     setModal(() => ({
       isOpen: true,
       title: "",
-      children: <>Moving to {generatedPlaceInfo.name}</>,
+      children: <p>Moving to {getLocation().info.name}</p>,
     }));
 
     setTimeout(() => {
@@ -364,33 +361,56 @@ export const worldMapController = () => {
         children: <></>,
       }));
 
-      setWorld({
-        ...world(),
-        screen: SCREENS.PLACE
+      setPlayer({
+        ...player(),
+        currentLocationIndex: cords
+      })
+
+      setPlace({
+        ...place(),
+        screen: E_SCREENS.PLACE
       })
     }, 1000);
   };
 
+  const createInitialPlace = () => {
+    const worldPlace = new WorldPlace(false, false);
+
+    let placeType = E_LOCATIONS[worldPlace.type] as TPLACE_TYPES;;
+    let worldLocation = PLACES[placeType];
+
+    worldPlace.info = createPlaceInfo(worldLocation)
+
+    return worldPlace
+  }
+
+  const generatedWorldMap = () => {
+    const worldSize = 11;
+    const _worldMap: any = [];
+
+    const playerPositionInWorld = player().worldPosition
+    console.log("🚀 ~ generatedWorldMap ~ playerPositionInWorld:", playerPositionInWorld)
+
+    for (let x = 0; x < worldSize; x++) {
+      _worldMap.push(
+        Array.apply(null, Array(worldSize)).map(function (_, y) {
+          const isPLayerInitialPosition = playerPositionInWorld.x === x && playerPositionInWorld.y === y
+
+          if(isPLayerInitialPosition){
+            return createInitialPlace()
+          }
+
+          return new WorldPlace(false, false);
+        })
+      );
+    }
+
+    return setWorldMap(_worldMap);
+  };
+
+
   onMount(() => {
     generatedWorldMap();
-
-    document.addEventListener("click", () => {
-      /* setPlayer((val) => ({
-        ...val,
-        previousWorldPosition: {
-          x: val.worldPosition.x,
-          y: val.worldPosition.y,
-        },
-      }));
-
-      setPlayer((val) => ({
-        ...val,
-        worldPosition: {
-          x: val.worldPosition.x + 1,
-          y: val.worldPosition.y + 1,
-        },
-      })); */
-    });
   });
 
   return {

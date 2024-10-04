@@ -1,14 +1,14 @@
 import { /* JSXElement, */ ValidComponent } from "solid-js";
 import { IENEMY } from "./constants/enemies";
 import { IITEM } from "./constants/items.ts";
-import { SCREENS } from "./enums/index.ts";
+import { E_SCREENS } from "./enums/index.ts";
 
 export interface IPlayerActions {
   name: string;
   click: (...args: any) => void;
 }
 
-export interface ILocation {
+export interface IThings {
   name: string;
   type: string;
   bg: ValidComponent;
@@ -25,8 +25,8 @@ export interface ILocation {
 }
 
 export interface IWorld {
-  locations: ILocation[];
-  screen: SCREENS
+  things: IThings[];
+  screen: E_SCREENS
 }
 
 export interface IItemShop extends IITEM {
