@@ -2,7 +2,7 @@ import Button from "./components/Button";
 import Modal from "./components/Modal";
 
 // Assets
-import { createEffect, createSignal, onMount } from "solid-js";
+import { createEffect, onMount } from "solid-js";
 import Player from "./components/Player";
 import WorldMap from "./components/WorldMap";
 import { modalState } from "./state/modal";
@@ -14,32 +14,29 @@ import Card from "./components/Card";
 import { Dynamic } from "solid-js/web";
 import ToolTip from "./components/Tooltip";
 import DropDown from "./components/Dropwdown";
-import SwordsSvg from "./components/svgIcons/swords";
-import ArrowSvg from "./components/svgIcons/arrow";
-import Explore from "./components/svgIcons/explore";
+import SwordsSvg from "./components/SvgIcons/swords";
+import ArrowSvg from "./components/SvgIcons/arrow";
+import Explore from "./components/SvgIcons/explore";
 import { E_SCREENS } from "./enums";
-import { worldMapState } from "./state/worldMap";
+import { screenController, screenState } from "./state/screen";
+import Map from "./components/SvgIcons/Map";
 
 const cardContainerStyle = "w-[25%] mr-2 mb-2";
 
 function Game() {
   const [player] = playerState;
-  const [modal /* setModal */] = modalState;
+  const [modal] = modalState;
   const [place] = placeState;
-  const [worldMap] = worldMapState;
+  const [screen] = screenState;
   const [combat] = combatState;
   const _combatController = combatController();
   const _placeController = placeController();
   const _settingsController = settingsController();
+  const _screenController = screenController()
 
 
   onMount(() => {
     _settingsController.loadSettings();
-    _placeController.createPlaces();
-
-    /* const playerWorldPosition = player().worldPosition
-    const playerWorldTileInfo = worldMap()[playerWorldPosition.y][playerWorldPosition.x].info
-    console.log("🚀 ~ Game ~ playerWorldTileInfo:", playerWorldTileInfo) */
   });
 
   createEffect(() => {
@@ -48,11 +45,12 @@ function Game() {
 
   return (
     <div class="flex justify-between h-screen max-w-[1360px] mx-auto">
+
       <aside class="w-[29%] p-4">
         <Player />
       </aside>
 
-      {place().screen === E_SCREENS.PLACE && place().things.length && (
+      {screen() === E_SCREENS.PLACE && place().things.length && (
         <main class="w-[69%]">
           <div class="h-full bg-contain">
             {player().isInCombat ? (
@@ -138,7 +136,7 @@ function Game() {
               >
                 <h2 class="text-[20px]">
                   You are in{" "}
-                  <strong>{_placeController.getCurrentLocation().name}</strong>
+                  <strong>{place().name}</strong>
                 </h2>
                 <hr class="my-4" />
                 <div>
@@ -167,20 +165,19 @@ function Game() {
                       </Button>
                     </ToolTip>
 
-                    <ToolTip text="Go to next area">
+                    <ToolTip text="Show map">
                       <Button
                         onClick={() => {
-                          _placeController.goToNextArea();
+                          _screenController.setScreen(E_SCREENS.WORLD_MAP)
                         }}
                       >
-                        <ArrowSvg />
+                        <Map />
                       </Button>
                     </ToolTip>
                   </div>
 
                   <div id="things-found" class="mt-4 flex flex-wrap">
-                    {_placeController
-                      .getCurrentLocation()
+                    {place()
                       .things.map((item) => {
                         const thing = item.thing;
 
@@ -231,7 +228,7 @@ function Game() {
         </main>
       )}
 
-      {place().screen === E_SCREENS.WORLD_MAP && <WorldMap />}
+      {screen() === E_SCREENS.WORLD_MAP && <WorldMap />}
 
       <Modal title={modal().title} isOpen={modal().isOpen}>
         {modal().children}

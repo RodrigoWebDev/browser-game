@@ -26,7 +26,7 @@ import {
   getRandomIntFromInterval,
   getRandomItemFromArray,
 } from "../helpers/index.tsx";
-import { IAction, IThing, IWorld } from "../interfaces.ts";
+import { IAction, IThing, IPlaceInfo } from "../interfaces.ts";
 import { combatController } from "./combat.tsx";
 import { inventoryController, inventoryState } from "./inventory.ts";
 import { modalState } from "./modal.ts";
@@ -34,12 +34,14 @@ import { playerState } from "./player.ts";
 import { shopState } from "./shop.ts";
 import { E_SCREENS } from "../enums/index.ts";
 
-export const placeState = createSignal<IWorld>({
+export const placeState = createSignal<IPlaceInfo>({
+  name: "",
+  type: "",
+  bg: "",
   things: [],
-  screen: E_SCREENS.WORLD_MAP
 });
 
-export const mockPlayerPos = 0
+export const mockPlayerPos = 0;
 
 export const placeController = () => {
   const [place, setPlace] = placeState;
@@ -49,35 +51,28 @@ export const placeController = () => {
   const [, setShop] = shopState;
   const combat = combatController();
   const _inventoryController = inventoryController();
-  const [screen, setScreen] = createSignal(E_SCREENS.WORLD_MAP)
-
-  const getCurrentLocation = () => {
-    return place().things[0];
-  };
+  const [screen, setScreen] = createSignal(E_SCREENS.WORLD_MAP);
 
   const removeThingFromLocation = (id: number) => {
     const _place = { ...place() };
 
-    delete _place.things[mockPlayerPos].things[id];
+    //delete _place.things[mockPlayerPos].things[id];
 
     setPlace({ ..._place });
   };
 
   const hasThingToFind = () => {
-    return getCurrentLocation().things.some((item) => {
+    return place().things.some((item) => {
       return item.found == false;
     });
   };
 
   const findSomething = () => {
     const _place = { ...place() };
-    const currentLocationIndex = mockPlayerPos;
-    const notFoundIndex = _place.things[
-      currentLocationIndex
-    ].things.findIndex((item) => !item.found);
+    const notFoundIndex = _place.things.findIndex((item) => !item.found);
 
     if (notFoundIndex !== -1) {
-      _place.things[currentLocationIndex].things[notFoundIndex].found = true;
+      _place.things[notFoundIndex].found = true;
 
       setPlace(_place);
     }
@@ -92,7 +87,7 @@ export const placeController = () => {
   const explore = () => {
     if (hasThingToFind()) {
       setModal(() => ({
-        title: `Exploring ${getCurrentLocation().name}`,
+        title: `Exploring ${place().name}`,
         children: <PersonWalk />,
         isOpen: true,
       }));
@@ -114,204 +109,198 @@ export const placeController = () => {
     return getRandomItemFromArray(NPC_GREETINGS);
   };
 
-  const getPlaceInformation = (place: IPlace) => {
-    const name = `${getRandomItemFromArray(place.NAMES)} (${place.ID}) `;
-    const bg = getRandomItemFromArray(place.IMAGES);
-    let things = [];
+  // const getThingInformation = (place: IPlace, i: number) => {
+  //   //const name = `${getRandomItemFromArray(place.NAMES)} (${place.ID}) `;
+  //   //const bg = getRandomItemFromArray(place.IMAGES);
+  //   let things = [];
 
-    const interval = getRandomIntFromInterval(
-      MIN_THINGS_NUMBER,
-      MAX_THINGS_NUMBER
-    );
+  //   const interval = getRandomIntFromInterval(
+  //     MIN_THINGS_NUMBER,
+  //     MAX_THINGS_NUMBER
+  //   );
 
-    for (let i = 0; i < interval; i++) {
-      const randomThing = getRandomItemFromArray(place.THINGS) as IThing;
-      /* const randomThing = {
-        TYPE: "NPC",
-        SUBTYPE: "MERCHANT",
-      }; */
+  //   /* for (let i = 0; i < interval; i++) { */
+  //   const randomThing = getRandomItemFromArray(place.THINGS) as IThing;
+  //   /* const randomThing = {
+  //       TYPE: "NPC",
+  //       SUBTYPE: "MERCHANT",
+  //     }; */
 
-      let randomName = "";
-      let randomImage: JSXElement;
-      let actions: IAction[] = [];
-      let subType = randomThing.SUBTYPE.toLocaleLowerCase();
-      const thingType = randomThing.TYPE;
+  //   let randomName = "";
+  //   let randomImage: JSXElement;
+  //   let actions: IAction[] = [];
+  //   let subType = randomThing.SUBTYPE.toLocaleLowerCase();
+  //   const thingType = randomThing.TYPE;
 
-      if (thingType === "NPC") {
-        //Create NPC Info
-        const _subType = randomThing.SUBTYPE as TNPC_TYPES;
-        const gender = getRandomItemFromArray(GENDERS) as "MALE" | "FEMALE";
-        const images = NPC[_subType][gender].IMAGES;
-        randomImage = <Dynamic component={getRandomItemFromArray(images)} />;
-        randomName = getRandomItemFromArray(NPC_NAMES[gender]);
-        actions.push({
-          name: "Talk",
-          click: () => {
-            setModal({
-              title: randomName,
-              isOpen: true,
-              children: <NpcTalk img={randomImage} text={getRandomTalk()} />,
-            });
-          },
-        });
+  //   if (thingType === "NPC") {
+  //     //Create NPC Info
+  //     const _subType = randomThing.SUBTYPE as TNPC_TYPES;
+  //     const gender = getRandomItemFromArray(GENDERS) as "MALE" | "FEMALE";
+  //     const images = NPC[_subType][gender].IMAGES;
+  //     randomImage = <Dynamic component={getRandomItemFromArray(images)} />;
+  //     randomName = getRandomItemFromArray(NPC_NAMES[gender]);
+  //     actions.push({
+  //       name: "Talk",
+  //       click: () => {
+  //         setModal({
+  //           title: randomName,
+  //           isOpen: true,
+  //           children: <NpcTalk img={randomImage} text={getRandomTalk()} />,
+  //         });
+  //       },
+  //     });
 
-        if (_subType == "MERCHANT") {
-          //Generate inventory items for merchant
-          const inventoryItems = getNewArrayWithRandomItems(
-            ITEM_TYPES
-          ) as TITEM_TYPES[];
+  //     if (_subType == "MERCHANT") {
+  //       //Generate inventory items for merchant
+  //       const inventoryItems = getNewArrayWithRandomItems(
+  //         ITEM_TYPES
+  //       ) as TITEM_TYPES[];
 
-          actions.push({
-            name: "Buy",
-            click: () => {
-              const items = inventoryItems.map((itemName) => ({
-                ...ITEM[itemName],
-                maxQuantity: 5,
-                quantitySelected: 0,
-                key: itemName,
-              }));
+  //       actions.push({
+  //         name: "Buy",
+  //         click: () => {
+  //           const items = inventoryItems.map((itemName) => ({
+  //             ...ITEM[itemName],
+  //             maxQuantity: 5,
+  //             quantitySelected: 0,
+  //             key: itemName,
+  //           }));
 
-              setShop((val) => ({
-                ...val,
-                items,
-              }));
+  //           setShop((val) => ({
+  //             ...val,
+  //             items,
+  //           }));
 
-              setModal({
-                title: `${randomName}'s Shop`,
-                isOpen: true,
-                children: (
-                  <Shop
-                    playerMoney={player().money}
-                    closeModal={() => {
-                      closeModal();
-                    }}
-                    playerInventoryMaxCapacity={inventory().maxCapacity}
-                    playerCurrentWeight={_inventoryController.getInventoryWeight()}
-                    isBuying
-                  />
-                ),
-              });
-            },
-          });
+  //           setModal({
+  //             title: `${randomName}'s Shop`,
+  //             isOpen: true,
+  //             children: (
+  //               <Shop
+  //                 playerMoney={player().money}
+  //                 closeModal={() => {
+  //                   closeModal();
+  //                 }}
+  //                 playerInventoryMaxCapacity={inventory().maxCapacity}
+  //                 playerCurrentWeight={_inventoryController.getInventoryWeight()}
+  //                 isBuying
+  //               />
+  //             ),
+  //           });
+  //         },
+  //       });
 
-          actions.push({
-            name: "Sell",
-            click: () => {
-              const items = inventory().items.map((item) => ({
-                ...ITEM[item.key],
-                maxQuantity: item.quantity,
-                quantitySelected: 0,
-                key: item.key,
-              }));
+  //       actions.push({
+  //         name: "Sell",
+  //         click: () => {
+  //           const items = inventory().items.map((item) => ({
+  //             ...ITEM[item.key],
+  //             maxQuantity: item.quantity,
+  //             quantitySelected: 0,
+  //             key: item.key,
+  //           }));
 
-              setShop((val) => ({
-                ...val,
-                items,
-              }));
+  //           setShop((val) => ({
+  //             ...val,
+  //             items,
+  //           }));
 
-              setModal({
-                title: `Selling to ${randomName}`,
-                isOpen: true,
-                children: (
-                  <Shop
-                    playerMoney={player().money}
-                    closeModal={() => {
-                      closeModal();
-                    }}
-                    playerInventoryMaxCapacity={inventory().maxCapacity}
-                    playerCurrentWeight={_inventoryController.getInventoryWeight()}
-                  />
-                ),
-              });
-            },
-          });
-        }
-      } else if (thingType === "INNER_PLACE") {
-        //Create INNER_PLACE Info
-        const _subType = randomThing.SUBTYPE as TINNER_PLACE_TYPES;
-        const thing = INNER_PLACE[_subType];
-        const image = getRandomItemFromArray(thing.IMAGES);
-        randomImage = image;
-        randomName = getRandomItemFromArray(thing.NAMES);
+  //           setModal({
+  //             title: `Selling to ${randomName}`,
+  //             isOpen: true,
+  //             children: (
+  //               <Shop
+  //                 playerMoney={player().money}
+  //                 closeModal={() => {
+  //                   closeModal();
+  //                 }}
+  //                 playerInventoryMaxCapacity={inventory().maxCapacity}
+  //                 playerCurrentWeight={_inventoryController.getInventoryWeight()}
+  //               />
+  //             ),
+  //           });
+  //         },
+  //       });
+  //     }
+  //   } else if (thingType === "INNER_PLACE") {
+  //     //Create INNER_PLACE Info
+  //     const _subType = randomThing.SUBTYPE as TINNER_PLACE_TYPES;
+  //     const thing = INNER_PLACE[_subType];
+  //     const image = getRandomItemFromArray(thing.IMAGES);
+  //     randomImage = image;
+  //     randomName = getRandomItemFromArray(thing.NAMES);
 
-        actions = [
-          {
-            name: "Enter",
-            click: () => {
-              //this.talk();
-            },
-          },
-        ];
-      } else if (thingType === "ENEMY") {
-        const thingSubType = randomThing.SUBTYPE as TENEMY_TYPES;
-        const enemy = ENEMY[thingSubType] as IENEMY;
-        const image = enemy.IMAGE;
-        randomName = enemy.NAME;
-        randomImage = <Dynamic component={image} />;
+  //     actions = [
+  //       {
+  //         name: "Enter",
+  //         click: () => {
+  //           //this.talk();
+  //         },
+  //       },
+  //     ];
+  //   } else if (thingType === "ENEMY") {
+  //     const thingSubType = randomThing.SUBTYPE as TENEMY_TYPES;
+  //     const enemy = ENEMY[thingSubType] as IENEMY;
+  //     const image = enemy.IMAGE;
+  //     randomName = enemy.NAME;
+  //     randomImage = <Dynamic component={image} />;
 
-        actions = [
-          {
-            name: "Start combat",
-            click: () => {
-              setPlayer((val) => ({
-                ...val,
-                isInCombat: true,
-              }));
+  //     actions = [
+  //       {
+  //         name: "Start combat",
+  //         click: () => {
+  //           setPlayer((val) => ({
+  //             ...val,
+  //             isInCombat: true,
+  //           }));
 
-              combat.setEnemiesToCombat(i, enemy);
+  //           combat.setEnemiesToCombat(i, enemy);
 
-              /* if (combat()) {
-              } */
-              //this.talk();
-            },
-          },
-        ];
-      } else {
-        const thingSubType = randomThing.SUBTYPE as TCONTAINER_TYPES;
-        const container = CONTAINER[thingSubType];
-        const image = container.IMAGE;
-        randomName = container.NAME;
-        randomImage = <Dynamic component={image} />;
+  //           /* if (combat()) {
+  //             } */
+  //           //this.talk();
+  //         },
+  //       },
+  //     ];
+  //   } else {
+  //     const thingSubType = randomThing.SUBTYPE as TCONTAINER_TYPES;
+  //     const container = CONTAINER[thingSubType];
+  //     const image = container.IMAGE;
+  //     randomName = container.NAME;
+  //     randomImage = <Dynamic component={image} />;
 
-        actions = [];
-      }
+  //     actions = [];
+  //   }
 
-      things.push({
-        id: i,
-        found: false,
-        thing: {
-          name: randomName,
-          type: subType,
-          img: randomImage,
-          playerActions: actions,
-        },
-      });
-    }
+  //   return {
+  //     id: i,
+  //     found: false,
+  //     thing: {
+  //       name: randomName,
+  //       type: subType,
+  //       img: randomImage,
+  //       playerActions: actions,
+  //     },
+  //   };
+  // };
 
-    return {
-      name,
-      type: place.ID,
-      bg,
-      things,
-    };
-  };
+  // const getThing = (i: number) => {
+  //   const randomPlaceType = getRandomItemFromArray(PLACE_TYPES) as TPLACE_TYPES;
+  //   //const randomPlaceType = "FOREST";
 
-  const getPlace = () => {
-    const randomPlaceType = getRandomItemFromArray(PLACE_TYPES) as TPLACE_TYPES;
-    //const randomPlaceType = "FOREST";
+  //   return getThingInformation(PLACES[randomPlaceType], i);
+  // };
 
-    return getPlaceInformation(PLACES[randomPlaceType]);
-  };
+  // const createThings = () => {
+  //   const _place = { ...place() };
 
-  const createPlaces = () => {
-    const _place = { ...place() };
+  //   for (let i = 0; i < 5; i++) {
+  //     _place.things.push(getThing(i));
+  //   }
 
-    for (let i = 0; i < 5; i++) {
-      _place.things.push(getPlace());
-    }
+  //   console.log("🚀 ~ createThings ~ _place:", _place)
 
-    setPlace({ ..._place });
-  };
+  //   setPlace({ ..._place });
+  // };
 
   const goToNextArea = () => {
     setModal({
@@ -337,13 +326,11 @@ export const placeController = () => {
   };
 
   return {
-    createPlaces,
     removeThingFromLocation,
-    getCurrentLocation,
     goToPreviousArea,
     explore,
     goToNextArea,
     screen,
-    setScreen
+    setScreen,
   };
 };

@@ -27,6 +27,7 @@ import { playerState } from "./player";
 import { shopState } from "./shop";
 import { placeController, placeState } from "./place";
 import { E_LOCATIONS, E_SCREENS } from "../enums";
+import { screenController, screenState } from "./screen";
 
 export const worldMapState = createSignal<any[][]>([]);
 
@@ -41,6 +42,7 @@ export const worldMapController = () => {
   const _combatController = combatController();
   const _inventoryController = inventoryController();
   const _placeController = placeController();
+  const _screenController = screenController();
 
   const mapWithVisibleArea = () => {
     if (!worldMap().length) return;
@@ -332,6 +334,7 @@ export const worldMapController = () => {
     const _worldMap = worldMap();
 
     const generatedPlaceInfo = createPlaceInfo(_place);
+    console.log("🚀 ~ move ~ generatedPlaceInfo:", generatedPlaceInfo)
 
     const getLocation = () => _worldMap[cords.y][cords.x]
     const setLocation = (worldPlace: WorldPlace) => {
@@ -367,9 +370,10 @@ export const worldMapController = () => {
       })
 
       setPlace({
-        ...place(),
-        screen: E_SCREENS.PLACE
+        ...getLocation().info,
       })
+
+      _screenController.setScreen(E_SCREENS.PLACE)
     }, 1000);
   };
 
@@ -380,6 +384,9 @@ export const worldMapController = () => {
     let worldLocation = PLACES[placeType];
 
     worldPlace.info = createPlaceInfo(worldLocation)
+    console.log("🚀 ~ createInitialPlace ~ worldPlace:", worldPlace)
+
+    setPlace(worldPlace.info)
 
     return worldPlace
   }
@@ -389,7 +396,6 @@ export const worldMapController = () => {
     const _worldMap: any = [];
 
     const playerPositionInWorld = player().worldPosition
-    console.log("🚀 ~ generatedWorldMap ~ playerPositionInWorld:", playerPositionInWorld)
 
     for (let x = 0; x < worldSize; x++) {
       _worldMap.push(

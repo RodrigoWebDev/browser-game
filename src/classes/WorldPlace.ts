@@ -1,22 +1,5 @@
-import { JSXElement } from "solid-js";
 import { getRandomIntFromInterval } from "../helpers";
-import { IAction } from "../interfaces";
-
-interface IInnerPlace {
-  name: string;
-  type: string;
-  bg: any;
-  things: {
-    id: number;
-    found: boolean;
-    thing: {
-      name: string;
-      type: string;
-      img: JSXElement;
-      playerActions: IAction[];
-    };
-  }[];
-}
+import { IPlaceInfo } from "../interfaces";
 
 export class WorldPlace {
   type;
@@ -27,7 +10,7 @@ export class WorldPlace {
   constructor(
     isCurrent: boolean = false,
     isVisible: boolean = false,
-    info?: IInnerPlace
+    info?: IPlaceInfo
   ) {
     this.type = getRandomIntFromInterval(1, 5);
     this.isCurrent = isCurrent;

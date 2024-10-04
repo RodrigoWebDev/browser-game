@@ -1,7 +1,6 @@
 import { /* JSXElement, */ ValidComponent } from "solid-js";
 import { IENEMY } from "./constants/enemies";
 import { IITEM } from "./constants/items.ts";
-import { E_SCREENS } from "./enums/index.ts";
 
 export interface IPlayerActions {
   name: string;
@@ -9,24 +8,21 @@ export interface IPlayerActions {
 }
 
 export interface IThings {
-  name: string;
-  type: string;
-  bg: ValidComponent;
-  things: {
     id: number;
     found: boolean;
     thing: {
       name: string;
       type: string;
       img: any;
-      playerActions: IPlayerActions[];
+      playerActions: IAction[];
     };
-  }[];
 }
 
-export interface IWorld {
-  things: IThings[];
-  screen: E_SCREENS
+export interface IPlaceInfo {
+  name: string;
+  type: string;
+  bg: ValidComponent;
+  things: IThings[]
 }
 
 export interface IItemShop extends IITEM {
