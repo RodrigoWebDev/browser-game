@@ -3,13 +3,13 @@ import { createSignal, JSXElement } from "solid-js";
 interface IModal {
   title?: string;
   isOpen: boolean;
-  children?: JSXElement | null;
+  children?: JSXElement | string | null;
 }
 
 export const modalState = createSignal<IModal>({
   title: "",
   isOpen: false,
-  children: null,
+  children: "",
 });
 
 // somewhere else:

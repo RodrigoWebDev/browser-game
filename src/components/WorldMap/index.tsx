@@ -35,7 +35,6 @@ const WorldMap = () => {
         return (
           <div class="flex justify-between mb-2">
             {row.map((col: any, colIndex: number) => {
-              console.log("col.isVisible ===", col.isVisible);
               /* if (col) { */
 
               let myCol: TPLACE_TYPES;
@@ -63,9 +62,7 @@ const WorldMap = () => {
                   }}
                 >
                   {col.isVisible ? (
-                    <>
-                      <Dynamic component={worldLocation.IMAGES[0]} />
-                    </>
+                    <Dynamic component={worldLocation.IMAGES[0]} />
                   ) : (
                     <QuestionMark />
                   )}

@@ -32,9 +32,11 @@ import { inventoryController, inventoryState } from "./inventory";
 import { modalState } from "./modal";
 import { playerState } from "./player";
 import { shopState } from "./shop";
+import { SCREENS } from "../enums/index.ts";
 
 export const worldState = createSignal<IWorld>({
   locations: [],
+  screen: SCREENS.WORLD_MAP
 });
 
 export const worldController = () => {
@@ -45,6 +47,7 @@ export const worldController = () => {
   const [, setShop] = shopState;
   const combat = combatController();
   const _inventoryController = inventoryController();
+  const [screen, setScreen] = createSignal(SCREENS.WORLD_MAP)
 
   const getCurrentLocation = () => {
     return world().locations[player().currentLocationIndex];
@@ -338,5 +341,7 @@ export const worldController = () => {
     goToPreviousArea,
     explore,
     goToNextArea,
+    screen,
+    setScreen
   };
 };

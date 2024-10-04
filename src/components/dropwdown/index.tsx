@@ -2,7 +2,7 @@ import { JSXElement } from "solid-js";
 
 interface IDropDown {
   items: JSXElement;
-  trigger: JSXElement;
+  trigger: JSXElement | string;
 }
 
 const DropDown = (props: IDropDown) => {

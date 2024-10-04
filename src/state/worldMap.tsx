@@ -25,6 +25,8 @@ import { inventoryController, inventoryState } from "./inventory";
 import { modalState } from "./modal";
 import { playerState } from "./player";
 import { shopState } from "./shop";
+import { worldController, worldState } from "./world";
+import { SCREENS } from "../enums";
 
 export const worldMapState = createSignal<any[][]>([]);
 
@@ -33,10 +35,12 @@ export const worldMapController = () => {
   const [player, setPlayer] = playerState;
   const [modal, setModal] = modalState;
   const [shop, setShop] = shopState;
+  const [world, setWorld] = worldState;
   const [inventory, setInventory] = inventoryState;
-  const _combatController = combatController();
 
+  const _combatController = combatController();
   const _inventoryController = inventoryController();
+  const _worldController = worldController();
 
   const generatedWorldMap = () => {
     const worldSize = 11;
@@ -49,8 +53,6 @@ export const worldMapController = () => {
         })
       );
     }
-
-    console.log({ _worldMap });
 
     return setWorldMap(_worldMap);
   };
@@ -114,11 +116,6 @@ export const worldMapController = () => {
 
           _worldMap[tile.y][tile.x].isVisible = true;
         }
-
-        console.log(
-          " _worldMap[tile.y][tile.x]",
-          _worldMap[tile.y][tile.x].isVisible
-        );
       }
     });
 
@@ -131,14 +128,10 @@ export const worldMapController = () => {
 
     setWorldMap(_worldMap);
 
-    console.log("DEBUG =======", _worldMap);
-
     return _worldMap;
   };
 
   const updateCurrentWorldPlace = (cords: Vector2) => {
-    console.log({ cords });
-
     setPlayer((val) => ({
       ...val,
       previousWorldPosition: {
@@ -350,28 +343,31 @@ export const worldMapController = () => {
   const move = (cords: Vector2, place?: any) => {
     const _worldMap = worldMap();
 
+    const generatedPlaceInfo = createPlaceInfo(place);
+
+    _worldMap[cords.y][cords.x] = {
+      ..._worldMap[cords.y][cords.x],
+      info: generatedPlaceInfo,
+    };
+
     setModal(() => ({
       isOpen: true,
       title: "",
-      children: <></>,
+      children: <>Moving to {generatedPlaceInfo.name}</>,
     }));
 
     setTimeout(() => {
       updateCurrentWorldPlace(cords);
 
-      const generatedPlaceInfo = createPlaceInfo(place);
-
-      _worldMap[cords.y][cords.x] = {
-        ..._worldMap[cords.y][cords.x],
-        info: generatedPlaceInfo,
-      };
-
-      console.log({ generatedPlaceInfo });
-
       setModal(() => ({
-        isOpen: true,
+        isOpen: false,
         children: <></>,
       }));
+
+      setWorld({
+        ...world(),
+        screen: SCREENS.PLACE
+      })
     }, 1000);
   };
 
