@@ -1,6 +1,6 @@
 import { Dynamic } from "solid-js/web";
 import { PLACES, TPLACE_TYPES } from "../../constants/places";
-import { worldMapController } from "../../state/worldMap";
+import { worldMapController, worldMapState } from "../../state/worldMap";
 import { QuestionMark } from "../Icons";
 import { E_LOCATIONS } from "../../enums";
 /* import { placeController } from "../../state/world";
@@ -20,12 +20,12 @@ import Button from "../Button"; */
 ]; */
 
 const WorldMap = () => {
-  const { mapWithVisibleArea, move } = worldMapController();
-  console.log("🚀 ~ WorldMap ~ mapWithVisibleArea:", mapWithVisibleArea())
+  const { move } = worldMapController();
+  const [worldMap] = worldMapState
 
   return (
     <div id="WorldMap" class="w-[70%] p-4">
-      {mapWithVisibleArea()?.map((row: any, rowIndex: number) => {
+      {worldMap()?.map((row: any, rowIndex: number) => {
         return (
           <div class="flex justify-between mb-2">
             {row.map((col: any, colIndex: number) => {
