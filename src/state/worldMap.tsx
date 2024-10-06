@@ -96,88 +96,65 @@ export const worldMapController = () => {
     });
   };
 
-  const showAdjacentTiles = () => {
+  const showAdjacentTiles = (_worldMap: any[][], cords: Vector2) => {
     //if (!worldMap().length) return;
 
-    const _worldMap = worldMap();
-    const pos = player().worldPosition;
-    const prevPos = player().previousWorldPosition;
     const tilesToShow = [
       {
-        x: pos.x,
-        y: pos.y,
+        x: cords.x,
+        y: cords.y,
       }, //Center
       {
-        x: pos.x + 1,
-        y: pos.y,
+        x: cords.x + 1,
+        y: cords.y,
       }, //Right
       {
-        x: pos.x - 1,
-        y: pos.y,
+        x: cords.x - 1,
+        y: cords.y,
       }, //Left
       {
-        x: pos.x,
-        y: pos.y + 1,
+        x: cords.x,
+        y: cords.y + 1,
       }, //Down
       {
-        x: pos.x,
-        y: pos.y - 1,
+        x: cords.x,
+        y: cords.y - 1,
       }, //Up
       {
-        x: pos.x + 1,
-        y: pos.y - 1,
+        x: cords.x + 1,
+        y: cords.y - 1,
       }, //Up/Righ
       {
-        x: pos.x - 1,
-        y: pos.y - 1,
+        x: cords.x - 1,
+        y: cords.y - 1,
       }, //Up/Left
       {
-        x: pos.x - 1,
-        y: pos.y + 1,
+        x: cords.x - 1,
+        y: cords.y + 1,
       }, //Down/Left
       {
-        x: pos.x + 1,
-        y: pos.y + 1,
+        x: cords.x + 1,
+        y: cords.y + 1,
       }, //Down/Right
     ];
 
     //Update visible tiles
-    // tilesToShow.forEach((tile) => {
-    //   const tileY = _worldMap[tile.y];
+    tilesToShow.forEach((tile) => {
+      const tileY = _worldMap[tile.y];
 
-    //   if (tileY) {
-    //     const tileX = _worldMap[tile.x];
+      if (tileY) {
+        const tileX = _worldMap[tile.x];
 
-    //     if (tileX) {
-    //       _worldMap[tile.y][tile.x].isVisible = true;
-    //     }
-    //   }
-    // });
+        if (tileX) {
+          _worldMap[tile.y][tile.x].isVisible = true;
+        }
+      }
+    });
+    console.log("🚀 ~ mapWithVisibleArea ~ _worldMap:", _worldMap)
 
-    // if (prevPos) {
-    //   _worldMap[prevPos.y][prevPos.x].isCurrent = false;
-    // }
+    setWorldMap(_worldMap);
 
-    // //Set current position
-    // _worldMap[pos.y][pos.x].isCurrent = true;
-    // console.log("🚀 ~ mapWithVisibleArea ~ _worldMap:", _worldMap)
-
-    // setWorldMap(_worldMap);
-
-    // return _worldMap;
-  };
-
-  const updateCurrentWorldPlace = (cords: Vector2) => {
-    setPlayer((val) => ({
-      ...val,
-      previousWorldPosition: {
-        x: val.worldPosition.x,
-        y: val.worldPosition.y,
-      },
-      worldPosition: {
-        ...cords,
-      },
-    }));
+    return _worldMap;
   };
 
   const closeModal = () => {
@@ -372,35 +349,36 @@ export const worldMapController = () => {
     };
   };
 
-  const resetCurrentPlace = () => {
-    const _worldMap = worldMap();
-    _worldMap.forEach((row) => {
-      row.forEach((col) => {
-        col.isCurrent = false;
-      });
+  const setCurrentPosition = (_worldMap: any[][], cords: Vector2, _place?: any) => {
+    const generatedPlaceInfo = createPlaceInfo(_place);
+
+    setPlayer({
+      ...player(),
+      previousWorldPosition: player().worldPosition,
+      worldPosition: cords
     });
-  };
+
+    const prevPos = player().previousWorldPosition!;
+
+    if(prevPos){
+      _worldMap[prevPos.y][prevPos.x].isCurrent = false;
+    }
+
+    if (!_worldMap[cords.y][cords.x].info) {
+      _worldMap[cords.y][cords.x] = {
+        ..._worldMap[cords.y][cords.x],
+        info: generatedPlaceInfo,
+        isCurrent: true,
+      }
+    }
+  }
 
   const move = (cords: Vector2, _place?: any) => {
     const _worldMap = worldMap();
-
-    const generatedPlaceInfo = createPlaceInfo(_place);
-
     const getLocation = () => _worldMap[cords.y][cords.x];
-    const setLocation = (worldPlace: WorldPlace) => {
-      _worldMap[cords.y][cords.x] = worldPlace;
-    };
 
-    resetCurrentPlace();
-
-    if (!getLocation().info) {
-      setLocation({
-        ...getLocation(),
-        info: generatedPlaceInfo,
-        isCurrent: true,
-      });
-    }
-
+    showAdjacentTiles(_worldMap, cords)
+    setCurrentPosition(_worldMap, cords, _place)
     setWorldMap(_worldMap);
 
     setModal(() => ({
@@ -410,14 +388,7 @@ export const worldMapController = () => {
     }));
 
     setTimeout(() => {
-      updateCurrentWorldPlace(cords);
-
       setModal({ isOpen: false });
-
-      setPlayer({
-        ...player(),
-        currentLocationIndex: cords,
-      });
 
       setPlace({
         ...getLocation().info,
