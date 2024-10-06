@@ -1,4 +1,4 @@
-import { JSXElement, createEffect, createSignal, onMount } from "solid-js";
+import { JSXElement, createSignal, onMount } from "solid-js";
 import { Dynamic } from "solid-js/web";
 import { WorldPlace } from "../classes/WorldPlace";
 import NpcTalk from "../components/NpcTalk";
@@ -13,7 +13,13 @@ import { CONTAINER, TCONTAINER_TYPES } from "../constants/containers";
 import { ENEMY, IENEMY, TENEMY_TYPES } from "../constants/enemies";
 import { ITEM, ITEM_TYPES, TITEM_TYPES } from "../constants/items";
 import { NPC, NPC_GREETINGS, TNPC_TYPES } from "../constants/npc";
-import { INNER_PLACE, IPlace, PLACES, TINNER_PLACE_TYPES, TPLACE_TYPES } from "../constants/places";
+import {
+  INNER_PLACE,
+  IPlace,
+  PLACES,
+  TINNER_PLACE_TYPES,
+  TPLACE_TYPES,
+} from "../constants/places";
 import {
   getNewArrayWithRandomItems,
   getRandomIntFromInterval,
@@ -42,7 +48,7 @@ export const worldMapController = () => {
   const _combatController = combatController();
   const _inventoryController = inventoryController();
   const _screenController = screenController();
-  const [worldMapTiles, setWorldMapTiles] = createSignal([])
+  const [worldMapTiles, setWorldMapTiles] = createSignal([]);
 
   const isAdjacentTile = (x: number, y: number) => {
     const pos = player().worldPosition;
@@ -86,9 +92,9 @@ export const worldMapController = () => {
     ];
 
     return adjacentTiles.some((tile) => {
-      return tile.x === x && tile.y === y
-    })
-  }
+      return tile.x === x && tile.y === y;
+    });
+  };
 
   const showAdjacentTiles = () => {
     //if (!worldMap().length) return;
@@ -367,35 +373,35 @@ export const worldMapController = () => {
   };
 
   const resetCurrentPlace = () => {
-    const _worldMap = worldMap()
+    const _worldMap = worldMap();
     _worldMap.forEach((row) => {
       row.forEach((col) => {
-        col.isCurrent = false
-      })
-    })
-  }
+        col.isCurrent = false;
+      });
+    });
+  };
 
   const move = (cords: Vector2, _place?: any) => {
     const _worldMap = worldMap();
 
     const generatedPlaceInfo = createPlaceInfo(_place);
 
-    const getLocation = () => _worldMap[cords.y][cords.x]
+    const getLocation = () => _worldMap[cords.y][cords.x];
     const setLocation = (worldPlace: WorldPlace) => {
-      _worldMap[cords.y][cords.x] = worldPlace
-    }
+      _worldMap[cords.y][cords.x] = worldPlace;
+    };
 
-    resetCurrentPlace()
+    resetCurrentPlace();
 
-    if(!getLocation().info){
+    if (!getLocation().info) {
       setLocation({
         ...getLocation(),
         info: generatedPlaceInfo,
-        isCurrent: true
-      })
+        isCurrent: true,
+      });
     }
 
-    setWorldMap(_worldMap)
+    setWorldMap(_worldMap);
 
     setModal(() => ({
       isOpen: true,
@@ -410,71 +416,71 @@ export const worldMapController = () => {
 
       setPlayer({
         ...player(),
-        currentLocationIndex: cords
-      })
+        currentLocationIndex: cords,
+      });
 
       setPlace({
         ...getLocation().info,
-      })
+      });
 
-      _screenController.setScreen(E_SCREENS.PLACE)
+      _screenController.setScreen(E_SCREENS.PLACE);
     }, 1000);
   };
 
   const createInitialPlace = () => {
     const worldPlace = new WorldPlace(false, false);
 
-    let placeType = E_LOCATIONS[worldPlace.type] as TPLACE_TYPES;;
+    let placeType = E_LOCATIONS[worldPlace.type] as TPLACE_TYPES;
     let worldLocation = PLACES[placeType];
 
-    worldPlace.info = createPlaceInfo(worldLocation)
-    worldPlace.isVisible = true
-    worldPlace.isCurrent = true
-    console.log("🚀 ~ createInitialPlace ~ worldPlace:", worldPlace)
+    worldPlace.info = createPlaceInfo(worldLocation);
+    worldPlace.isVisible = true;
+    worldPlace.isCurrent = true;
+    console.log("🚀 ~ createInitialPlace ~ worldPlace:", worldPlace);
 
-    setPlace(worldPlace.info)
+    setPlace(worldPlace.info);
 
-    return worldPlace
-  }
+    return worldPlace;
+  };
 
   const createPlace = (x: number, y: number) => {
     const place = new WorldPlace(false, false);
 
-    if(isAdjacentTile(x, y)){
-      place
-      .isVisible = true
+    if (isAdjacentTile(x, y)) {
+      place.isVisible = true;
     }
 
-    return place
-  }
+    return place;
+  };
 
   const generatedWorldMap = () => {
     const worldSize = 11;
     const _worldMap: any = [];
 
-    const playerPositionInWorld = player().worldPosition
+    const playerPositionInWorld = player().worldPosition;
 
     for (let x = 0; x < worldSize; x++) {
       _worldMap.push(
         Array.apply(null, Array(worldSize)).map(function (_, y) {
-          const isPLayerInitialPosition = playerPositionInWorld.x === x && playerPositionInWorld.y === y
+          const isPlayerInitialPosition =
+            playerPositionInWorld.x === x && playerPositionInWorld.y === y;
 
-          if(isPLayerInitialPosition){
-            return createInitialPlace()
+          if (isPlayerInitialPosition) {
+            return createInitialPlace();
           }
-
 
           return createPlace(x, y);
         })
       );
     }
 
-    return setWorldMap(_worldMap);
+    setWorldMap(_worldMap);
   };
 
-
   onMount(() => {
-    generatedWorldMap();
+    if (!worldMap().length) {
+      generatedWorldMap();
+    }
   });
 
   return {
