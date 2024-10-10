@@ -4,7 +4,6 @@ export class Enemy {
   id;
   refference;
   damageEffetct = false;
-  hueRotation;
   playerActions = [
     {
       name: "Atacar",
@@ -16,10 +15,9 @@ export class Enemy {
   hp = 100;
   maxHp = 100;
 
-  constructor(id: number, refference: IENEMY, hueRotation: number = 0) {
+  constructor(id: number, refference: IENEMY) {
     this.id = id;
     this.refference = refference;
-    this.hueRotation = hueRotation;
   }
 
   attack(damage: number) {

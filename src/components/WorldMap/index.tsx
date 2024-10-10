@@ -3,6 +3,7 @@ import { PLACES, TPLACE_TYPES } from "../../constants/places";
 import { worldMapController, worldMapState } from "../../state/worldMap";
 import { QuestionMark } from "../Icons";
 import { E_LOCATIONS } from "../../enums";
+import ToolTip from "../Tooltip";
 /* import { placeController } from "../../state/world";
 import Button from "../Button"; */
 
@@ -21,7 +22,7 @@ import Button from "../Button"; */
 
 const WorldMap = () => {
   const { move } = worldMapController();
-  const [worldMap] = worldMapState
+  const [worldMap] = worldMapState;
 
   return (
     <div id="WorldMap" class="w-[70%] p-4">
@@ -40,9 +41,10 @@ const WorldMap = () => {
               }
 
               return (
-                <div
-                  tabIndex={0}
-                  class={`w-[8%] bg-accent-content p-2 rounded ${
+                <ToolTip
+                  //tabIndex={0}
+                  text={col?.info?.name || `Unknown`}
+                  className={`w-[8%] bg-accent-content p-2 rounded ${
                     col.isCurrent && "animate-pulse"
                   }`}
                   onClick={() => {
@@ -60,7 +62,7 @@ const WorldMap = () => {
                   ) : (
                     <QuestionMark />
                   )}
-                </div>
+                </ToolTip>
               );
               /* } else {
                 return (

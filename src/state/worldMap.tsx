@@ -1,5 +1,4 @@
 import { JSXElement, createSignal, onMount } from "solid-js";
-import { Dynamic } from "solid-js/web";
 import { WorldPlace } from "../classes/WorldPlace";
 import NpcTalk from "../components/NpcTalk";
 import Shop from "../components/Shop";
@@ -31,9 +30,9 @@ import { inventoryController, inventoryState } from "./inventory";
 import { modalState } from "./modal";
 import { playerState } from "./player";
 import { shopState } from "./shop";
-import { placeState } from "./place";
 import { E_LOCATIONS, E_SCREENS } from "../enums";
 import { screenController } from "./screen";
+import { COLOR_PALETTE } from "../constants/colorPallet";
 
 export const worldMapState = createSignal<any[][]>([]);
 
@@ -42,13 +41,25 @@ export const worldMapController = () => {
   const [player, setPlayer] = playerState;
   const [, setModal] = modalState;
   const [, setShop] = shopState;
-  const [, setPlace] = placeState;
+  //const [, setPlace] = placeState;
   const [inventory] = inventoryState;
 
   const _combatController = combatController();
   const _inventoryController = inventoryController();
   const _screenController = screenController();
-  const [worldMapTiles, setWorldMapTiles] = createSignal([]);
+
+  const place = () => {
+    const worldPosition = player().worldPosition;
+    const location = worldMap()[worldPosition.y][worldPosition.x];
+    return location;
+  };
+
+  const setPlace = (info: any) => {
+    const {x, y} = player().worldPosition;
+    const _worldMap = worldMap();
+    _worldMap[y][x].info = info;
+    setWorldMap(_worldMap);
+  };
 
   const isAdjacentTile = (x: number, y: number) => {
     const pos = player().worldPosition;
@@ -150,11 +161,8 @@ export const worldMapController = () => {
         }
       }
     });
-    console.log("🚀 ~ mapWithVisibleArea ~ _worldMap:", _worldMap)
 
     setWorldMap(_worldMap);
-
-    return _worldMap;
   };
 
   const closeModal = () => {
@@ -167,7 +175,7 @@ export const worldMapController = () => {
     return getRandomItemFromArray(NPC_GREETINGS);
   };
 
-  const createPlaceInfo = (place: IPlace) => {
+  const createPlaceInfo = (place: IPlace, cords: Vector2) => {
     const name = `${getRandomItemFromArray(place.NAMES)} (${place.ID}) `;
     const bg = getRandomItemFromArray(place.IMAGES);
     let things = [];
@@ -188,6 +196,7 @@ export const worldMapController = () => {
       let randomImage: JSXElement;
       let actions: IAction[] = [];
       let subType = randomThing.SUBTYPE.toLocaleLowerCase();
+      let randomColor = getRandomItemFromArray(COLOR_PALETTE);
       const thingType = randomThing.TYPE;
 
       if (thingType === "NPC") {
@@ -195,7 +204,7 @@ export const worldMapController = () => {
         const _subType = randomThing.SUBTYPE as TNPC_TYPES;
         const gender = getRandomItemFromArray(GENDERS) as "MALE" | "FEMALE";
         const images = NPC[_subType][gender].IMAGES;
-        randomImage = <Dynamic component={getRandomItemFromArray(images)} />;
+        randomImage = getRandomItemFromArray(images);
         randomName = getRandomItemFromArray(NPC_NAMES[gender]);
         actions.push({
           name: "Talk",
@@ -283,8 +292,7 @@ export const worldMapController = () => {
         //Create INNER_PLACE Info
         const _subType = randomThing.SUBTYPE as TINNER_PLACE_TYPES;
         const thing = INNER_PLACE[_subType];
-        const image = getRandomItemFromArray(thing.IMAGES);
-        randomImage = image;
+        randomImage = getRandomItemFromArray(thing.IMAGES);
         randomName = getRandomItemFromArray(thing.NAMES);
 
         actions = [
@@ -298,9 +306,9 @@ export const worldMapController = () => {
       } else if (thingType === "ENEMY") {
         const thingSubType = randomThing.SUBTYPE as TENEMY_TYPES;
         const enemy = ENEMY[thingSubType] as IENEMY;
-        const image = enemy.IMAGE;
+        const image = enemy.IMAGE as any;
         randomName = enemy.NAME;
-        randomImage = <Dynamic component={image} />;
+        randomImage = image;
 
         actions = [
           {
@@ -311,7 +319,13 @@ export const worldMapController = () => {
                 isInCombat: true,
               }));
 
-              _combatController.setEnemiesToCombat(i, enemy);
+              const _enemy = {
+                ...enemy,
+                color: randomColor,
+                cords,
+              };
+
+              _combatController.setEnemiesToCombat(i, _enemy);
 
               /* if (combat()) {
               } */
@@ -322,21 +336,23 @@ export const worldMapController = () => {
       } else {
         const thingSubType = randomThing.SUBTYPE as TCONTAINER_TYPES;
         const container = CONTAINER[thingSubType];
-        const image = container.IMAGE;
+        const image = container.IMAGE as any;
         randomName = container.NAME;
-        randomImage = <Dynamic component={image} />;
+        randomImage = image;
 
         actions = [];
       }
 
       things.push({
         id: i,
+        cords,
         found: false,
         thing: {
           name: randomName,
           type: subType,
           img: randomImage,
           playerActions: actions,
+          fill: randomColor,
         },
       });
     }
@@ -349,18 +365,22 @@ export const worldMapController = () => {
     };
   };
 
-  const setCurrentPosition = (_worldMap: any[][], cords: Vector2, _place?: any) => {
-    const generatedPlaceInfo = createPlaceInfo(_place);
+  const setCurrentPosition = (
+    _worldMap: any[][],
+    cords: Vector2,
+    _place?: any
+  ) => {
+    const generatedPlaceInfo = createPlaceInfo(_place, cords);
 
     setPlayer({
       ...player(),
       previousWorldPosition: player().worldPosition,
-      worldPosition: cords
+      worldPosition: cords,
     });
 
     const prevPos = player().previousWorldPosition!;
 
-    if(prevPos){
+    if (prevPos) {
       _worldMap[prevPos.y][prevPos.x].isCurrent = false;
     }
 
@@ -369,16 +389,16 @@ export const worldMapController = () => {
         ..._worldMap[cords.y][cords.x],
         info: generatedPlaceInfo,
         isCurrent: true,
-      }
+      };
     }
-  }
+  };
 
   const move = (cords: Vector2, _place?: any) => {
     const _worldMap = worldMap();
     const getLocation = () => _worldMap[cords.y][cords.x];
 
-    showAdjacentTiles(_worldMap, cords)
-    setCurrentPosition(_worldMap, cords, _place)
+    showAdjacentTiles(_worldMap, cords);
+    setCurrentPosition(_worldMap, cords, _place);
     setWorldMap(_worldMap);
 
     setModal(() => ({
@@ -398,18 +418,19 @@ export const worldMapController = () => {
     }, 1000);
   };
 
-  const createInitialPlace = () => {
+  const createInitialPlace = (cords: Vector2) => {
     const worldPlace = new WorldPlace(false, false);
 
     let placeType = E_LOCATIONS[worldPlace.type] as TPLACE_TYPES;
     let worldLocation = PLACES[placeType];
 
-    worldPlace.info = createPlaceInfo(worldLocation);
+    worldPlace.info = createPlaceInfo(worldLocation, cords);
     worldPlace.isVisible = true;
     worldPlace.isCurrent = true;
-    console.log("🚀 ~ createInitialPlace ~ worldPlace:", worldPlace);
 
-    setPlace(worldPlace.info);
+    //setPlace(worldPlace.info);
+
+    console.log("worldPlace.info", worldPlace.info);
 
     return worldPlace;
   };
@@ -437,7 +458,7 @@ export const worldMapController = () => {
             playerPositionInWorld.x === x && playerPositionInWorld.y === y;
 
           if (isPlayerInitialPosition) {
-            return createInitialPlace();
+            return createInitialPlace({ x, y });
           }
 
           return createPlace(x, y);
@@ -456,5 +477,7 @@ export const worldMapController = () => {
 
   return {
     move,
+    place,
+    setPlace,
   };
 };

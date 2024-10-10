@@ -12,7 +12,7 @@ export class WorldPlace {
     isVisible: boolean = false,
     info?: IPlaceInfo
   ) {
-    this.type = getRandomIntFromInterval(1, 5);
+    this.type = getRandomIntFromInterval(1, 4);
     this.isCurrent = isCurrent;
     this.isVisible = isVisible;
     this.info = info;

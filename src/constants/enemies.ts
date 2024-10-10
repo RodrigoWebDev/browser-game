@@ -1,5 +1,5 @@
 import { ValidComponent } from "solid-js";
-import { Goblin, Spider, Troll } from "../components/Icons";
+import { Goblin, Spider, Troll, Wolf } from "../components/Icons";
 import { TITEM_TYPES } from "./items.ts";
 
 export interface IENEMY {
@@ -9,6 +9,7 @@ export interface IENEMY {
   HP: number;
   MAX_HP: number;
   DROPS: TITEM_TYPES[];
+  color?: string;
 }
 
 export const ENEMY = {
@@ -37,6 +38,14 @@ export const ENEMY = {
     HP: 100,
     MAX_HP: 100,
     DROPS: ["POISON"],
+  },
+  WOLF: {
+    NAME: "WOLF",
+    IMAGE: Wolf,
+    DESCRIPTION: "A wolf",
+    HP: 100,
+    MAX_HP: 100,
+    DROPS: ["BONE", "FANG"],
   },
 };
 

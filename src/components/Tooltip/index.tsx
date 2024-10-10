@@ -5,6 +5,7 @@ interface IToolTip {
   text?: string;
   className?: string;
   direction?: "right" | "left" | "bottom" | "top";
+  onClick?: () => void
 }
 
 const ToolTip = (props: IToolTip) => {
@@ -14,6 +15,9 @@ const ToolTip = (props: IToolTip) => {
         props.className
       }`}
       data-tip={props.text}
+      onClick={() => {
+        props.onClick && props.onClick()
+      }}
     >
       {props.children}
     </div>

@@ -15,6 +15,7 @@ export interface IThings {
       type: string;
       img: any;
       playerActions: IAction[];
+      fill: string
     };
 }
 

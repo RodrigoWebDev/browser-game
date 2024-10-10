@@ -20,20 +20,21 @@ import Explore from "./components/SvgIcons/explore";
 import { E_SCREENS } from "./enums";
 import { screenController, screenState } from "./state/screen";
 import Map from "./components/SvgIcons/Map";
+import { worldMapController, worldMapState } from "./state/worldMap";
 
 const cardContainerStyle = "w-[25%] mr-2 mb-2";
 
 function Game() {
   const [player] = playerState;
   const [modal] = modalState;
-  const [place] = placeState;
+  //const [place] = placeState;
   const [screen] = screenState;
   const [combat] = combatState;
   const _combatController = combatController();
   const _placeController = placeController();
   const _settingsController = settingsController();
   const _screenController = screenController()
-
+  const _worldMapController = worldMapController()
 
   onMount(() => {
     _settingsController.loadSettings();
@@ -43,6 +44,12 @@ function Game() {
     _settingsController.updateSettings();
   });
 
+  const place = () => {
+    const _place = _worldMapController.place()
+    console.log("🚀 ~ place ~ _place:", _place)
+    return _place
+  }
+
   return (
     <div class="flex justify-between h-screen max-w-[1360px] mx-auto">
 
@@ -50,13 +57,14 @@ function Game() {
         <Player />
       </aside>
 
-      {screen() === E_SCREENS.PLACE && place().things.length && (
+      {screen() === E_SCREENS.PLACE && place().info.things.length && (
         <main class="w-[69%]">
           <div class="h-full bg-contain">
             {player().isInCombat ? (
               <div id="combat" class="p-4 bg-black/40">
                 <div id="enemies" class="flex mb-4">
                   {combat().enemies.map((enemy) => {
+                    console.log("🚀 ~ {combat ~ enemy:", enemy)
                     const enemyIsDead = enemy.hp <= 0;
                     return (
                       <div
@@ -65,7 +73,7 @@ function Game() {
                         }`}
                       >
                         <Card
-                          img={<Dynamic component={enemy.refference.IMAGE} />}
+                          img={<Dynamic component={enemy.refference.IMAGE} fill={enemy.refference.color} />}
                           imgHueRotation={0}
                           imgBrighter={false}
                           title={enemy.refference.NAME}
@@ -177,8 +185,8 @@ function Game() {
                   </div>
 
                   <div id="things-found" class="mt-4 flex flex-wrap">
-                    {place()
-                      .things.map((item) => {
+                    {place().info
+                      .things.map((item: any) => {
                         const thing = item.thing;
 
                         if (item.found) {
@@ -187,7 +195,7 @@ function Game() {
                               <Card
                                 title={thing.name}
                                 subTitle={thing.type}
-                                img={<Dynamic component={thing.img} />}
+                                img={<Dynamic component={thing.img} fill={thing.fill} />}
                                 imgBrighter={false}
                                 footer={
                                   <>
@@ -199,7 +207,7 @@ function Game() {
                                           </Button>
                                         }
                                         items={thing.playerActions.map(
-                                          (item) => (
+                                          (item: any) => (
                                             <li>
                                               <Button
                                                 onClick={() => {

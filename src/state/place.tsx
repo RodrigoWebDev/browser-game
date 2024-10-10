@@ -33,6 +33,7 @@ import { modalState } from "./modal.ts";
 import { playerState } from "./player.ts";
 import { shopState } from "./shop.ts";
 import { E_SCREENS } from "../enums/index.ts";
+import { worldMapController, worldMapState } from "./worldMap.tsx";
 
 export const placeState = createSignal<IPlaceInfo>({
   name: "",
@@ -44,14 +45,22 @@ export const placeState = createSignal<IPlaceInfo>({
 export const mockPlayerPos = 0;
 
 export const placeController = () => {
-  const [place, setPlace] = placeState;
+  //const [place, setPlace] = placeState;
   const [player, setPlayer] = playerState;
   const [, setModal] = modalState;
   const [inventory] = inventoryState;
   const [, setShop] = shopState;
   const combat = combatController();
   const _inventoryController = inventoryController();
+  const _worldMapController = worldMapController();
   const [screen, setScreen] = createSignal(E_SCREENS.WORLD_MAP);
+
+  const place = () => {
+    const _place = _worldMapController.place()
+    console.log("🚀 ~ place ~ _place:", _place)
+    return _place
+  }
+  const setPlace = (place: any) => _worldMapController.setPlace(place)
 
   const removeThingFromLocation = (id: number) => {
     const _place = { ...place() };
@@ -62,17 +71,17 @@ export const placeController = () => {
   };
 
   const hasThingToFind = () => {
-    return place().things.some((item) => {
+    return place().info.things.some((item: any) => {
       return item.found == false;
     });
   };
 
   const findSomething = () => {
     const _place = { ...place() };
-    const notFoundIndex = _place.things.findIndex((item) => !item.found);
+    const notFoundIndex = _place.info.things.findIndex((item: any) => !item.found);
 
     if (notFoundIndex !== -1) {
-      _place.things[notFoundIndex].found = true;
+      _place.info.things[notFoundIndex].found = true;
 
       setPlace(_place);
     }

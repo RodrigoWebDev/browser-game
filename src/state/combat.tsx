@@ -1,12 +1,13 @@
 import { createSignal } from "solid-js";
 import Enemy from "../classes/Enemy.tsx";
-import { IAction } from "../interfaces";
+import { IAction, Vector2 } from "../interfaces";
 import { playerState } from "./player";
 import { modalState } from "./modal";
 import { IITEM, ITEM } from "../constants/items.ts";
 import { IENEMY } from "../constants/enemies";
 import { inventoryController } from "./inventory";
 import { Dynamic } from "solid-js/web";
+import { worldMapState } from "./worldMap.tsx";
 
 interface ICombat {
   enemies: Enemy[];
@@ -20,6 +21,7 @@ export const combatController = () => {
   const [combat, setCombat] = combatState;
   const [player, setPlayer] = playerState;
   const [, setModal] = modalState;
+  const [worldMap, setWorldMap] = worldMapState;
   const _inventoryController = inventoryController();
 
   const updateCombat = () => {
@@ -39,11 +41,17 @@ export const combatController = () => {
     }, 150);
   };
 
+  // const updatePlaceEnemies = ({x, y}: Vector2, id: number, info: any) => {
+  //   const _worldMap = worldMap()
+  //   _worldMap[y][x].things[id] = info
+  // }
+
   const winCombat = () => {
-    const isWinCombat = !combat().enemies.some((item) => item.hp > 0);
+    const _combat = combat()
+    const isWinCombat = !_combat.enemies.some((item) => item.hp > 0);
 
     if (isWinCombat) {
-      const itemsDrop = combat()
+      const itemsDrop = _combat
         .enemies.map((enemy) => {
           return enemy.refference.DROPS.map((drop) => {
             return {
@@ -87,6 +95,8 @@ export const combatController = () => {
 
       _inventoryController.updateInventory(itemsToInventory, "SUM");
 
+      //updatePlaceEnemies(cords, info)
+
       setCombat((val) => ({
         ...val,
         enemies: [],
@@ -100,10 +110,11 @@ export const combatController = () => {
   };
 
   const setEnemiesToCombat = (index: number, enemy: IENEMY) => {
+    console.log({ enemy })
     setCombat((val) => {
       return {
         ...val,
-        enemies: [new Enemy(index, enemy, 0)],
+        enemies: [new Enemy(index, enemy)],
       };
     });
   };
