@@ -154,7 +154,7 @@ export const PLACES = {
     ],
   },
   DUNGEON: {
-    ID: "DUNEGON",
+    ID: "DUNGEON",
     NAMES: ["Mistery", "Shadow", "Death", "Fear"],
     IMAGES: [Dungeon],
     THINGS: [

@@ -9,8 +9,7 @@ export interface IPlayerActions {
 
 export interface IThings {
     id: number;
-    found: boolean;
-    thing: {
+    thing?: {
       name: string;
       type: string;
       img: any;
@@ -41,10 +40,7 @@ export interface IUpdatePlayerArgs {
   purchasedItems: IItemShop[];
 }
 
-export interface IAction {
-  name: string;
-  click: (...args: any) => void;
-}
+export type IAction = "Talk" | "Buy" | "Sell" | "Attack"
 
 export interface ISVG {
   fill?: string;

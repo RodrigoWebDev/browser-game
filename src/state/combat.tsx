@@ -110,7 +110,6 @@ export const combatController = () => {
   };
 
   const setEnemiesToCombat = (index: number, enemy: IENEMY) => {
-    console.log({ enemy })
     setCombat((val) => {
       return {
         ...val,

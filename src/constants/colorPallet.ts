@@ -1,4 +1,4 @@
-// from: https://lospec.com/palette-list/console16
+// Based on: https://lospec.com/palette-list/console16
 
 export const COLOR_PALETTE = [
   "#ff032b",
@@ -10,7 +10,7 @@ export const COLOR_PALETTE = [
   "#0dffff",
   "#3c80db",
   "#2929ff",
-  "#2d006e",
+  "#6800ff",
   "#ff08ff",
   "#6e0085",
   "#260a34",

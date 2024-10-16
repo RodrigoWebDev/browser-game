@@ -72,18 +72,19 @@ export const placeController = () => {
 
   const hasThingToFind = () => {
     return place().info.things.some((item: any) => {
-      return item.found == false;
+      return !item.thing;
     });
   };
 
   const findSomething = () => {
     const _place = { ...place() };
-    const notFoundIndex = _place.info.things.findIndex((item: any) => !item.found);
+    const notFoundIndex = _place.info.things.findIndex((item: any) => !item.thing);
 
     if (notFoundIndex !== -1) {
       _place.info.things[notFoundIndex].found = true;
+      _place.info.things[notFoundIndex].info = _worldMapController.createPlaceInfo(player().worldPosition, notFoundIndex)
 
-      setPlace(_place);
+      setPlace(_place); 
     }
   };
 

@@ -1,5 +1,6 @@
 import { createSignal } from "solid-js";
-import { Vector2 } from "../interfaces";
+import { IAction, Vector2 } from "../interfaces";
+import { worldMapState } from "./worldMap";
 
 interface IPlayer {
   name: string;
@@ -27,6 +28,37 @@ export const playerState = createSignal<IPlayer>({
     y: 5,
   },
 });
+
+export const playerController = () => {
+  const [worldMap] = worldMapState
+  const [player] = playerState
+  const getPlayerActionsInPlace = (
+    id: number
+  ) => {
+    const _worldMap = worldMap()
+    const cords = player().worldPosition
+    const thing = _worldMap[cords.y][cords.x].info.things[id].thing
+
+    return thing.placeActions.map((action: string) => {
+      const actionObj = {
+        name: action,
+        onClick: () => {}
+      }
+
+      if (action === "Attack"){
+        actionObj.onClick = () => {
+          console.log("ATACOU")
+        }
+      }
+
+      return actionObj
+    })
+  };
+
+  return {
+    getPlayerActionsInPlace,
+  };
+};
 
 /* const playerController = () => {
   const [player, setPlayer] = playerState;
