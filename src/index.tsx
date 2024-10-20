@@ -2,8 +2,8 @@
 import { render } from "solid-js/web";
 
 import "./index.css";
-import Game from "./Game";
+import GameView from "./GameView";
 
 const root = document.getElementById("root");
 
-render(() => <Game />, root!);
+render(() => <GameView />, root!);

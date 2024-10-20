@@ -1,23 +1,51 @@
-import { ValidComponent } from "solid-js";
 import {
+  Bone,
   Cave,
   Chest,
+  Clawn,
   Dungeon,
   FemalePerson0,
   Forest,
   Goblin,
+  LiquidTube,
   MalePerson0,
+  Potion,
+  Ring,
+  Rope,
   Spider,
   Tavern,
   Troll,
   Village,
   Wolf,
 } from "../components/Icons";
+import { TGender } from "./model";
+
+export const COLOR_PALETTE = [
+  "#ff032b",
+  "#800034",
+  "#ffff0d",
+  "#ff8f00",
+  "#0aff0a",
+  "#007062",
+  "#0dffff",
+  "#3c80db",
+  "#2929ff",
+  "#6800ff",
+  "#ff08ff",
+  "#6e0085",
+  "#ffffff",
+  "#7d7da3",
+];
+
+export const NPC_GREETINGS = [
+  "O dia está lindo hoje!",
+  "Olá, posso ajuda-lo?",
+  "O clima esta ótimo para dar um passeio.",
+];
 
 export const MIN_THINGS_NUMBER = 3;
 export const MAX_THINGS_NUMBER = 11;
 
-export type TGender = "Male" | "Female";
 export const GENDERS: TGender[] = ["Male", "Female"];
 
 export const NPC_NAMES = {
@@ -53,41 +81,6 @@ export const NPC_NAMES = {
     "Luna",
   ],
 };
-
-export interface IEntity {
-  id: number;
-  hp: number;
-  maxHp: number;
-  description: string;
-  drops: string[];
-  img: ValidComponent;
-  type: string;
-}
-
-export interface IItem2 extends IEntity {
-  name?: string;
-  weight?: number;
-  color?: string;
-  price?: number;
-  canEquip?: boolean;
-  consumableEffects?: {
-    heal?: number | null;
-  } | null;
-}
-
-export interface IThingTwo {
-  type: string;
-  subtype: string;
-}
-
-export interface IPlaceTwo {
-  type: string;
-  names: string[];
-  images: string[];
-  things: IThingTwo[];
-}
-
-export type TPlaceTypes = "Cavern";
 
 export const Game = {
   Enemy: {
@@ -354,9 +347,54 @@ export const Game = {
       img: Tavern,
     },
   },
+  Item: {
+    HealingPotion: {
+      name: "Healing potion",
+      img: Potion,
+      price: 12,
+      consumableEffects: {
+        heal: 50,
+      },
+      weight: 0.1,
+      key: "HealingPotion",
+    },
+    Ring: {
+      name: "Ring",
+      img: Ring,
+      price: 58,
+      canEquip: true,
+      consumableEffects: null,
+      weight: 0.1,
+      key: "Ring",
+    },
+    Bone: {
+      name: "Bone",
+      img: Bone,
+      price: 1,
+      weight: 0.2,
+      key: "Bone",
+    },
+    Clawn: {
+      name: "Clawn",
+      img: Clawn,
+      price: 1,
+      weight: 0.1,
+      key: "Clawn",
+    },
+    Poison: {
+      name: "Poison",
+      img: LiquidTube,
+      color: "green",
+      price: 3,
+      weight: 0.1,
+      key: "Poison",
+    },
+    Rope: {
+      name: "Rope",
+      img: Rope,
+      price: 1,
+      weight: 0.1,
+      key: "Rope",
+    },
+  }
 };
-
-export type TEnemyTypes = keyof typeof Game.Enemy;
-export type TContainerTypes = keyof typeof Game.Containers;
-export type TNpcTypes = keyof typeof Game.Npc;
-export type TInnerPlaceTypes = keyof typeof Game.InnerPlace;

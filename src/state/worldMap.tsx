@@ -5,45 +5,33 @@ import Shop from "../components/Shop";
 import {
   Game,
   GENDERS,
-  IEntity,
-  IPlaceTwo,
-  IThingTwo,
   MAX_THINGS_NUMBER,
   MIN_THINGS_NUMBER,
+  NPC_GREETINGS,
   NPC_NAMES,
+  COLOR_PALETTE
+} from "../constants";
+import {
+  IPlaceTwo,
+  IThingTwo,
   TContainerTypes,
   TEnemyTypes,
   TInnerPlaceTypes,
   TNpcTypes,
   TPlaceTypes,
-} from "../constants";
-import { CONTAINER, TCONTAINER_TYPES } from "../constants/containers";
-import { ENEMIY_TYPES, ENEMY, IENEMY, TENEMY_TYPES } from "../constants/enemies";
-import { ITEM, ITEM_TYPES, TITEM_TYPES } from "../constants/items";
-import { NPC, NPC_GREETINGS, TNPC_TYPES } from "../constants/npc";
+} from "../constants/model"
 import {
-  INNER_PLACE,
-  IPlace,
-  PLACES,
-  TINNER_PLACE_TYPES,
-  TPLACE_TYPES,
-} from "../constants/places";
-import {
-  getNewArrayWithRandomItems,
   getRandomIntFromInterval,
   getRandomItemFromArray,
 } from "../helpers";
 import { IAction, ISVG, IThing, Vector2 } from "../interfaces";
-import { combatController } from "./combat";
 import { inventoryController, inventoryState } from "./inventory";
 import { modalState } from "./modal";
 import { playerState } from "./player";
 import { shopState } from "./shop";
-import { E_LOCATIONS, E_SCREENS } from "../enums";
+import { E_SCREENS } from "../enums";
 import { screenController } from "./screen";
-import { COLOR_PALETTE } from "../constants/colorPallet";
-import Enemy from "../classes/Enemy";
-import { Entity } from "../classes/Entity";
+import { PersonWalk } from "../components/Icons";
 
 export const worldMapState = createSignal<any[][]>([]);
 
@@ -52,10 +40,8 @@ export const worldMapController = () => {
   const [player, setPlayer] = playerState;
   const [, setModal] = modalState;
   const [, setShop] = shopState;
-  //const [, setPlace] = placeState;
   const [inventory] = inventoryState;
 
-  const _combatController = combatController();
   const _inventoryController = inventoryController();
   const _screenController = screenController();
 
@@ -206,7 +192,6 @@ export const worldMapController = () => {
 
 
     if (thingType === "Npc") {
-      debugger
       //Create NPC Info
       const _subType = randomThing.subtype as TNpcTypes;
       const gender = getRandomItemFromArray(GENDERS) as "Male" | "Female";
@@ -433,6 +418,45 @@ export const worldMapController = () => {
     setWorldMap(_worldMap);
   };
 
+  const hasThingToFind = () => {
+    return place().info.things.some((item: any) => {
+      return !item.thing;
+    });
+  };
+
+  const findSomething = () => {
+    const _place = { ...place() };
+    const notFoundIndex = _place.info.things.findIndex((item: any) => !item.thing);
+
+    if (notFoundIndex !== -1) {
+      _place.info.things[notFoundIndex].found = true;
+      _place.info.things[notFoundIndex].info = createPlaceInfo(player().worldPosition, notFoundIndex)
+
+      setPlace(_place); 
+    }
+  };
+
+  const explore = () => {
+    if (hasThingToFind()) {
+      setModal(() => ({
+        title: `Exploring ${place().name}`,
+        children: <PersonWalk />,
+        isOpen: true,
+      }));
+
+      setTimeout(() => {
+        closeModal();
+        findSomething();
+      }, 1000);
+    } else {
+      setModal(() => ({
+        title: "Você ja explorou tudo",
+        children: <></>,
+        isOpen: true,
+      }));
+    }
+  };
+
   onMount(() => {
     if (!worldMap().length) {
       generatedWorldMap();
@@ -444,5 +468,6 @@ export const worldMapController = () => {
     place,
     setPlace,
     createPlaceInfo,
+    explore
   };
 };

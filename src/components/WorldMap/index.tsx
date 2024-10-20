@@ -1,11 +1,10 @@
 import { Dynamic } from "solid-js/web";
-import { PLACES, TPLACE_TYPES } from "../../constants/places";
 import { worldMapController, worldMapState } from "../../state/worldMap";
 import { QuestionMark } from "../Icons";
-import { E_LOCATIONS } from "../../enums";
 import ToolTip from "../Tooltip";
-import { Game, IPlaceTwo } from "../../constants";
+import { Game } from "../../constants";
 import { WorldPlace } from "../../classes/WorldPlace";
+import { IPlaceTwo } from "../../constants/model";
 /* import { placeController } from "../../state/world";
 import Button from "../Button"; */
 

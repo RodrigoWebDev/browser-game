@@ -1,13 +1,14 @@
 import { createSignal } from "solid-js";
 import { IInventoryItems } from "../interfaces";
-import { IITEM, ITEM, TITEM_TYPES } from "../constants/items.ts";
 import { getTotalPrice } from "../helpers";
 import { shopState } from "./shop";
+import { IItem2, TItemTypes } from "../constants/model.ts";
+import { Game } from "../constants/index.ts";
 
 interface IPlayerInventory {
   money: number;
   maxCapacity: number;
-  items: IInventoryItems[];
+  items: IItem2[];
 }
 
 export const inventoryState = createSignal<IPlayerInventory>({
@@ -16,7 +17,7 @@ export const inventoryState = createSignal<IPlayerInventory>({
   items: [],
 });
 
-export const getPlayerTotalWiehgt = (inventoryItems: IInventoryItems[]) => {
+export const getPlayerTotalWiehgt = (inventoryItems: IItem2[]) => {
   const itemWeights = inventoryItems.map((item) => {
     return item.weight;
   });
@@ -39,7 +40,7 @@ export const inventoryController = () => {
   };
 
   const updateInventory = (
-    newItems: { key: TITEM_TYPES; quantity: number }[],
+    newItems: { key: TItemTypes; quantity: number }[],
     operation: "SUM" | "SUBTRACTION"
   ) => {
     if (!newItems) return [];
@@ -51,26 +52,12 @@ export const inventoryController = () => {
       const index = _inventory.findIndex((item) => {
         return item.key === newItem.key;
       });
-      const itemInfo = ITEM[newItem.key] as IITEM;
+      const itemInfo = Game.Item[newItem.key] as IItem2;
 
       if (index < 0) {
         _inventory.push({
           ...itemInfo,
           quantity: newItem.quantity,
-          playerActions: [
-            {
-              name: "Equip",
-              click: () => {},
-            },
-            {
-              name: "Consume",
-              click: () => {},
-            },
-            {
-              name: "Info",
-              click: () => {},
-            },
-          ],
         });
       } else {
         _inventory[index] = {

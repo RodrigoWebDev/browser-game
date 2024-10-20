@@ -1,5 +1,5 @@
 import { Game } from "../constants";
-import { getRandomIntFromInterval, getRandomItemFromArray } from "../helpers";
+import { getRandomItemFromArray } from "../helpers";
 import { IPlaceInfo } from "../interfaces";
 
 export class WorldPlace {
@@ -16,7 +16,6 @@ export class WorldPlace {
     const places = Object.entries(Game.Places)
     const randomPlace = getRandomItemFromArray(places)
     const type = randomPlace[0]
-    //this.type = getRandomIntFromInterval(1, 4);
     this.type = type;
     this.isCurrent = isCurrent;
     this.isVisible = isVisible;

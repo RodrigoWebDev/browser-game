@@ -1,21 +1,17 @@
 import Button from "./components/Button";
 import Modal from "./components/Modal";
 
-// Assets
 import { createEffect, onMount } from "solid-js";
 import Player from "./components/Player";
 import WorldMap from "./components/WorldMap";
 import { modalState } from "./state/modal";
 import { settingsController } from "./state/settings";
-import { mockPlayerPos, placeController } from "./state/place";
-import { playerController, playerState } from "./state/player";
-import { combatController, combatState } from "./state/combat";
+import { playerController } from "./state/player";
 import Card from "./components/Card";
 import { Dynamic } from "solid-js/web";
 import ToolTip from "./components/Tooltip";
 import DropDown from "./components/Dropwdown";
 import SwordsSvg from "./components/SvgIcons/swords";
-import ArrowSvg from "./components/SvgIcons/arrow";
 import Explore from "./components/SvgIcons/explore";
 import { E_SCREENS } from "./enums";
 import { screenController, screenState } from "./state/screen";
@@ -24,13 +20,9 @@ import { worldMapController } from "./state/worldMap";
 
 const cardContainerStyle = "w-[25%] mr-2 mb-2";
 
-function Game() {
-  const [player] = playerState;
+function GameView() {
   const [modal] = modalState;
   const [screen] = screenState;
-  const [combat] = combatState;
-  const _combatController = combatController();
-  const _placeController = placeController();
   const _settingsController = settingsController();
   const _screenController = screenController();
   const _worldMapController = worldMapController();
@@ -65,23 +57,10 @@ function Game() {
               <hr class="my-4" />
               <div>
                 <div class="flex flex-wrap">
-                  {mockPlayerPos > 0 && (
-                    <ToolTip text="Go back to previous area">
-                      <Button
-                        className="mr-2"
-                        onClick={() => {
-                          _placeController.goToPreviousArea();
-                        }}
-                      >
-                        <ArrowSvg className="flip-x" />
-                      </Button>
-                    </ToolTip>
-                  )}
-
                   <ToolTip text="Explore the current location">
                     <Button
                       onClick={() => {
-                        _placeController.explore();
+                        _worldMapController.explore();
                       }}
                       className="mr-2"
                     >
@@ -180,4 +159,4 @@ function Game() {
   );
 }
 
-export default Game;
+export default GameView;
