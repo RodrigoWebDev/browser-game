@@ -17,7 +17,7 @@ export const ENEMY = {
     NAME: "Troll",
     IMAGE: Troll,
     DESCRIPTION:
-      "A troll is a being in Nordic folklore, including Norse mythology. In Old Norse sources, beings described as trolls dwell in isolated areas of rocks, mountains, or caves, live together in small family units, and are rarely helpful to human beings.",
+      "Troll",
     HP: 100,
     MAX_HP: 100,
     DROPS: ["BONE", "FANG"],
@@ -26,13 +26,13 @@ export const ENEMY = {
     NAME: "Goblin",
     IMAGE: Goblin,
     DESCRIPTION:
-      "A goblin is a small, grotesque, monstrous creature that appears in the folklore of multiple European cultures. First attested in stories from the Middle Ages, they are ascribed conflicting abilities, temperaments, and appearances depending on the story and country of origin, ranging from mischievous household spirits to malicious, bestial thieves",
+      "Goblin",
     HP: 200,
     MAX_HP: 200,
     DROPS: ["BONE", "FANG"],
   },
   SPIDER: {
-    NAME: "Giant Spider",
+    NAME: "Spider",
     IMAGE: Spider,
     DESCRIPTION: "A spider",
     HP: 100,
@@ -40,7 +40,7 @@ export const ENEMY = {
     DROPS: ["POISON"],
   },
   WOLF: {
-    NAME: "WOLF",
+    NAME: "Wolf",
     IMAGE: Wolf,
     DESCRIPTION: "A wolf",
     HP: 100,

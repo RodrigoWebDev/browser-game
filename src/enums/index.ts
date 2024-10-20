@@ -4,8 +4,8 @@ export enum E_SCREENS {
 }
 
 export enum E_LOCATIONS {
-  "FOREST" = 1,
-  "VILLAGE",
-  "DUNGEON",
-  "CAVERN",
+  "Forest" = 1,
+  "Village",
+  "Dungeon",
+  "Cavern",
 }

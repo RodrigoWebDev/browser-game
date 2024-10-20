@@ -1,15 +1,24 @@
-import { JSXElement, createSignal, onMount } from "solid-js";
+import { JSX, JSXElement, createSignal, onMount } from "solid-js";
 import { WorldPlace } from "../classes/WorldPlace";
 import NpcTalk from "../components/NpcTalk";
 import Shop from "../components/Shop";
 import {
+  Game,
   GENDERS,
+  IEntity,
+  IPlaceTwo,
+  IThingTwo,
   MAX_THINGS_NUMBER,
   MIN_THINGS_NUMBER,
   NPC_NAMES,
+  TContainerTypes,
+  TEnemyTypes,
+  TInnerPlaceTypes,
+  TNpcTypes,
+  TPlaceTypes,
 } from "../constants";
 import { CONTAINER, TCONTAINER_TYPES } from "../constants/containers";
-import { ENEMY, IENEMY, TENEMY_TYPES } from "../constants/enemies";
+import { ENEMIY_TYPES, ENEMY, IENEMY, TENEMY_TYPES } from "../constants/enemies";
 import { ITEM, ITEM_TYPES, TITEM_TYPES } from "../constants/items";
 import { NPC, NPC_GREETINGS, TNPC_TYPES } from "../constants/npc";
 import {
@@ -24,7 +33,7 @@ import {
   getRandomIntFromInterval,
   getRandomItemFromArray,
 } from "../helpers";
-import { IAction, IThing, Vector2 } from "../interfaces";
+import { IAction, ISVG, IThing, Vector2 } from "../interfaces";
 import { combatController } from "./combat";
 import { inventoryController, inventoryState } from "./inventory";
 import { modalState } from "./modal";
@@ -33,6 +42,8 @@ import { shopState } from "./shop";
 import { E_LOCATIONS, E_SCREENS } from "../enums";
 import { screenController } from "./screen";
 import { COLOR_PALETTE } from "../constants/colorPallet";
+import Enemy from "../classes/Enemy";
+import { Entity } from "../classes/Entity";
 
 export const worldMapState = createSignal<any[][]>([]);
 
@@ -177,53 +188,57 @@ export const worldMapController = () => {
 
   const createPlaceInfo = (cords: Vector2, id: number) => {
     const _worldMap = worldMap();
-    const type = _worldMap[cords.y][cords.x].info.type as TPLACE_TYPES;
-    console.log("=== DEBUG ===", _worldMap[cords.y][cords.x]);
-    const place = PLACES[type];
-    const randomThing = getRandomItemFromArray(place.THINGS) as IThing;
+    const placeType = _worldMap[cords.y][cords.x].info.type as TPlaceTypes;
+    const place = Game.Places[placeType] as unknown as IPlaceTwo
+    const randomThing = getRandomItemFromArray(place.things) as IThingTwo;
+    let subType = randomThing.subtype;
+
     /* const randomThing = {
         TYPE: "NPC",
         SUBTYPE: "MERCHANT",
       }; */
 
     let randomName = "";
-    let randomImage: JSXElement;
+    let randomImage: (props: ISVG) => JSX.Element = () => <></>;
     let placeActions: IAction[] = [];
-    let subType = randomThing.SUBTYPE.toLocaleLowerCase();
     let randomColor = getRandomItemFromArray(COLOR_PALETTE);
-    const thingType = randomThing.TYPE;
+    const thingType = randomThing.type;
 
-    if (thingType === "NPC") {
+
+    if (thingType === "Npc") {
+      debugger
       //Create NPC Info
-      const _subType = randomThing.SUBTYPE as TNPC_TYPES;
-      const gender = getRandomItemFromArray(GENDERS) as "MALE" | "FEMALE";
-      const images = NPC[_subType][gender].IMAGES;
+      const _subType = randomThing.subtype as TNpcTypes;
+      const gender = getRandomItemFromArray(GENDERS) as "Male" | "Female";
+      const images = Game.Npc[_subType][gender].Images;
       randomImage = getRandomItemFromArray(images);
       randomName = getRandomItemFromArray(NPC_NAMES[gender]);
       placeActions = [...placeActions, "Talk"];
 
-      if (_subType == "MERCHANT") {
-        //Generate inventory items for merchant
-        const inventoryItems = getNewArrayWithRandomItems(
-          ITEM_TYPES
-        ) as TITEM_TYPES[];
+      // if (_subType == "MERCHANT") {
+      //   //Generate inventory items for merchant
+      //   const inventoryItems = getNewArrayWithRandomItems(
+      //     ITEM_TYPES
+      //   ) as TITEM_TYPES[];
 
-        placeActions = [...placeActions, "Buy", "Sell"];
-      }
-    } else if (thingType === "INNER_PLACE") {
+      //   placeActions = [...placeActions, "Buy", "Sell"];
+      // }
+    } else if (thingType === "InnerPlace") {
       //Create INNER_PLACE Info
-      const _subType = randomThing.SUBTYPE as TINNER_PLACE_TYPES;
-      const thing = INNER_PLACE[_subType];
-      randomImage = getRandomItemFromArray(thing.IMAGES);
-      randomName = getRandomItemFromArray(thing.NAMES);
+      const _subType = randomThing.subtype as TInnerPlaceTypes;
+      const thing = Game.InnerPlace[_subType]
+      randomImage = thing.img;
+      //randomName = getRandomItemFromArray(thing.NAMES);
 
       placeActions = [...placeActions, "Talk"];
-    } else if (thingType === "ENEMY") {
-      const thingSubType = randomThing.SUBTYPE as TENEMY_TYPES;
-      const enemy = ENEMY[thingSubType] as IENEMY;
-      const image = enemy.IMAGE as any;
-      randomName = enemy.NAME;
-      randomImage = image;
+    } else if (thingType === "Enemy") {
+      const thingSubType = randomThing.subtype as TEnemyTypes;
+      //const enemy = ENEMY[thingSubType] as IENEMY;
+      const enemy = Game[thingType][thingSubType]
+      console.log("🚀 ~ createPlaceInfo ~ enemy:", enemy)
+      // const image = enemy.IMAGE as any;
+      // randomName = enemy.NAME;
+      // randomImage = image;
 
       placeActions = [...placeActions, "Attack"];
 
@@ -251,31 +266,40 @@ export const worldMapController = () => {
       //   },
       // ];
     } else {
-      const thingSubType = randomThing.SUBTYPE as TCONTAINER_TYPES;
-      const container = CONTAINER[thingSubType];
-      const image = container.IMAGE as any;
-      randomName = container.NAME;
-      randomImage = image;
+      const thingSubType = randomThing.subtype as TContainerTypes;
+      const container = Game.Containers[thingSubType];
+      // const image = container.IMAGE as any;
+      // randomName = container.NAME;
+      randomImage = container.img as any;
 
       placeActions = [];
     }
 
-    console.log("🚀 ~ createPlaceInfo ~ placeActions:", placeActions)
+    // _worldMap[cords.y][cords.x].info.things[id].thing = {
+    //   name: randomName,
+    //   type: subType,
+    //   img: randomImage,
+    //   placeActions,
+    //   fill: randomColor,
+    //   hp: 10
+    // };
 
+    //_worldMap[cords.y][cords.x].info.things[id].thing = new Entity(id, randomThing)
     _worldMap[cords.y][cords.x].info.things[id].thing = {
       name: randomName,
       type: subType,
       img: randomImage,
       placeActions,
       fill: randomColor,
-    };
+      hp: 10
+    }
 
     setWorldMap([..._worldMap]);
   };
 
-  const createEmptyPlaceInfo = (place: IPlace, cords: Vector2) => {
-    const name = `${getRandomItemFromArray(place.NAMES)} (${place.ID}) `;
-    const bg = getRandomItemFromArray(place.IMAGES);
+  const createEmptyPlaceInfo = (place: IPlaceTwo, cords: Vector2) => {
+    const name = `${getRandomItemFromArray(place.names)} (${place.type}) `;
+    const bg = getRandomItemFromArray(place.images);
     let things = [];
 
     const interval = getRandomIntFromInterval(
@@ -299,7 +323,7 @@ export const worldMapController = () => {
 
     return {
       name,
-      type: place.ID,
+      type: place.type,
       bg,
       things,
     };
@@ -360,9 +384,11 @@ export const worldMapController = () => {
 
   const createInitialPlace = (cords: Vector2) => {
     const worldPlace = new WorldPlace(false, false);
+    console.log("🚀 ~ createInitialPlace ~ worldPlace:", worldPlace)
 
-    let placeType = E_LOCATIONS[worldPlace.type] as TPLACE_TYPES;
-    let worldLocation = PLACES[placeType];
+    //let placeType = E_LOCATIONS[worldPlace.type] as TPLACE_TYPES;
+    const worldLocation = Game.Places[worldPlace.type] as unknown as IPlaceTwo
+    console.log("🚀 ~ createInitialPlace ~ worldLocation:", worldLocation)
 
     worldPlace.info = createEmptyPlaceInfo(worldLocation, cords);
     worldPlace.isVisible = true;
@@ -403,8 +429,6 @@ export const worldMapController = () => {
         })
       );
     }
-
-    console.log("🚀 ~ generatedWorldMap ~ _worldMap:", _worldMap);
 
     setWorldMap(_worldMap);
   };

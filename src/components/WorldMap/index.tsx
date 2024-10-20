@@ -4,6 +4,8 @@ import { worldMapController, worldMapState } from "../../state/worldMap";
 import { QuestionMark } from "../Icons";
 import { E_LOCATIONS } from "../../enums";
 import ToolTip from "../Tooltip";
+import { Game, IPlaceTwo } from "../../constants";
+import { WorldPlace } from "../../classes/WorldPlace";
 /* import { placeController } from "../../state/world";
 import Button from "../Button"; */
 
@@ -29,16 +31,10 @@ const WorldMap = () => {
       {worldMap()?.map((row: any, rowIndex: number) => {
         return (
           <div class="flex justify-between mb-2">
-            {row.map((col: any, colIndex: number) => {
+            {row.map((col: WorldPlace, colIndex: number) => {
               /* if (col) { */
-
-              let myCol: TPLACE_TYPES;
-              let worldLocation: any;
-
-              if (col) {
-                myCol = E_LOCATIONS[col.type] as TPLACE_TYPES;
-                worldLocation = PLACES[myCol];
-              }
+              const place = Game.Places[col.type] as unknown as IPlaceTwo;
+              let worldLocation = place
 
               return (
                 <ToolTip
@@ -58,7 +54,7 @@ const WorldMap = () => {
                   }}
                 >
                   {col.isVisible ? (
-                    <Dynamic component={worldLocation.IMAGES[0]} />
+                    <Dynamic component={worldLocation.images[0]} />
                   ) : (
                     <QuestionMark />
                   )}

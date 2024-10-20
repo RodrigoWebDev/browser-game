@@ -30,7 +30,7 @@ import { IAction, IThing, IPlaceInfo } from "../interfaces.ts";
 import { combatController } from "./combat.tsx";
 import { inventoryController, inventoryState } from "./inventory.ts";
 import { modalState } from "./modal.ts";
-import { playerState } from "./player.ts";
+import { playerState } from "./player.tsx";
 import { shopState } from "./shop.ts";
 import { E_SCREENS } from "../enums/index.ts";
 import { worldMapController, worldMapState } from "./worldMap.tsx";
@@ -57,9 +57,9 @@ export const placeController = () => {
 
   const place = () => {
     const _place = _worldMapController.place()
-    console.log("🚀 ~ place ~ _place:", _place)
     return _place
   }
+
   const setPlace = (place: any) => _worldMapController.setPlace(place)
 
   const removeThingFromLocation = (id: number) => {
@@ -306,8 +306,6 @@ export const placeController = () => {
   //   for (let i = 0; i < 5; i++) {
   //     _place.things.push(getThing(i));
   //   }
-
-  //   console.log("🚀 ~ createThings ~ _place:", _place)
 
   //   setPlace({ ..._place });
   // };

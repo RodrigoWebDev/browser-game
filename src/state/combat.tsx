@@ -31,7 +31,7 @@ export const combatController = () => {
   };
 
   const attackEnemy = (item: IAction, enemy: Enemy) => {
-    item.click(player().attackDamage);
+    //item.click(player().attackDamage);
     updateCombat();
 
     enemy.resetDamageEffect();

@@ -58,152 +58,72 @@ function Game() {
       {screen() === E_SCREENS.PLACE && place().info.things.length && (
         <main class="w-[69%]">
           <div class="h-full bg-contain">
-            {player().isInCombat ? (
-              <div id="combat" class="p-4 bg-black/40">
-                <div id="enemies" class="flex mb-4">
-                  {combat().enemies.map((enemy) => {
-                    const enemyIsDead = enemy.hp <= 0;
-                    return (
-                      <div
-                        class={`${cardContainerStyle} ${
-                          enemyIsDead ? "pointer-events-none brightness-50" : ""
-                        }`}
+            <div id="exploration" class="min-h-[600px] w-full bg-black/40 p-4">
+              <h2 class="text-[20px]">
+                You are in <strong>{place().info.name}</strong>
+              </h2>
+              <hr class="my-4" />
+              <div>
+                <div class="flex flex-wrap">
+                  {mockPlayerPos > 0 && (
+                    <ToolTip text="Go back to previous area">
+                      <Button
+                        className="mr-2"
+                        onClick={() => {
+                          _placeController.goToPreviousArea();
+                        }}
                       >
-                        <Card
-                          img={
-                            <Dynamic
-                              component={enemy.refference.IMAGE}
-                              fill={enemy.refference.color}
-                            />
-                          }
-                          imgHueRotation={0}
-                          imgBrighter={false}
-                          title={enemy.refference.NAME}
-                          subTitle="ENEMY"
-                          footer={
-                            <>
-                              <ToolTip
-                                text={`HP: ${enemy.hp}`}
-                                className="flex items-center"
-                              >
-                                <div class="mr-2">HP:</div>
-                                <progress
-                                  class="progress progress-error"
-                                  value={enemy.hp}
-                                  max={enemy.maxHp}
-                                ></progress>
-                              </ToolTip>
-                              <div data-id="actions" class="flex">
-                                <DropDown
-                                  trigger={
-                                    <Button>
-                                      <SwordsSvg className="w-[16px] text-white" />
-                                    </Button>
-                                  }
-                                  items={[]}
-                                  // items={enemy.playerActions.map((item) => (
-                                  //   <li>
-                                  //     <Button
-                                  //       onClick={() => {
-                                  //         _combatController.attackEnemy(
-                                  //           item,
-                                  //           enemy
-                                  //         );
-                                  //         _combatController.winCombat();
-                                  //         _placeController.removeThingFromLocation(
-                                  //           enemy.id
-                                  //         );
-                                  //       }}
-                                  //     >
-                                  //       {item.name}
-                                  //     </Button>
-                                  //   </li>
-                                  // ))}
-                                />
-                              </div>
-                            </>
-                          }
-                        />
-                      </div>
-                    );
-                  })}
-                </div>
-                <div id="player-actions" class="flex">
-                  <div>
+                        <ArrowSvg className="flip-x" />
+                      </Button>
+                    </ToolTip>
+                  )}
+
+                  <ToolTip text="Explore the current location">
                     <Button
                       onClick={() => {
-                        _combatController.escapeFromCombat();
+                        _placeController.explore();
+                      }}
+                      className="mr-2"
+                    >
+                      <Explore />
+                    </Button>
+                  </ToolTip>
+
+                  <ToolTip text="Show map">
+                    <Button
+                      onClick={() => {
+                        _screenController.setScreen(E_SCREENS.WORLD_MAP);
                       }}
                     >
-                      Fugir do combate
+                      <Map />
                     </Button>
-                  </div>
+                  </ToolTip>
                 </div>
-              </div>
-            ) : (
-              <div
-                id="exploration"
-                class="min-h-[600px] w-full bg-black/40 p-4"
-              >
-                <h2 class="text-[20px]">
-                  You are in <strong>{place().info.name}</strong>
-                </h2>
-                <hr class="my-4" />
-                <div>
-                  <div class="flex flex-wrap">
-                    {mockPlayerPos > 0 && (
-                      <ToolTip text="Go back to previous area">
-                        <Button
-                          className="mr-2"
-                          onClick={() => {
-                            _placeController.goToPreviousArea();
-                          }}
-                        >
-                          <ArrowSvg className="flip-x" />
-                        </Button>
-                      </ToolTip>
-                    )}
 
-                    <ToolTip text="Explore the current location">
-                      <Button
-                        onClick={() => {
-                          _placeController.explore();
-                        }}
-                        className="mr-2"
-                      >
-                        <Explore />
-                      </Button>
-                    </ToolTip>
+                <div id="things-found" class="mt-4 flex flex-wrap">
+                  {place().info.things.map((item: any) => {
+                    const thing = item.thing;
 
-                    <ToolTip text="Show map">
-                      <Button
-                        onClick={() => {
-                          _screenController.setScreen(E_SCREENS.WORLD_MAP);
-                        }}
-                      >
-                        <Map />
-                      </Button>
-                    </ToolTip>
-                  </div>
-
-                  <div id="things-found" class="mt-4 flex flex-wrap">
-                    {place().info.things.map((item: any) => {
-                      const thing = item.thing;
-
-                      if (!!thing) {
-                        return (
-                          <div class={cardContainerStyle}>
-                            <Card
-                              title={thing.name}
-                              subTitle={thing.type}
-                              img={
-                                <Dynamic
-                                  component={thing.img}
-                                  fill={thing.fill}
-                                />
-                              }
-                              imgBrighter={false}
-                              footer={
+                    if (!!thing) {
+                      return (
+                        <div class={cardContainerStyle}>
+                          <Card
+                            title={thing.name}
+                            subTitle={thing.type}
+                            img={
+                              <Dynamic
+                                component={thing.img}
+                                fill={thing.fill}
+                              />
+                            }
+                            imgBrighter={false}
+                            footer={
+                              <div>
+                                <progress
+                                  class="progress progress-error"
+                                  value={thing.hp}
+                                  max={100}
+                                ></progress>
                                 <div data-id="actions" class="flex">
                                   <DropDown
                                     trigger={
@@ -212,9 +132,7 @@ function Game() {
                                       </Button>
                                     }
                                     items={_playerController
-                                      .getPlayerActionsInPlace(
-                                        item.id
-                                      )
+                                      .getPlayerActionsInPlace(item.id)
                                       .map((item: any) => (
                                         <li>
                                           <Button
@@ -228,16 +146,18 @@ function Game() {
                                       ))}
                                   />
                                 </div>
-                              }
-                            />
-                          </div>
-                        );
-                      }
-                    })}
-                  </div>
+                              </div>
+                            }
+                          />
+                        </div>
+                      );
+                    } else {
+                      return <></>;
+                    }
+                  })}
                 </div>
               </div>
-            )}
+            </div>
           </div>
         </main>
       )}
