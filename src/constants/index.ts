@@ -85,6 +85,7 @@ export const NPC_NAMES = {
 export const Game = {
   Enemy: {
     Troll: {
+      name: "Troll",
       img: Troll,
       description: "Troll",
       hp: 100,
@@ -93,6 +94,7 @@ export const Game = {
       type: "enemy",
     },
     Spider: {
+      name: "Spider",
       img: Spider,
       description: "Spider",
       hp: 100,
@@ -101,6 +103,7 @@ export const Game = {
       type: "enemy",
     },
     Goblin: {
+      name: "Goblin",
       img: Goblin,
       description: "Goblin",
       hp: 100,
@@ -109,6 +112,7 @@ export const Game = {
       type: "enemy",
     },
     Wolf: {
+      name: "Wolf",
       img: Wolf,
       description: "Wolf",
       hp: 100,

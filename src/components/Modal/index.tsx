@@ -11,7 +11,7 @@ interface IModal {
 
 const Modal = (props: IModal) => {
   const [_isOpen, _setIsOpen] = createSignal(props.isOpen);
-  const [, setModal] = modalState;
+  const [modal, setModal] = modalState;
 
   onMount(() => {
     document.addEventListener("keyup", (e) => {
@@ -30,14 +30,14 @@ const Modal = (props: IModal) => {
   return (
     <dialog
       class={`modal bg-black/50 ${
-        _isOpen() ? "opacity-100 pointer-events-auto" : ""
+        /* _isOpen() */ modal().isOpen ? "opacity-100 pointer-events-auto" : ""
       }`}
     >
       {_isOpen() && (
         <div class="modal-box">
           <h3 class="font-bold text-lg">{props.title}</h3>
           <div class="w-full">{props.children}</div>
-          {!props.hideCloseButton && (
+          {!modal().hideCloseButton && (
             <div class="modal-action">
               <form method="dialog">
                 <Button

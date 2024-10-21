@@ -9,7 +9,7 @@ import {
   MIN_THINGS_NUMBER,
   NPC_GREETINGS,
   NPC_NAMES,
-  COLOR_PALETTE
+  COLOR_PALETTE,
 } from "../constants";
 import {
   IPlaceTwo,
@@ -19,11 +19,8 @@ import {
   TInnerPlaceTypes,
   TNpcTypes,
   TPlaceTypes,
-} from "../constants/model"
-import {
-  getRandomIntFromInterval,
-  getRandomItemFromArray,
-} from "../helpers";
+} from "../constants/model";
+import { getRandomIntFromInterval, getRandomItemFromArray } from "../helpers";
 import { IAction, ISVG, IThing, Vector2 } from "../interfaces";
 import { inventoryController, inventoryState } from "./inventory";
 import { modalState } from "./modal";
@@ -32,6 +29,11 @@ import { shopState } from "./shop";
 import { E_SCREENS } from "../enums";
 import { screenController } from "./screen";
 import { PersonWalk } from "../components/Icons";
+import Card from "../components/Card";
+import { Dynamic } from "solid-js/web";
+import DropDown from "../components/Dropwdown";
+import Button from "../components/Button";
+import SwordsSvg from "../components/SvgIcons/swords";
 
 export const worldMapState = createSignal<any[][]>([]);
 
@@ -175,7 +177,7 @@ export const worldMapController = () => {
   const createPlaceInfo = (cords: Vector2, id: number) => {
     const _worldMap = worldMap();
     const placeType = _worldMap[cords.y][cords.x].info.type as TPlaceTypes;
-    const place = Game.Places[placeType] as unknown as IPlaceTwo
+    const place = Game.Places[placeType] as unknown as IPlaceTwo;
     const randomThing = getRandomItemFromArray(place.things) as IThingTwo;
     let subType = randomThing.subtype;
 
@@ -189,7 +191,6 @@ export const worldMapController = () => {
     let placeActions: IAction[] = [];
     let randomColor = getRandomItemFromArray(COLOR_PALETTE);
     const thingType = randomThing.type;
-
 
     if (thingType === "Npc") {
       //Create NPC Info
@@ -211,7 +212,7 @@ export const worldMapController = () => {
     } else if (thingType === "InnerPlace") {
       //Create INNER_PLACE Info
       const _subType = randomThing.subtype as TInnerPlaceTypes;
-      const thing = Game.InnerPlace[_subType]
+      const thing = Game.InnerPlace[_subType];
       randomImage = thing.img;
       //randomName = getRandomItemFromArray(thing.NAMES);
 
@@ -219,11 +220,11 @@ export const worldMapController = () => {
     } else if (thingType === "Enemy") {
       const thingSubType = randomThing.subtype as TEnemyTypes;
       //const enemy = ENEMY[thingSubType] as IENEMY;
-      const enemy = Game[thingType][thingSubType]
-      console.log("🚀 ~ createPlaceInfo ~ enemy:", enemy)
-      // const image = enemy.IMAGE as any;
-      // randomName = enemy.NAME;
-      // randomImage = image;
+      const enemy = Game[thingType][thingSubType];
+      const image = enemy.img as any;
+      randomImage = image;
+      randomName = enemy.name;
+      subType = randomThing.type;
 
       placeActions = [...placeActions, "Attack"];
 
@@ -276,8 +277,11 @@ export const worldMapController = () => {
       img: randomImage,
       placeActions,
       fill: randomColor,
-      hp: 10
-    }
+      hp: 10,
+      sawThePlayer: false,
+    };
+
+    _worldMap[cords.y][cords.x].info.things[id].found = true;
 
     setWorldMap([..._worldMap]);
   };
@@ -369,11 +373,9 @@ export const worldMapController = () => {
 
   const createInitialPlace = (cords: Vector2) => {
     const worldPlace = new WorldPlace(false, false);
-    console.log("🚀 ~ createInitialPlace ~ worldPlace:", worldPlace)
 
     //let placeType = E_LOCATIONS[worldPlace.type] as TPLACE_TYPES;
-    const worldLocation = Game.Places[worldPlace.type] as unknown as IPlaceTwo
-    console.log("🚀 ~ createInitialPlace ~ worldLocation:", worldLocation)
+    const worldLocation = Game.Places[worldPlace.type] as unknown as IPlaceTwo;
 
     worldPlace.info = createEmptyPlaceInfo(worldLocation, cords);
     worldPlace.isVisible = true;
@@ -426,13 +428,69 @@ export const worldMapController = () => {
 
   const findSomething = () => {
     const _place = { ...place() };
-    const notFoundIndex = _place.info.things.findIndex((item: any) => !item.thing);
+    const notFoundIndex = _place.info.things.findIndex(
+      (item: any) => !item.thing
+    );
+
+    debugger;
 
     if (notFoundIndex !== -1) {
       _place.info.things[notFoundIndex].found = true;
-      _place.info.things[notFoundIndex].info = createPlaceInfo(player().worldPosition, notFoundIndex)
+      createPlaceInfo(player().worldPosition, notFoundIndex);
 
-      setPlace(_place); 
+      console.log("IS ENEMY???", _place.info.things[notFoundIndex].thing.type);
+      const thing = _place.info.things[notFoundIndex].thing;
+
+      if (_place.info.things[notFoundIndex].thing.type === "Enemy") {
+        const sawPlayer = !!getRandomIntFromInterval(0, 1);
+
+        setModal((prev) => ({
+          ...prev,
+          isOpen: true,
+          title: `You found an enemy ${
+            sawPlayer
+              ? "and he saw you, fight started!"
+              : "but he hasn't seen you yet."
+          }`,
+          hideCloseButton: sawPlayer,
+          children: (
+            <div class="my-8">
+              <div class="flex gap-2">
+                <div class="w-[30%]">
+                  <Dynamic component={thing.img} fill={thing.fill} />
+                </div>
+                <div class="grow">
+                  <h2 class="mb-2">Name: {thing.name}</h2>
+
+                  <div class="flex items-center">
+                    <span class="mr-2">HP:</span>
+                    <progress
+                      class="progress progress-error"
+                      value={100}
+                      max={100}
+                    ></progress>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mt-4">
+                {sawPlayer ? (
+                  <>
+                    <Button className="mr-2">Attack</Button>
+                    <Button className="mr-2">Defend</Button>
+                    <Button className="mr-2">Dodge</Button>
+                    <Button>Flee</Button>
+                  </>
+                ) : (
+                  <Button className="mr-2">Sneak attack</Button>
+                )}
+              </div>
+            </div>
+          ),
+        }));
+      }
+
+      setPlace(_place);
     }
   };
 
@@ -468,6 +526,6 @@ export const worldMapController = () => {
     place,
     setPlace,
     createPlaceInfo,
-    explore
+    explore,
   };
 };
