@@ -24,7 +24,7 @@ import { getRandomIntFromInterval, getRandomItemFromArray } from "../helpers";
 import { IAction, ISVG, IThing, Vector2 } from "../interfaces";
 import { inventoryController, inventoryState } from "./inventory";
 import { modalState } from "./modal";
-import { playerState } from "./player";
+import { playerController, playerState } from "./player";
 import { shopState } from "./shop";
 import { E_SCREENS } from "../enums";
 import { screenController } from "./screen";
@@ -46,6 +46,7 @@ export const worldMapController = () => {
 
   const _inventoryController = inventoryController();
   const _screenController = screenController();
+  const _playerController = playerController();
 
   const place = () => {
     const worldPosition = player().worldPosition;
@@ -188,7 +189,7 @@ export const worldMapController = () => {
 
     let randomName = "";
     let randomImage: (props: ISVG) => JSX.Element = () => <></>;
-    let placeActions: IAction[] = [];
+    let actions: IAction[] = [];
     let randomColor = getRandomItemFromArray(COLOR_PALETTE);
     const thingType = randomThing.type;
 
@@ -199,7 +200,7 @@ export const worldMapController = () => {
       const images = Game.Npc[_subType][gender].Images;
       randomImage = getRandomItemFromArray(images);
       randomName = getRandomItemFromArray(NPC_NAMES[gender]);
-      placeActions = [...placeActions, "Talk"];
+      actions = [...actions, "Talk"];
 
       // if (_subType == "MERCHANT") {
       //   //Generate inventory items for merchant
@@ -216,7 +217,7 @@ export const worldMapController = () => {
       randomImage = thing.img;
       //randomName = getRandomItemFromArray(thing.NAMES);
 
-      placeActions = [...placeActions, "Talk"];
+      actions = [...actions, "Talk"];
     } else if (thingType === "Enemy") {
       const thingSubType = randomThing.subtype as TEnemyTypes;
       //const enemy = ENEMY[thingSubType] as IENEMY;
@@ -226,7 +227,7 @@ export const worldMapController = () => {
       randomName = enemy.name;
       subType = randomThing.type;
 
-      placeActions = [...placeActions, "Attack"];
+      actions = [...actions, "Attack"];
 
       // actions = [
       //   {
@@ -258,7 +259,7 @@ export const worldMapController = () => {
       // randomName = container.NAME;
       randomImage = container.img as any;
 
-      placeActions = [];
+      actions = [];
     }
 
     // _worldMap[cords.y][cords.x].info.things[id].thing = {
@@ -272,13 +273,14 @@ export const worldMapController = () => {
 
     //_worldMap[cords.y][cords.x].info.things[id].thing = new Entity(id, randomThing)
     _worldMap[cords.y][cords.x].info.things[id].thing = {
+      id,
       name: randomName,
       type: subType,
       img: randomImage,
-      placeActions,
       fill: randomColor,
       hp: 10,
       sawThePlayer: false,
+      actions,
     };
 
     _worldMap[cords.y][cords.x].info.things[id].found = true;
@@ -432,17 +434,16 @@ export const worldMapController = () => {
       (item: any) => !item.thing
     );
 
-    debugger;
-
     if (notFoundIndex !== -1) {
       _place.info.things[notFoundIndex].found = true;
       createPlaceInfo(player().worldPosition, notFoundIndex);
 
-      console.log("IS ENEMY???", _place.info.things[notFoundIndex].thing.type);
       const thing = _place.info.things[notFoundIndex].thing;
+      console.log("🚀 ~ findSomething ~ thing:", thing);
 
       if (_place.info.things[notFoundIndex].thing.type === "Enemy") {
         const sawPlayer = !!getRandomIntFromInterval(0, 1);
+        _place.info.things[notFoundIndex].thing.sawPlayer = sawPlayer;
 
         setModal((prev) => ({
           ...prev,
@@ -474,16 +475,18 @@ export const worldMapController = () => {
               </div>
 
               <div class="mt-4">
-                {sawPlayer ? (
-                  <>
-                    <Button className="mr-2">Attack</Button>
-                    <Button className="mr-2">Defend</Button>
-                    <Button className="mr-2">Dodge</Button>
-                    <Button>Flee</Button>
-                  </>
-                ) : (
-                  <Button className="mr-2">Sneak attack</Button>
-                )}
+                  {_playerController.getPlayerActions(thing, sawPlayer).map((item) => {
+                    return (
+                      <Button
+                        className="mr-2"
+                        onClick={() => {
+                          item.onClick();
+                        }}
+                      >
+                        {item.name}
+                      </Button>
+                    );
+                  })}
               </div>
             </div>
           ),

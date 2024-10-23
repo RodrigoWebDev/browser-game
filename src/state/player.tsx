@@ -38,8 +38,10 @@ export const playerController = () => {
   const getThing = (_worldMap: any[][], cords: Vector2, id: number) =>
     _worldMap[cords.y][cords.x].info.things[id].thing;
 
-  const attack = (_worldMap: any[][], cords: Vector2, id: number) => {
-    const thing = getThing(_worldMap, cords, id);
+  const attack = (cords: Vector2, id: number) => {
+    debugger;
+    const _worldMap = worldMap();
+    const thing = getThing(worldMap(), cords, id);
     const thingHp = thing.hp;
 
     if (thingHp > 0) {
@@ -47,30 +49,71 @@ export const playerController = () => {
       _worldMap[cords.y][cords.x].info.things[id].thing.hp -= 10;
     } else {
       // Remove thing from place
-      _worldMap[cords.y][cords.x].info.things[id].thing = undefined
+      _worldMap[cords.y][cords.x].info.things[id].thing = undefined;
     }
 
     setWorldMap([..._worldMap]);
   };
 
-  const getPlayerActionsInPlace = (id: number) => {
-    const _worldMap = worldMap();
+  const getPlayerActions = ({
+    type,
+    id,
+  }: {
+    type: string;
+    id: number;
+  }, sawThePlayer: boolean) => {
     const cords = player().worldPosition;
+    let actions = [];
+    const _attack = {
+      name: "Attack",
+      onClick: () => {
+        attack(cords, id);
+      },
+    };
+    const sneakAttack = {
+      name: "Sneak attack",
+      onClick: () => {
+        //attack(cords, id);
+      },
+    };
+    const flee = {
+      name: "Flee",
+      onClick: () => {
+        //attack(cords, id);
+      },
+    };
+    const ignore = {
+      name: "Ignore",
+      onClick: () => {
+        //attack(cords, id);
+      },
+    };
 
-    return getThing(_worldMap, cords, id).placeActions.map((action: string) => {
-      const actionObj = {
-        name: action,
-        onClick: () => {},
-      };
-
-      if (action === "Attack") {
-        actionObj.onClick = () => {
-          attack(_worldMap, cords, id);
-        };
+    if (type === "Enemy") {
+      debugger
+      if (sawThePlayer) {
+        actions.push(_attack, flee);
+      }else{
+        actions.push(sneakAttack, ignore);
       }
+    }
 
-      return actionObj;
-    });
+    return actions;
+
+    // return actions.map((action: string) => {
+    //   const actionObj = {
+    //     name: action,
+    //     onClick: () => {},
+    //   };
+
+    //   if (action === "Attack") {
+    //     actionObj.onClick = () => {
+    //       attack(cords, id);
+    //     };
+    //   }
+
+    //   return actionObj;
+    // });
   };
 
   // const winCombat = () => {
@@ -137,7 +180,7 @@ export const playerController = () => {
   // };
 
   return {
-    getPlayerActionsInPlace,
+    getPlayerActions,
   };
 };
 

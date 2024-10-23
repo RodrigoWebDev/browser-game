@@ -110,7 +110,7 @@ function GameView() {
                                         <SwordsSvg className="w-[16px] text-white" />
                                       </Button>
                                     }
-                                    items={_playerController
+                                    items={/* _playerController
                                       .getPlayerActionsInPlace(item.id)
                                       .map((item: any) => (
                                         <li>
@@ -122,7 +122,7 @@ function GameView() {
                                             {item.name}
                                           </Button>
                                         </li>
-                                      ))}
+                                      )) */[]}
                                   />
                                 </div>
                               </div>
