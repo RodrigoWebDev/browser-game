@@ -39,17 +39,22 @@ export const playerController = () => {
     _worldMap[cords.y][cords.x].info.things[id].thing;
 
   const attack = (cords: Vector2, id: number) => {
-    debugger;
     const _worldMap = worldMap();
-    const thing = getThing(worldMap(), cords, id);
+    const thing = getThing(_worldMap, cords, id);
     const thingHp = thing.hp;
+    const attackDamage = 10
 
-    if (thingHp > 0) {
-      // Decrement HP
-      _worldMap[cords.y][cords.x].info.things[id].thing.hp -= 10;
-    } else {
+    if(thingHp <= 0 || (thingHp - attackDamage <= 0)){
       // Remove thing from place
       _worldMap[cords.y][cords.x].info.things[id].thing = undefined;
+      setModal(prev => ({
+        ...prev,
+        isOpen: false,
+        children: <></>
+      }))
+    }else{
+      // Decrement HP
+      _worldMap[cords.y][cords.x].info.things[id].thing.hp -= attackDamage;
     }
 
     setWorldMap([..._worldMap]);
@@ -90,7 +95,6 @@ export const playerController = () => {
     };
 
     if (type === "Enemy") {
-      debugger
       if (sawThePlayer) {
         actions.push(_attack, flee);
       }else{

@@ -42,7 +42,10 @@ const Modal = (props: IModal) => {
               <form method="dialog">
                 <Button
                   onClick={() => {
-                    _setIsOpen(false);
+                    setModal(prev => ({
+                      isOpen: false,
+                      children: <></>
+                    }));
                   }}
                 >
                   Fechar

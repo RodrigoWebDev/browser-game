@@ -439,7 +439,7 @@ export const worldMapController = () => {
       createPlaceInfo(player().worldPosition, notFoundIndex);
 
       const thing = _place.info.things[notFoundIndex].thing;
-      console.log("🚀 ~ findSomething ~ thing:", thing);
+      console.log("🚀 ~ findSomething ~ thing:", thing)
 
       if (_place.info.things[notFoundIndex].thing.type === "Enemy") {
         const sawPlayer = !!getRandomIntFromInterval(0, 1);
@@ -467,15 +467,18 @@ export const worldMapController = () => {
                     <span class="mr-2">HP:</span>
                     <progress
                       class="progress progress-error"
-                      value={100}
-                      max={100}
+                      value={thing.hp}
+                      max={thing.maxHp}
                     ></progress>
                   </div>
                 </div>
               </div>
 
               <div class="mt-4">
-                  {_playerController.getPlayerActions(thing, sawPlayer).map((item) => {
+                  {_playerController.getPlayerActions({
+                    id: thing.id,
+                    type: thing.type
+                  }, sawPlayer).map((item) => {
                     return (
                       <Button
                         className="mr-2"
@@ -500,7 +503,7 @@ export const worldMapController = () => {
   const explore = () => {
     if (hasThingToFind()) {
       setModal(() => ({
-        title: `Exploring ${place().name}`,
+        title: `Exploring ${place().info.name}`,
         children: <PersonWalk />,
         isOpen: true,
       }));

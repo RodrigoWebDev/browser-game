@@ -98,19 +98,40 @@ function GameView() {
                             imgBrighter={false}
                             footer={
                               <div>
-                                <progress
+                                {/* <progress
                                   class="progress progress-error"
                                   value={thing.hp}
                                   max={100}
-                                ></progress>
+                                ></progress> */}
                                 <div data-id="actions" class="flex">
-                                  <DropDown
+                                  <select
+                                    class="select select-bordered w-full max-w-xs"
+                                    onChange={(e) => {
+                                      alert(e.target.value);
+                                      e.target.value = "";
+                                    }}
+                                  >
+                                    <option value="" disabled selected>
+                                      Select action
+                                    </option>
+                                    {
+                                      _playerController
+                                      .getPlayerActions({
+                                        id: item.id,
+                                        type: "Enemy"
+                                      }, false)
+                                      .map((item: any) => (
+                                        <option value={item.name}>{item.name}</option>
+                                      ))
+                                    }
+                                  </select>
+                                  {/* <DropDown
                                     trigger={
                                       <Button>
                                         <SwordsSvg className="w-[16px] text-white" />
                                       </Button>
                                     }
-                                    items={/* _playerController
+                                    items={_playerController
                                       .getPlayerActionsInPlace(item.id)
                                       .map((item: any) => (
                                         <li>
@@ -122,8 +143,8 @@ function GameView() {
                                             {item.name}
                                           </Button>
                                         </li>
-                                      )) */[]}
-                                  />
+                                      ))}
+                                  /> */}
                                 </div>
                               </div>
                             }
