@@ -34,6 +34,7 @@ import { Dynamic } from "solid-js/web";
 import DropDown from "../components/Dropwdown";
 import Button from "../components/Button";
 import SwordsSvg from "../components/SvgIcons/swords";
+import EnemyCombatInfo from "../components/EnemyCombatInfo";
 
 export const worldMapState = createSignal<any[][]>([]);
 
@@ -281,6 +282,7 @@ export const worldMapController = () => {
       hp: 10,
       sawThePlayer: false,
       actions,
+      damageEffect: false,
     };
 
     _worldMap[cords.y][cords.x].info.things[id].found = true;
@@ -439,7 +441,7 @@ export const worldMapController = () => {
       createPlaceInfo(player().worldPosition, notFoundIndex);
 
       const thing = _place.info.things[notFoundIndex].thing;
-      console.log("🚀 ~ findSomething ~ thing:", thing)
+      console.log("🚀 ~ findSomething ~ thing:", thing);
 
       if (_place.info.things[notFoundIndex].thing.type === "Enemy") {
         const sawPlayer = !!getRandomIntFromInterval(0, 1);
@@ -455,43 +457,16 @@ export const worldMapController = () => {
           }`,
           hideCloseButton: sawPlayer,
           children: (
-            <div class="my-8">
-              <div class="flex gap-2">
-                <div class="w-[30%]">
-                  <Dynamic component={thing.img} fill={thing.fill} />
-                </div>
-                <div class="grow">
-                  <h2 class="mb-2">Name: {thing.name}</h2>
-
-                  <div class="flex items-center">
-                    <span class="mr-2">HP:</span>
-                    <progress
-                      class="progress progress-error"
-                      value={thing.hp}
-                      max={thing.maxHp}
-                    ></progress>
-                  </div>
-                </div>
-              </div>
-
-              <div class="mt-4">
-                  {_playerController.getPlayerActions({
-                    id: thing.id,
-                    type: thing.type
-                  }, sawPlayer).map((item) => {
-                    return (
-                      <Button
-                        className="mr-2"
-                        onClick={() => {
-                          item.onClick();
-                        }}
-                      >
-                        {item.name}
-                      </Button>
-                    );
-                  })}
-              </div>
-            </div>
+            <EnemyCombatInfo
+              thing={thing}
+              actions={_playerController.getPlayerActions(
+                {
+                  id: thing.id,
+                  type: thing.type,
+                },
+                sawPlayer
+              )}
+            />
           ),
         }));
       }

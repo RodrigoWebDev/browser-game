@@ -2,6 +2,7 @@ import { createSignal } from "solid-js";
 import { IAction, Vector2 } from "../interfaces";
 import { worldMapState } from "./worldMap";
 import { modalState } from "./modal";
+import EnemyCombatInfo from "../components/EnemyCombatInfo";
 
 interface IPlayer {
   name: string;
@@ -38,35 +39,16 @@ export const playerController = () => {
   const getThing = (_worldMap: any[][], cords: Vector2, id: number) =>
     _worldMap[cords.y][cords.x].info.things[id].thing;
 
-  const attack = (cords: Vector2, id: number) => {
-    const _worldMap = worldMap();
-    const thing = getThing(_worldMap, cords, id);
-    const thingHp = thing.hp;
-    const attackDamage = 10
-
-    if(thingHp <= 0 || (thingHp - attackDamage <= 0)){
-      // Remove thing from place
-      _worldMap[cords.y][cords.x].info.things[id].thing = undefined;
-      setModal(prev => ({
-        ...prev,
-        isOpen: false,
-        children: <></>
-      }))
-    }else{
-      // Decrement HP
-      _worldMap[cords.y][cords.x].info.things[id].thing.hp -= attackDamage;
-    }
-
-    setWorldMap([..._worldMap]);
-  };
-
-  const getPlayerActions = ({
-    type,
-    id,
-  }: {
-    type: string;
-    id: number;
-  }, sawThePlayer: boolean) => {
+  const getPlayerActions = (
+    {
+      type,
+      id,
+    }: {
+      type: string;
+      id: number;
+    },
+    sawThePlayer: boolean
+  ) => {
     const cords = player().worldPosition;
     let actions = [];
     const _attack = {
@@ -97,7 +79,7 @@ export const playerController = () => {
     if (type === "Enemy") {
       if (sawThePlayer) {
         actions.push(_attack, flee);
-      }else{
+      } else {
         actions.push(sneakAttack, ignore);
       }
     }
@@ -118,6 +100,59 @@ export const playerController = () => {
 
     //   return actionObj;
     // });
+  };
+
+  const attack = (cords: Vector2, id: number) => {
+    const sawPlayer = true;
+    const _worldMap = worldMap();
+    const thing = getThing(_worldMap, cords, id);
+    const thingHp = thing.hp;
+    const attackDamage = 1;
+
+    const updateEnemyCombatModal = () => {
+      setModal((prev) => ({
+        ...prev,
+        isOpen: true,
+        title: "You found an enemy and he saw you, fight started!",
+        hideCloseButton: sawPlayer,
+        children: (
+          <EnemyCombatInfo
+            thing={thing}
+            actions={getPlayerActions(
+              {
+                id: thing.id,
+                type: thing.type,
+              },
+              sawPlayer
+            )}
+          />
+        ),
+      }));
+    };
+
+    if (thingHp <= 0 || thingHp - attackDamage <= 0) {
+      // Remove thing from place
+      _worldMap[cords.y][cords.x].info.things[id].thing = undefined;
+      setModal((prev) => ({
+        ...prev,
+        isOpen: false,
+        children: <></>,
+      }));
+      setWorldMap([..._worldMap]);
+    } else {
+      // Decrement HP
+      _worldMap[cords.y][cords.x].info.things[id].thing.hp -= attackDamage;
+      _worldMap[cords.y][cords.x].info.things[id].thing.damageEffect = true;
+
+      updateEnemyCombatModal();
+      setWorldMap([..._worldMap]);
+
+      setTimeout(() => {
+        _worldMap[cords.y][cords.x].info.things[id].thing.damageEffect = false;
+        updateEnemyCombatModal();
+        setWorldMap([..._worldMap]);
+      }, 100);
+    }
   };
 
   // const winCombat = () => {

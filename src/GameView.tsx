@@ -82,6 +82,13 @@ function GameView() {
                 <div id="things-found" class="mt-4 flex flex-wrap">
                   {place().info.things.map((item: any) => {
                     const thing = item.thing;
+                    const actions = _playerController.getPlayerActions(
+                      {
+                        id: item.id,
+                        type: "Enemy",
+                      },
+                      false
+                    );
 
                     if (!!thing) {
                       return (
@@ -107,23 +114,20 @@ function GameView() {
                                   <select
                                     class="select select-bordered w-full max-w-xs"
                                     onChange={(e) => {
-                                      alert(e.target.value);
                                       e.target.value = "";
+                                      actions[item.id].onClick()
                                     }}
                                   >
                                     <option value="" disabled selected>
                                       Select action
                                     </option>
-                                    {
-                                      _playerController
-                                      .getPlayerActions({
-                                        id: item.id,
-                                        type: "Enemy"
-                                      }, false)
-                                      .map((item: any) => (
-                                        <option value={item.name}>{item.name}</option>
-                                      ))
-                                    }
+                                    {actions.map((item: any) => (
+                                      <option
+                                        value={item.name}
+                                      >
+                                        {item.name}
+                                      </option>
+                                    ))}
                                   </select>
                                   {/* <DropDown
                                     trigger={
