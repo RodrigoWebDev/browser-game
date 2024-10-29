@@ -19,12 +19,12 @@ const Player = () => {
 
       <div class="flex items-center text-[14px]">
         <div class="mr-2 flex items-center">
-          <span>HP</span> ({player().hp}/{player().maxHp}):
+          <span>HP</span> ({player().stats.hp}/{player().stats.maxHp}):
         </div>
         <progress
           class="progress progress-error"
-          value={player().hp}
-          max={player().maxHp}
+          value={player().stats.hp}
+          max={player().stats.maxHp}
         ></progress>
       </div>
 

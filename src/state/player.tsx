@@ -7,20 +7,21 @@ import EnemyCombatInfo from "../components/EnemyCombatInfo";
 interface IPlayer {
   name: string;
   class: string;
-  hp: number;
-  maxHp: number;
   attackDamage: number;
   isInCombat: boolean;
   money: number;
   worldPosition: Vector2;
   previousWorldPosition?: Vector2;
+  stats: {
+    hp: number
+    maxHp: number
+    stealth: number
+  }
 }
 
 export const playerState = createSignal<IPlayer>({
   name: "Player",
   class: "Guerreiro",
-  hp: 100,
-  maxHp: 100,
   attackDamage: 50,
   isInCombat: false,
   money: 10000,
@@ -29,6 +30,11 @@ export const playerState = createSignal<IPlayer>({
     x: 5,
     y: 5,
   },
+  stats: {
+    hp: 100,
+    maxHp: 100,
+    stealth: 2
+  }
 });
 
 export const playerController = () => {
@@ -106,7 +112,7 @@ export const playerController = () => {
     const sawPlayer = true;
     const _worldMap = worldMap();
     const thing = getThing(_worldMap, cords, id);
-    const thingHp = thing.hp;
+    const thingHp = thing.stats.hp;
     const attackDamage = 1;
 
     const updateEnemyCombatModal = () => {
@@ -141,7 +147,7 @@ export const playerController = () => {
       setWorldMap([..._worldMap]);
     } else {
       // Decrement HP
-      _worldMap[cords.y][cords.x].info.things[id].thing.hp -= attackDamage;
+      _worldMap[cords.y][cords.x].info.things[id].thing.stats.hp -= attackDamage;
       _worldMap[cords.y][cords.x].info.things[id].thing.damageEffect = true;
 
       updateEnemyCombatModal();

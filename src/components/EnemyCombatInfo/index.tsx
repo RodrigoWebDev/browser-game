@@ -2,6 +2,7 @@ import { Dynamic } from "solid-js/web";
 import Button from "../Button";
 
 const EnemyCombatInfo = ({ thing, actions }: any) => {
+  console.log("🚀 ~ EnemyCombatInfo ~ thing:", thing)
   return (
     <div class="my-8">
       <div class="flex gap-2">
@@ -15,7 +16,7 @@ const EnemyCombatInfo = ({ thing, actions }: any) => {
             <span class="mr-2">HP:</span>
             <progress
               class="progress progress-error"
-              value={thing.hp}
+              value={thing.stats.hp}
               max={10}
             ></progress>
           </div>

@@ -279,10 +279,13 @@ export const worldMapController = () => {
       type: subType,
       img: randomImage,
       fill: randomColor,
-      hp: 10,
       sawThePlayer: false,
       actions,
       damageEffect: false,
+      stats: {
+        hp: 10,
+        attention: 1
+      }
     };
 
     _worldMap[cords.y][cords.x].info.things[id].found = true;
@@ -430,6 +433,18 @@ export const worldMapController = () => {
     });
   };
 
+  const enemySawPlayer = (thing: any) => {
+    let sawPlayer = false
+
+    if(thing.stats.attention === player().stats.stealth){
+      sawPlayer = !!getRandomIntFromInterval(0, 1);
+    }else{
+      sawPlayer = thing.stats.attention > player().stats.stealth
+    }
+
+    return sawPlayer
+  }
+
   const findSomething = () => {
     const _place = { ...place() };
     const notFoundIndex = _place.info.things.findIndex(
@@ -441,10 +456,10 @@ export const worldMapController = () => {
       createPlaceInfo(player().worldPosition, notFoundIndex);
 
       const thing = _place.info.things[notFoundIndex].thing;
-      console.log("🚀 ~ findSomething ~ thing:", thing);
 
-      if (_place.info.things[notFoundIndex].thing.type === "Enemy") {
-        const sawPlayer = !!getRandomIntFromInterval(0, 1);
+      if (thing.type === "Enemy") {
+        const sawPlayer = enemySawPlayer(thing)
+
         _place.info.things[notFoundIndex].thing.sawPlayer = sawPlayer;
 
         setModal((prev) => ({
